@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+
+{% block content %}
+
+    <div class="container">
+
+        
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <h1>{% block create %} {% endblock %} {% block name %} {% endblock %}</h1>
+
+            
+                    {% for field in form %}
+
+{% comment %}                     <div class="row justify-content-center">
+                        <div class="col-sm-3">
+                            <label>{{ field.label_tag }}</label>
+                        <p></p>
+                        </div>
+                        <div class="col-sm-9">
+                            {{ field }}
+                            {% if field.errors %}
+                                <p></p>
+                                <div>
+                                    <button type="button" data-dismiss="alert">&times;</button>
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div> {% endcomment %}
+                
+
+                    <div class="container">
+                        <div class="mb-3 row">
+                            <div class="col-sm-2 col-form-label">
+                                {{ field.label_tag }}
+                            </div>
+                            <div class="col-sm-10">{{ field }}</div>
+                            {% if field.errors %}
+                                <p></p>
+                                <div>
+                                    <button type="button" data-dismiss="alert">&times;</button>
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
+                        <p></p>
+                        </div>
+                    </div>
+
+
+                {% endfor %}
+
+            
+                <div class="row justify-content-center">
+                    <div class="col-8">
+                        <button type="submit" name="" id="" class="btn btn-primary">{% block boton_save %}Guardar{% endblock %}</button>
+                        {% block button_link %}{% endblock %}
+                    </div>
+                </div>
+        </form>
+    </div>
+
+{% endblock %}
