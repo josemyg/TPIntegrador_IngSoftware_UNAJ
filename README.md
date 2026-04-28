@@ -1,4 +1,4 @@
-# TP Integrador Ingenieria de Software Universidad Nacional Arturo Jauretche
+# TP Integrador - Ingenieria de Software - Universidad Nacional Arturo Jauretche
 
 ## TP Gol Ahora
 ### Equipo 6 (Comisión 2 - 20:00 a 22:00 Hs.)
