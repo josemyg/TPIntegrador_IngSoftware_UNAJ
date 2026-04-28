@@ -1,6 +1,6 @@
-# TPIntegrador_IngSoftware_UNAJ
+# TP Integrador Ingenieria de Software Universidad Nacional Arturo Jauretche
 
-## TP Gol Ahora - Universidad Nacional Arturo Jauretche - Ingenieria de Software
+## TP Gol Ahora
 ### Equipo 6 (Comisión 2 - 20:00 a 22:00 Hs.)
 
 * Arce, Marcos Esteban
