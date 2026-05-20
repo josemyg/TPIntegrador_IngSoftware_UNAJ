@@ -30,6 +30,25 @@
               <li><a class="dropdown-item" href="{% url 'profesor_list' %}">Listar Profesores</a></li>
             </ul>
           </li>
+          <li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Clientes
+  </a>
+
+  <ul class="dropdown-menu">
+    <li>
+      <a class="dropdown-item" href="{% url 'cliente_create' %}">
+        Registrar Cliente
+      </a>
+    </li>
+
+    <li>
+      <a class="dropdown-item" href="{% url 'cliente_list' %}">
+        Listar Clientes
+      </a>
+    </li>
+  </ul>
+</li>
         </ul>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#barranavegacion" aria-controls="barranavegacion" aria-expanded="false" aria-label="Toggle navigation">

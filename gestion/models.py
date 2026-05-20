@@ -75,3 +75,25 @@ def crear_Usuario(sender, instance, created, **kwargs):
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")
+
+
+
+class Cliente(Usuario):
+    fechaAlta = models.CharField(("Fecha de Alta"), max_length=20)
+    estado = models.CharField(("Estado"), max_length=50)
+    esSocio = models.BooleanField(("Es Socio"), default=False)
+
+
+    class Meta:
+        verbose_name = ("Cliente")
+        verbose_name_plural = ("Clientes")
+
+@receiver(post_save, sender=Cliente)
+def crear_Cliente(sender, instance, created, **kwargs):
+    if created:
+        nombre = instance.nombre+'_'+instance.apellido
+        print(nombre)
+        user = User.objects.create_user(nombre,instance.email, 'f.123456')
+        user.save()
+        instance.user_django = user
+        print("Se ha creado el perfil de usuario correctamente")        
