@@ -1,0 +1,21 @@
+{% block content %}
+
+<div class="container">
+
+    <h1>Ficha del Cliente</h1>
+
+    <hr>
+
+    <p><b>Nombre:</b> {{ cliente.nombre }}</p>
+    <p><b>Apellido:</b> {{ cliente.apellido }}</p>
+    <p><b>Email:</b> {{ cliente.email }}</p>
+    <p><b>Teléfono:</b> {{ cliente.telefono }}</p>
+    <p><b>DNI:</b> {{ cliente.dni }}</p>
+
+    <button onclick="window.print()" class="btn btn-primary">
+        Imprimir
+    </button>
+
+</div>
+
+{% endblock %}

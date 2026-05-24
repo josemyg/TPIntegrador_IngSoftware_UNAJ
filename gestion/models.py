@@ -66,6 +66,18 @@ class Profesor(Usuario):
         verbose_name = ("Profesor/a")
         verbose_name_plural = ("Profesores")
 
+
+
+    def verificar_estado_profesor(self):
+
+        if self.certificado:
+            self.estado = "activo"
+        else:
+            self.estado = "en_validación"
+
+        self.save()
+      
+
 @receiver(post_save, sender=Profesor)
 def crear_Usuario(sender, instance, created, **kwargs):
     if created:
@@ -76,7 +88,9 @@ def crear_Usuario(sender, instance, created, **kwargs):
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")
 
+ 
 
+    
 
 class Cliente(Usuario):
     fechaAlta = models.CharField(("Fecha de Alta"), max_length=20)
