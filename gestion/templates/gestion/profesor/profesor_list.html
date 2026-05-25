@@ -25,9 +25,12 @@
                     <td>{{ profesor.telefono }}</td>
                     <td>{{ profesor.localidad }}</td>
                     <td>
+                        {% if profesor.estado == 'en_validación' %}
+                        <a name="" id="" class="" href="{% url 'profesor_print' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/printer.svg' %}" alt="Imprimir" width="24" height="24"/></a>
+                        {% endif %}
                         <a name="" id="" class="" href="{% url 'profesor_update' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"/></a>
                         <a name="" id="" class="" href="{% url 'profesor_delete' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"/></a>
-                        <a name="" id="" class="" href="{% url 'profesor_print' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/printer.svg' %}" alt="Imprimir" width="24" height="24"/></a>
+                        
                     </td>
                     </tr>
             {% endfor %}

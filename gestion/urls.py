@@ -20,4 +20,11 @@ urlpatterns = [
     path('eliminarcliente/<pk>', ClienteDeleteView.as_view(), name='cliente_delete'),
     path('modificarcliente/<pk>', ClienteUpdateView.as_view(), name='cliente_update'),
     path("imprimircliente/<pk>", ClientePrintView.as_view(), name="cliente_print"),
+
+
+    # VistaCliente
+    path('inicio/', views.inicio, name='inicio'),
+
+
+
 ]   

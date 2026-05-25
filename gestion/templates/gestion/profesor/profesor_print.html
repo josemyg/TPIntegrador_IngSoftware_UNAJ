@@ -1,5 +1,9 @@
-{% block content %}
+{% extends 'base.html' %}
+{% load static %}
 
+{% block title %}Lista de clientes{% endblock title %}
+
+{% block content %}
 <div class="container">
 
     <h1>Ficha del Profesor</h1>
@@ -17,9 +21,11 @@
 
         {% csrf_token %}
 
+{% if profesor.estado == 'en_validación' %}
         <button type="submit" class="btn btn-primary">
             Verificar Profesor
         </button>
+{% endif %}
 
     </form>
 
