@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}Eliminar
+{% endblock header %}
+
+
+{% block content %}
+
+<div class="container">
+    <div class="">
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div>
+
+                <p></p>
+                <h3>¿Desea eliminar el Profesor/a <b>{{ object.id }}</b> con Nombre <b>{{ object.nombre }} {{ object.apellido }}</b>?</h3>
+                <p></p>
+
+            </div>
+
+
+            <button type="submit" class="btn btn-danger" value="save">Borrar</button>
+            <a href="{% url 'profesor_list' %}" class="btn btn-secondary">Cancelar</a>
+
+        </form>
+    </div>
+</div>
+
+{% endblock content %}
