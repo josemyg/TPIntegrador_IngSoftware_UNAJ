@@ -1,0 +1,58 @@
+{% extends 'canchas/base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card border-0 shadow-lg rounded-4 p-2">
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <div class="bg-warning-subtle text-warning rounded-circle p-3 d-inline-flex mb-3">
+                        <i class="bi bi-sliders fs-2"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">
+                        {% if object %}Modificar Parámetros{% else %}Nueva Cancha!{% endif %}
+                    </h3>
+                    <p class="text-muted small">Completá las caracteristicas técnicas del tipo de cancha.</p>
+                </div>
+
+                <form method="post" novalidate class="needs-validation">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                        <div class="mb-3 position-relative">
+                            <label class="form-label small fw-bold text-uppercase text-muted tracking-wider">{{ field.label }}</label>
+                            <input type="{{ field.field.widget.input_type }}" 
+                                   name="{{ field.html_name }}" 
+                                   class="form-control form-control-lg bg-light border-0 rounded-3 fs-6 {% if field.errors %}is-invalid{% endif %}"
+                                   value="{{ field.value|default:'' }}"
+                                   placeholder="Completar campo..."
+                                   {% if field.field.required %}required{% endif %}>
+                            
+                            {% if field.errors %}
+                                <div class="invalid-feedback small">
+                                    {% for error in field.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <hr class="my-4 text-black-50">
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a href="{% url 'tipo_cancha_list' %}" class="btn btn-light btn-lg w-100 rounded-3 fs-6 text-muted fw-semibold">
+                                Cancelar
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-dark btn-lg w-100 rounded-3 fs-6 fw-semibold shadow-sm">
+                                <i class="bi bi-cloud-arrow-up me-2"></i>Guardar
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

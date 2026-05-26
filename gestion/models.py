@@ -66,6 +66,8 @@ class Profesor(Usuario):
         verbose_name = ("Profesor/a")
         verbose_name_plural = ("Profesores")
 
+
+
 @receiver(post_save, sender=Profesor)
 def crear_Usuario(sender, instance, created, **kwargs):
     if created:

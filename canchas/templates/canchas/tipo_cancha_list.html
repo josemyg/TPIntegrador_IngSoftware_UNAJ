@@ -1,0 +1,100 @@
+{% extends 'canchas/base.html' %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col">
+        <h2 class="font-weight-extrabold text-dark m-0">Gestión de los Tipos de Canchas</h2>
+        <p class="text-muted small mb-0">Formatos de canchas disponibles en el complejo.</p>
+    </div>
+    <div class="col-12 col-md-5">
+        <form method="get" class="d-flex gap-2">
+        <div class="input-group shadow-sm rounded-pill overflow-hidden bg-dark border border-secondary">
+            
+            <span class="input-group-text border-0 bg-dark text-white-50 ps-3">
+                <i class="bi bi-search"></i>
+            </span>
+            
+            <input type="text" name="b" class="form-control border-0 bg-dark text-white ps-1" 
+                   placeholder="Buscar por tipo o superficie..." 
+                   value="{{ request.GET.b|default:'' }}"
+                   style="box-shadow: none;"> {% if request.GET.b %}
+                <a href="{% url 'tipo_cancha_list' %}" class="btn border-0 bg-dark text-danger pe-3 d-flex align-items-center">
+                    <i class="bi bi-x-circle-fill"></i>
+                </a>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-dark px-4 rounded-pill fw-semibold shadow-sm">Filtrar</button>
+    </form>
+    </div>
+
+    <div class="col-auto">
+        <a href="{% url 'tipo_cancha_create' %}" class="btn btn-primary px-4 py-2 shadow-sm rounded-pill fw-semibold">
+            <i class="bi bi-plus-lg me-2"></i>Registrar Cancha
+        </a>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light text-uppercase fs-7 text-muted border-bottom">
+                    <tr>
+                        <th class="py-3 ps-4 bg-light">Estructura / Tipo</th>
+                        <th class="py-3 bg-light">Superficie Terreno</th>
+                        <th class="py-3 bg-light">Capacidad Máx.</th>
+                        <th class="py-3 text-center bg-light" style="width: 220px;"></th>
+                    </tr>
+                </thead>
+                <tbody class="border-0">
+                    {% for tipo in tipos_canchas %}
+                    <tr>
+                        <td class="py-3 ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="bg-primary-subtle text-primary rounded-3 p-2 d-inline-flex">
+                                    <i class="bi bi-flag-fill fs-5"></i>
+                                </div>
+                                <div>
+                                    <span class="fw-bold text-dark d-block">{{ tipo.nombre }}</span>
+                                    <span class="text-muted small">ID Cancha: #{{ tipo.pk }}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="py-3">
+                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 fw-medium">
+                                {{ tipo.superficie }}
+                            </span>
+                        </td>
+                        <td class="py-3">
+                            <span class="fw-semibold text-secondary">
+                                <i class="bi bi-people me-1 text-muted"></i> {{ tipo.capacidad }} Jugadores
+                            </span>
+                        </td>
+                        <td class="py-3 text-end pe-4">
+                            <div class="btn-group gap-2">
+                                <a href="{% url 'tipo_cancha_update' tipo.pk %}" class="btn btn-sm btn-outline-dark rounded-2 px-3">
+                                    <i class="bi bi-pencil me-1"></i> Editar
+                                </a>
+                                <a href="{% url 'tipo_cancha_delete' tipo.pk %}" class="btn btn-sm btn-outline-danger rounded-2 px-3">
+                                    <i class="bi bi-trash me-1"></i> Borrar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3 text-black-50"></i>
+                                <span class="fw-semibold d-block">No hay registros</span>
+                                <span class="small text-muted">Hacé clic en "Registrar Cancha" para empezar.</span>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
