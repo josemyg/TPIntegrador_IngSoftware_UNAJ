@@ -111,3 +111,10 @@ def crear_Cliente(sender, instance, created, **kwargs):
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")        
+
+
+
+
+
+        
+    

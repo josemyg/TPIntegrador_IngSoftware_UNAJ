@@ -1,40 +1,92 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Lista de profesors{% endblock title %}
+{% block title %}
+Lista de profesores
+{% endblock title %}
+
 {% block content %}
-        <div class="container">
-            <h1>Lista de profesores</h1>
-            <table class="table table-striped">
-                <thead>
-                    <tr class="table-primary">
-                        <th scope="col">Apellidos</th>
-                        <th scope="col">Nombres</th>
-                        <th scope="col">EMail</th>
-                        <th scope="col">Teléfono</th>
-                        <th scope="col">Localidad</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-            {% for profesor in profesor_list %}
-                    <tr>
-                    <td>{{ profesor.nombre }}</td>
-                    <td>{{ profesor.apellido }}</td>
-                    <td>{{ profesor.email }}</td>
-                    <td>{{ profesor.telefono }}</td>
-                    <td>{{ profesor.localidad }}</td>
-                    <td>
-                        {% if profesor.estado == 'en_validación' %}
-                        <a name="" id="" class="" href="{% url 'profesor_print' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/printer.svg' %}" alt="Imprimir" width="24" height="24"/></a>
-                        {% endif %}
-                        <a name="" id="" class="" href="{% url 'profesor_update' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"/></a>
-                        <a name="" id="" class="" href="{% url 'profesor_delete' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"/></a>
-                        
-                    </td>
-                    </tr>
-            {% endfor %}
-                </tbody>
-            </table>
-        </div>
+
+<div class="container">
+
+    <h1>Lista de profesores</h1>
+
+    <table class="table table-striped">
+
+        <thead>
+
+            <tr class="table-primary">
+
+                <th scope="col">Apellido</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Email</th>
+                <th scope="col">Teléfono</th>
+                <th scope="col">Localidad</th>
+                <th scope="col">Acciones</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for profesor in profesor_list %}
+
+            <tr>
+
+                <td>{{ profesor.apellido }}</td>
+
+                <td>{{ profesor.nombre }}</td>
+
+                <td>{{ profesor.email }}</td>
+
+                <td>{{ profesor.telefono }}</td>
+
+                <td>{{ profesor.localidad }}</td>
+
+                <td>
+
+                    {% if profesor.estado == 'en_validación' %}
+
+                        <a href="{% url 'profesor_print' profesor.id %}">
+                            <img 
+                                src="{% static 'gestion/third/bootstrap-icons/check-circle.svg' %}" 
+                                alt="Verificar"
+                                width="24"
+                                height="24"
+                            />
+                        </a>
+
+                    {% endif %}
+
+                    <a href="{% url 'profesor_update' profesor.id %}">
+                        <img 
+                            src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" 
+                            alt="Editar"
+                            width="24"
+                            height="24"
+                        />
+                    </a>
+
+                    <a href="{% url 'profesor_delete' profesor.id %}">
+                        <img 
+                            src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" 
+                            alt="Eliminar"
+                            width="24"
+                            height="24"
+                        />
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
 {% endblock %}

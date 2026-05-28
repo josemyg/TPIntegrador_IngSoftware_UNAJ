@@ -11,6 +11,7 @@ from django.shortcuts import redirect, get_object_or_404
 from .models import Profesor
 
 
+
 class ProfesorListView(ListView):
     model = Profesor
     template_name = "gestion/profesor/profesor_list.html"
@@ -87,5 +88,13 @@ class ClientePrintView(DetailView):
     template_name = "gestion/cliente/cliente_print.html"
     context_object_name = 'cliente'
 
+
+
+
 def inicio(request):
     return render(request, 'principal.html')
+
+
+
+
+
