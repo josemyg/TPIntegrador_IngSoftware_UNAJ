@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import Clase, Entrenamiento , AsistenciaClase, AsistenciaEntrenamiento
 
-# Register your models here.
+admin.site.register(Clase)
+admin.site.register(Entrenamiento)
+admin.site.register(AsistenciaClase) 
+admin.site.register(AsistenciaEntrenamiento) 

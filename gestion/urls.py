@@ -1,8 +1,9 @@
 from django.urls import path
 from django.contrib.auth.decorators import login_required
-
 from . import views
 from .views import *
+
+
 
 urlpatterns = [
     path('', views.inicio, name = 'inicio'),
@@ -24,6 +25,15 @@ urlpatterns = [
 
     # VistaCliente
     path('inicio/', views.inicio, name='inicio'),
+
+    
+    # RUTAS DE CLASES 
+    
+
+    
+    
+    # RUTAS DE ENTRENAMIENTOS
+
 
 
 

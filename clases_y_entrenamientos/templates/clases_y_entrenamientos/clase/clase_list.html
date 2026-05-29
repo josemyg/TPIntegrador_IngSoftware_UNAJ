@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lista de Clases{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Lista de Clases</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr class="table-primary">
+                <th>Nombre</th>
+                <th>Horario</th>
+                <th>Profesor</th>
+                <th>Cupo</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for clase in clase_list %}
+            <tr>
+                <td>{{ clase.nombre }}</td>
+                <td>{{ clase.horario|date:"d/m/Y H:i" }}</td>
+                <td>{{ clase.profesor|default:"Sin profesor" }}</td>
+                <td>{{ clase.alumnos.count }}/{{ clase.cupo_maximo }}</td>
+                <td>{{ clase.get_estado_display }}</td>
+                <td>
+                    <a href="{% url 'clases_y_entrenamientos:clase_print' clase.id %}">Imprimir</a> |
+                    <a href="{% url 'clases_y_entrenamientos:clase_update' clase.id %}">Editar</a> |
+                    <a href="{% url 'clases_y_entrenamientos:clase_delete' clase.id %}">Eliminar</a> |
+                    <a href="{% url 'clases_y_entrenamientos:tomar_asistencia_clase' clase.id %}">Tomar asistencia</a> |
+                    <a href="{% url 'clases_y_entrenamientos:clase_reporte' clase.id %}">Reporte</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay clases registradas.{% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'clases_y_entrenamientos:clase_create' %}" class="btn btn-primary">Nueva Clase</a>
+</div>
+{% endblock %}

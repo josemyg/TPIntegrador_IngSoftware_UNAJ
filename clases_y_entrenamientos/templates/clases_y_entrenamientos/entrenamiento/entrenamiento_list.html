@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lista de Entrenamientos{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Lista de Entrenamientos</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr class="table-primary">
+                <th>Nombre</th>
+                <th>Horario</th>
+                <th>Entrenador</th>
+                <th>Cupo</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ent in entrenamiento_list %}
+            <tr>
+                <td>{{ ent.nombre }}</td>
+                <td>{{ ent.horario|date:"d/m/Y H:i" }}</td>
+                <td>{{ ent.entrenador|default:"Sin entrenador" }}</td>
+                <td>{{ ent.alumnos.count }}/{{ ent.cupo_maximo }}</td>
+                <td>{{ ent.get_estado_display }}</td>
+                <td>
+                    <a href="{% url 'clases_y_entrenamientos:entrenamiento_print' ent.id %}">Imprimir</a> |
+                    <a href="{% url 'clases_y_entrenamientos:entrenamiento_update' ent.id %}">Editar</a> |
+                    <a href="{% url 'clases_y_entrenamientos:entrenamiento_delete' ent.id %}">Eliminar</a> |
+                    <a href="{% url 'clases_y_entrenamientos:tomar_asistencia_entrenamiento' ent.id %}">Tomar asistencia</a> |
+                    <a href="{% url 'clases_y_entrenamientos:entrenamiento_reporte' ent.id %}">Reporte</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No hay entrenamientos registrados.{% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'clases_y_entrenamientos:entrenamiento_create' %}" class="btn btn-primary">Nuevo Entrenamiento</a>
+</div>
+{% endblock %}
+
