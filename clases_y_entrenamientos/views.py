@@ -12,7 +12,7 @@ from .models import AsistenciaClase
 from .models import Entrenamiento
 from .forms import EntrenamientoForm
 from .models import AsistenciaEntrenamiento
-from django.views import View
+
 
 
 class ClaseListView(ListView):
@@ -21,38 +21,17 @@ class ClaseListView(ListView):
     context_object_name = 'clase_list'
 
 
-class ClaseCreateView(View):
-    def get(self, request):
-        form = ClaseForm()
-        return render(request, 'clases_y_entrenamientos/clase/clase_form.html', {'form': form})
+class ClaseCreateView(CreateView):
+    model = Clase
+    form_class = ClaseForm
+    template_name = 'clases_y_entrenamientos/clase/clase_form.html'
+    success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
 
-    def post(self, request):
-        form = ClaseForm(request.POST)
-        if form.is_valid():
-            datos = form.cleaned_data
-            Clase.crear_clase(
-                nombre=datos['nombre'],
-                horario=datos['horario'],
-                cupo_maximo=datos['cupo_maximo'],
-                profesor=datos['profesor'],
-                alumnos=datos.get('alumnos', [])
-            )
-            return redirect('clases_y_entrenamientos:clase_list')
-        return render(request, 'clases_y_entrenamientos/clase/clase_form.html', {'form': form})
-
-class ClaseUpdateView(View):
-    def get(self, request, pk):
-        clase = get_object_or_404(Clase, pk=pk)
-        form = ClaseForm(instance=clase)
-        return render(request, 'clases_y_entrenamientos/clase/clase_form.html', {'form': form})
-
-    def post(self, request, pk):
-        clase = get_object_or_404(Clase, pk=pk)
-        form = ClaseForm(request.POST, instance=clase)
-        if form.is_valid():
-            clase.modificar_clase(**form.cleaned_data)
-            return redirect('clases_y_entrenamientos:clase_list')
-        return render(request, 'clases_y_entrenamientos/clase/clase_form.html', {'form': form})
+class ClaseUpdateView(UpdateView):
+    model = Clase
+    form_class = ClaseForm
+    template_name = 'clases_y_entrenamientos/clase/clase_form.html'
+    success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
 
 
 class ClaseDeleteView(DeleteView):
@@ -60,10 +39,7 @@ class ClaseDeleteView(DeleteView):
     template_name = 'clases_y_entrenamientos/clase/clase_confirm_delete.html'
     success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.eliminar_clase()
-        return redirect(self.success_url)
+   
 
 
 class ClasePrintView(DetailView):
@@ -86,10 +62,11 @@ class ClaseReporteView(DetailView):
         context = super().get_context_data(**kwargs)
         context['reporte'] = self.object.generar_reporte_clase()
         return context
-
-
+    
 def tomar_asistencia_clase(request, pk):
     clase = get_object_or_404(Clase, pk=pk)
+    if clase.estado in ['cancelada', 'finalizada']:
+        return redirect('clases_y_entrenamientos:clase_list')
     if request.method == 'POST':
         for alumno in clase.alumnos.all():
             asistio = request.POST.get(f'alumno_{alumno.id}') == 'on'
@@ -110,39 +87,17 @@ class EntrenamientoListView(ListView):
     context_object_name = 'entrenamiento_list'
 
 
-class EntrenamientoCreateView(View):
-    def get(self, request):
-        form = EntrenamientoForm()
-        return render(request, 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html', {'form': form})
+class EntrenamientoCreateView(CreateView):
+    model = Entrenamiento
+    form_class = EntrenamientoForm
+    template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html'
+    success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
 
-    def post(self, request):
-        form = EntrenamientoForm(request.POST)
-        if form.is_valid():
-            datos = form.cleaned_data
-            Entrenamiento.crear_entrenamiento(
-                nombre=datos['nombre'],
-                horario=datos['horario'],
-                cupo_maximo=datos['cupo_maximo'],
-                entrenador=datos['entrenador'],
-                alumnos=datos.get('alumnos', [])
-            )
-            return redirect('clases_y_entrenamientos:entrenamiento_list')
-        return render(request, 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html', {'form': form})
-
-
-class EntrenamientoUpdateView(View):
-    def get(self, request, pk):
-        entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
-        form = EntrenamientoForm(instance=entrenamiento)
-        return render(request, 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html', {'form': form})
-
-    def post(self, request, pk):
-        entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
-        form = EntrenamientoForm(request.POST, instance=entrenamiento)
-        if form.is_valid():
-            entrenamiento.modificar_entrenamiento(**form.cleaned_data)
-            return redirect('clases_y_entrenamientos:entrenamiento_list')
-        return render(request, 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html', {'form': form})
+class EntrenamientoUpdateView(UpdateView):
+    model = Entrenamiento
+    form_class = EntrenamientoForm
+    template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html'
+    success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
 
 
 class EntrenamientoDeleteView(DeleteView):
@@ -150,10 +105,7 @@ class EntrenamientoDeleteView(DeleteView):
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_confirm_delete.html'
     success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
 
-    def delete(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object.eliminar_entrenamiento()
-        return redirect(self.success_url)
+   
 
 
 class EntrenamientoPrintView(DetailView):
@@ -181,6 +133,8 @@ class EntrenamientoReporteView(DetailView):
 
 def tomar_asistencia_entrenamiento(request, pk):
     entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
+    if entrenamiento.estado in ['cancelado', 'finalizado']:
+        return redirect('clases_y_entrenamientos:entrenamiento_list')
     if request.method == 'POST':
         for alumno in entrenamiento.alumnos.all():
             asistio = request.POST.get(f'alumno_{alumno.id}') == 'on'

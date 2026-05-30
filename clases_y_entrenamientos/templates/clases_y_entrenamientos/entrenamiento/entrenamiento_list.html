@@ -34,7 +34,8 @@
                 </td>
             </tr>
             {% empty %}
-            <tr><td colspan="6">No hay entrenamientos registrados.{% endfor %}
+            <tr><td colspan="6">No hay entrenamientos registrados.</td></tr>
+            {% endfor %}
         </tbody>
     </table>
     <a href="{% url 'clases_y_entrenamientos:entrenamiento_create' %}" class="btn btn-primary">Nuevo Entrenamiento</a>

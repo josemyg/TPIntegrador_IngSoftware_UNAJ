@@ -17,7 +17,8 @@
                     <td><input type="checkbox" name="alumno_{{ alumno.id }}"></td>
                 </tr>
                 {% empty %}
-                <tr><td colspan="2">No hay alumnos inscriptos en este entrenamiento.{% endfor %}
+                <tr><td colspan="2">No hay alumnos inscriptos en este entrenamiento.</td></tr>
+                {% endfor %}
             </tbody>
         </table>
         <button type="submit" class="btn btn-primary">Guardar asistencia</button>
