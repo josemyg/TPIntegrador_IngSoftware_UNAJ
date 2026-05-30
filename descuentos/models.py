@@ -41,3 +41,6 @@ class Descuento(models.Model):
     def darDescuento_Baja(self):
         self.estado="baja"
         self.save()    
+
+    def __str__(self):
+     return f"{self.get_tipo_display()} - {self.cantidad}%"

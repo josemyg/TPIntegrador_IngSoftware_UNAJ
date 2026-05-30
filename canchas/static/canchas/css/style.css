@@ -1,0 +1,67 @@
+/* ESTILOS GENERALES DE LA WEB*/
+
+body { 
+    background-image: url("../icons/fondo.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+}
+
+/* Conservamos tus estilos del contenido */
+h2, .fw-extrabold {
+    color: #ffffff !important;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.71);
+    font-weight: 400;
+}
+
+.text-muted {
+    color: #070707 !important;
+    font-weight: 500;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+
+/*ESTILOS DEL NAVBAR */
+
+
+/* Contenedor principal de la barra */
+.GestionCanchas-navbar {
+    background: linear-gradient(135deg, #000000 0%, #0f2c0af6 100%);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    width: 100%;
+}
+
+/*Logo y Texto al lado */
+
+.navbar-identity {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
+.navbar-logo {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.navbar-title {
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: -0.025em;
+}
+
+
