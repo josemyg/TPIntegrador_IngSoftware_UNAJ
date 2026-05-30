@@ -6,6 +6,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 
 
+
 class Usuario(models.Model):
 
     id = models.AutoField("ID Usuario", primary_key=True)

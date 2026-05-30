@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('gestion.urls')),
     path('reservas/', include('reservas.urls')),
+    path('canchas/', include('canchas.urls')),
 ]
 
 
