@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gol Ahora — Control de Pagos</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <link rel="stylesheet" href="{% static 'pagos/css/style.css' %}">
+</head>
+<body>
+
+    <nav class="pagos-navbar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand-custom" href="{% url 'pago_list' %}">
+                <i class="bi bi-wallet2 me-2 text-success"></i>GOL AHORA — Pagos
+            </a>
+            <div class="d-flex gap-3 me-auto ms-4 border-start ps-4" style="border-color: rgba(255,255,255,0.15) !important;">
+                <a class="nav-link-custom active" href="{% url 'pago_list' %}">
+                    <i class="bi bi-cash me-1"></i> Módulo Pagos
+                </a>
+                <a class="nav-link-custom" href="{% url 'recibo_list' %}">
+                    <i class="bi bi-receipt me-1"></i> Módulo Recibos
+                </a>
+            </div>
+            <div class="d-flex gap-2">
+                <a class="nav-link-custom {% if not request.GET.tipo %}active{% endif %}" href="{% url 'pago_list' %}">Historial General</a>
+                <a class="nav-link-custom {% if request.GET.tipo == 'alquiler_cancha' %}active{% endif %}" href="{% url 'pago_list' %}?tipo=alquiler_cancha">Alquileres</a>
+                <a class="nav-link-custom {% if request.GET.tipo == 'inscripcion_liga' %}active{% endif %}" href="{% url 'pago_list' %}?tipo=inscripcion_liga">Ligas</a>
+                <a class="nav-link-custom {% if request.GET.tipo == 'inscripcion_torneo' %}active{% endif %}" href="{% url 'pago_list' %}?tipo=inscripcion_torneo">Torneos</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-extrabold text-white mb-0">
+                    {% if tipo_actual == 'alquiler_cancha' %}Cobros de Alquileres
+                    {% elif tipo_actual == 'inscripcion_liga' %}Cobros de Ligas
+                    {% elif tipo_actual == 'inscripcion_torneo' %}Cobros de Torneos
+                    {% else %}Historial General de Pagos{% endif %}
+                </h2>
+                <p class="text-white small mb-0">Módulo de control financiero independiente.</p>
+            </div>
+            <a href="{% url 'pago_create' %}" class="btn btn-dark rounded-3 px-3 py-2 fw-semibold shadow-sm">
+                <i class="bi bi-plus-circle me-1"></i> Registrar Cobro
+            </a>
+        </div>
+
+        <div class="card border-0 shadow-sm p-3 mb-4 bg-white rounded-3">
+            <form method="get" class="d-flex gap-2">
+                {% if tipo_actual %}
+                    <input type="hidden" name="tipo" value="{{ tipo_actual }}">
+                {% endif %}
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-search"></i></span>
+                    <input type="text" name="b" value="{{ request.GET.b }}" class="form-control bg-light border-start-0" placeholder="Buscar por método de pago o concepto">
+                </div>
+                <button type="submit" class="btn btn-secondary px-4 fw-semibold">Buscar</button>
+                {% if request.GET.b %}
+                    <a href="?{% if tipo_actual %}tipo={{ tipo_actual }}{% endif %}" class="btn btn-outline-secondary">Limpiar</a>
+                {% endif %}
+            </form>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white mb-5">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-secondary small fw-semibold">
+                        <tr>
+                            <th class="ps-4">ID PAGO</th>
+                            <th>CONCEPTO / SERVICIO</th>
+                            <th>MÉTODO DE PAGO</th>
+                            <th>DESCUENTO</th>
+                            <th>FECHA</th>
+                            <th>MONTO</th>
+                            <th class="text-end pe-4">ACCIONES</th>
+                        </tr>
+                    </thead>
+                    <tbody class="small">
+                        {% for pago in pagos %}
+                        <tr>
+                            <td class="fw-bold ps-4">#{{ pago.id }}</td>
+                            <td><span class="badge bg-light text-dark border px-2 py-1.5">{{ pago.get_origen_pago_display }}</span></td>
+                            <td><i class="bi bi-credit-card-2-back me-1 text-muted"></i> {{ pago.tipo_pago.nombre }}</td>
+                            <td>
+                                {% if pago.descuento %}
+                                    <span class="text-success fw-semibold"><i class="bi bi-tag-fill me-1"></i>{{ pago.descuento }}</span>
+                                {% else %}
+                                    <span class="text-muted">Ninguno</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-secondary">{{ pago.fecha|date:"d/m/Y" }}</td>
+                            <td class="fw-bold text-dark">${{ pago.monto }}</td>
+                            <td class="text-end pe-4">
+                             <div class="btn-group gap-1">
+                                 <a href="{% url 'recibo_imprimir' pago.recibo.id %}" target="_blank" class="btn btn-sm btn-outline-dark rounded-2" title="Imprimir Recibo">
+                                   <i class="bi bi-printer"></i>
+                                 </a>
+                                <a href="{% url 'pago_update' pago.id %}" class="btn btn-sm btn-outline-secondary rounded-2" title="Editar Pago">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'pago_delete' pago.id %}" class="btn btn-sm btn-outline-danger rounded-2" title="Eliminar Pago">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                              </div>
+                             </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
+                                No se encontraron registros de cobros.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

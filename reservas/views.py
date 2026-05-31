@@ -14,10 +14,13 @@ def gestion_reservas(request):
         form = ReservaForm(request.POST) # Crea una instancia del formulario ReservaForm con los datos enviados en la solicitud POST.
 
         if form.is_valid():
-            form.save()
 
-            return redirect('lista_reservas') # Si el formulario es válido, se guarda la nueva reserva en la base de datos y se redirige al usuario a la página de lista de reservas.
+            reserva = form.save()
 
+            return redirect(
+                'pago_create_reserva',
+                reserva_id=reserva.id
+            ) # Si el formulario es válido, se guarda la nueva reserva en la base de datos y luego se redirige al usuario a la vista de creación de pago para esa reserva específica, pasando el ID de la reserva recién creada como argumento.
     else:
         form = ReservaForm() # Si el método de la solicitud no es POST, se crea una instancia vacía del formulario ReservaForm para mostrarlo al usuario y permitirle crear una nueva reserva.
 

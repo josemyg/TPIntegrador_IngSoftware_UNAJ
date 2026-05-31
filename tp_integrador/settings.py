@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'gestion',
     'reservas',
     'canchas',
+    'descuentos',
+    'pagos',
 ]
 
 MIDDLEWARE = [
