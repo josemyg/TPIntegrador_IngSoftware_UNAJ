@@ -99,9 +99,11 @@
                             <td class="fw-bold text-dark">${{ pago.monto }}</td>
                             <td class="text-end pe-4">
                              <div class="btn-group gap-1">
+                                {% if pago.recibo %}
                                  <a href="{% url 'recibo_imprimir' pago.recibo.id %}" target="_blank" class="btn btn-sm btn-outline-dark rounded-2" title="Imprimir Recibo">
                                    <i class="bi bi-printer"></i>
                                  </a>
+                                 {% endif %}
                                 <a href="{% url 'pago_update' pago.id %}" class="btn btn-sm btn-outline-secondary rounded-2" title="Editar Pago">
                                     <i class="bi bi-pencil"></i>
                                 </a>
