@@ -29,4 +29,13 @@ urlpatterns = [
     # rUTAS DE FIXTURE
     path('ligas/<int:pk>/', views.LigaDetailView.as_view(), name='liga_detail'),
     path('ligas/<int:liga_id>/generar-fixture/', views.generar_fixture_liga, name='generar_fixture_liga'),
+    # Rutas para Torneos
+    path('torneos/', views.TorneoListView.as_view(), name='torneo_list'),
+    path('torneos/nuevo/', views.TorneoCreateView.as_view(), name='torneo_create'),
+    path('torneos/editar/<int:pk>/', views.TorneoUpdateView.as_view(), name='torneo_update'),
+    path('torneos/eliminar/<int:pk>/', views.TorneoDeleteView.as_view(), name='torneo_delete'),
+    
+    #RUTAS DE FIXTURE PARA TORNEOS
+    path('torneos/<int:pk>/', views.TorneoDetailView.as_view(), name='torneo_detail'),
+    path('torneos/<int:torneo_id>/generar-fixture/', views.generar_fixture_torneo, name='generar_fixture_torneo'),
 ]

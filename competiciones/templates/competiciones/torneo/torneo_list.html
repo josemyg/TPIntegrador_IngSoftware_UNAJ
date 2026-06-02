@@ -19,14 +19,16 @@
             </tr>
         </thead>
         <tbody>
-            {% for torneo in torneo_list %}
+            {% for torneo_registrado in torneo_list %}
             <tr>
-                <td class="fw-bold">{{ torneo.nombre }}</td>
-                <td>{{ torneo.get_estado_display }}</td>
-                <td>{{ torneo.equipos.count }}</td>
+                <td class="fw-bold">{{ torneo_registrado.nombre }}</td>
+                <td>{{ torneo_registrado.get_estado_display }}</td>
+                <td>{{ torneo_registrado.equipos.count }}</td>
                 <td>
-                    <a href="{% url 'torneo_update' torneo.id %}" class="btn btn-sm btn-warning">Editar</a>
-                    <a href="{% url 'torneo_delete' torneo.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    <a href="{% url 'torneo_detail' torneo_registrado.id %}" class="btn btn-sm btn-info text-white">Ver Detalle / Cruces</a>
+
+                    <a href="{% url 'torneo_update' torneo_registrado.id %}" class="btn btn-sm btn-warning">Editar</a>
+                    <a href="{% url 'torneo_delete' torneo_registrado.id %}" class="btn btn-sm btn-danger">Eliminar</a>
                 </td>
             </tr>
             {% empty %}
