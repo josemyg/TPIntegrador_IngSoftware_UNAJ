@@ -1,43 +1,89 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Lista de Clases{% endblock %}
+{% block title %}
+  Lista de Clases
+{% endblock %}
 
 {% block content %}
-<div class="container">
+  <div class="container">
     <h1>Lista de Clases</h1>
     <table class="table table-striped">
-        <thead>
-            <tr class="table-primary">
-                <th>Nombre</th>
-                <th>Horario</th>
-                <th>Profesor</th>
-                <th>Cupo</th>
-                <th>Estado</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for clase in clase_list %}
-            <tr>
-                <td>{{ clase.nombre }}</td>
-                <td>{{ clase.horario|date:"d/m/Y H:i" }}</td>
-                <td>{{ clase.profesor|default:"Sin profesor" }}</td>
-                <td>{{ clase.alumnos.count }}/{{ clase.cupo_maximo }}</td>
-                <td>{{ clase.get_estado_display }}</td>
-                <td>
-                    <a href="{% url 'clases_y_entrenamientos:clase_print' clase.id %}">Imprimir</a> |
-                    <a href="{% url 'clases_y_entrenamientos:clase_update' clase.id %}">Editar</a> |
-                    <a href="{% url 'clases_y_entrenamientos:clase_delete' clase.id %}">Eliminar</a> |
-                    <a href="{% url 'clases_y_entrenamientos:tomar_asistencia_clase' clase.id %}">Tomar asistencia</a> |
-                    <a href="{% url 'clases_y_entrenamientos:clase_reporte' clase.id %}">Reporte</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="6">No hay clases registradas.</td></tr>
-            {% endfor %}
-        </tbody>
+      <thead>
+        <tr class="table-primary">
+          <th>Nombre</th>
+          <th>Horario</th>
+          <th>Profesor</th>
+          <th>Cupo</th>
+          <th>Estado</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for clase in clase_list %}
+          <tr>
+            <td>{{ clase.nombre }}</td>
+            <td>{{ clase.horario|date:'d/m/Y H:i' }}</td>
+            <td>{{ clase.profesor|default:'Sin profesor' }}</td>
+            <td>
+              <div class="progress" style="min-width: 80px;">
+                {% with total=clase.alumnos.count %}
+                  {% if total == clase.cupo_maximo %}
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: {% widthratio total clase.cupo_maximo 100 %}%"></div>
+                  {% elif total >= clase.cupo_maximo|add:'-2' %}
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: {% widthratio total clase.cupo_maximo 100 %}%"></div>
+                  {% else %}
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {% widthratio total clase.cupo_maximo 100 %}%"></div>
+                  {% endif %}
+                {% endwith %}
+              </div>
+              <small>{{ clase.alumnos.count }}/{{ clase.cupo_maximo }}</small>
+            </td>
+            <td>
+              {% if clase.estado == 'programada' %}
+                <span class="badge bg-success">{{ clase.get_estado_display }}</span>
+              {% elif clase.estado == 'en_curso' %}
+                <span class="badge bg-primary">{{ clase.get_estado_display }}</span>
+              {% elif clase.estado == 'finalizada' %}
+                <span class="badge bg-secondary">{{ clase.get_estado_display }}</span>
+              {% elif clase.estado == 'cancelada' %}
+                <span class="badge bg-danger">{{ clase.get_estado_display }}</span>
+              {% endif %}
+            </td>
+            <td>
+              <a href="{% url 'clases_y_entrenamientos:clase_print' clase.id %}">Imprimir</a> |
+              <a href="{% url 'clases_y_entrenamientos:clase_update' clase.id %}">Editar</a> |
+              <a href="{% url 'clases_y_entrenamientos:clase_delete' clase.id %}">Eliminar</a> |
+              <a href="{% url 'clases_y_entrenamientos:tomar_asistencia_clase' clase.id %}">Tomar asistencia</a> |
+              <a href="{% url 'clases_y_entrenamientos:clase_reporte' clase.id %}">Reporte</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="6">No hay clases registradas.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
     </table>
     <a href="{% url 'clases_y_entrenamientos:clase_create' %}" class="btn btn-primary">Nueva Clase</a>
-</div>
+  </div>
+  {% if is_paginated %}
+    <nav class="mt-3">
+      <ul class="pagination">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+          </li>
+        {% endif %}
+        <li class="page-item active">
+          <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
 {% endblock %}

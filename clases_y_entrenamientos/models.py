@@ -34,6 +34,7 @@ class Clase(models.Model):
     class Meta:
         verbose_name = "Clase"
         verbose_name_plural = "Clases"
+        ordering = ['horario']
 
     def __str__(self):
         if self.nombre and self.horario:
@@ -210,6 +211,7 @@ class Entrenamiento(models.Model):
     class Meta:
         verbose_name = "Entrenamiento"
         verbose_name_plural = "Entrenamientos"
+        ordering = ['horario']
 
     def __str__(self):
         if self.nombre and self.horario:
@@ -363,7 +365,7 @@ class Entrenamiento(models.Model):
 class AsistenciaClase(models.Model):
     clase = models.ForeignKey(
         'Clase', on_delete=models.CASCADE, related_name='asistencias_clase')
-    alumno = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    alumno = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     asistencia = models.BooleanField(default=False)
 
     class Meta:
@@ -415,7 +417,7 @@ class AsistenciaClase(models.Model):
 class AsistenciaEntrenamiento(models.Model):
     entrenamiento = models.ForeignKey(
         'Entrenamiento', on_delete=models.CASCADE, related_name='asistencias_entrenamiento')
-    alumno = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    alumno = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     asistencia = models.BooleanField(default=False)
 
     class Meta:
