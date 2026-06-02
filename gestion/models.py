@@ -75,3 +75,11 @@ def crear_Usuario(sender, instance, created, **kwargs):
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")
+class Cliente(models.Model):
+    nombre = models.CharField(("Nombre"), max_length=100)
+    email = models.EmailField(("Correo Electrónico"), max_length=254)
+    class Meta:
+        verbose_name = ("Cliente")
+        verbose_name_plural = ("Clientes")
+    def __str__(self):
+        return self.nombre
