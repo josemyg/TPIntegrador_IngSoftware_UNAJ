@@ -1,5 +1,5 @@
 /* ==========================================================================
-   SPORTS MANAGER — MODULO DE PAGOS (ESTILOS GENERALES)
+   GOL AHORA — MODULO DE PAGOS (ESTILOS GENERALES)
    ========================================================================== */
 
 /* Variables de diseño para mantener consistencia */
@@ -27,7 +27,7 @@ body {
 }
 
 /* ==========================================================================
-   1. NAVBAR SUPERIOR OSCURO (AUTÓNOMO)
+   1. NAVBAR SUPERIOR OSCURO
    ========================================================================== */
 .pagos-navbar {
     background-color: #121212;

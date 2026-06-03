@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle de la Liga{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+        <div>
+            <h1 class="text-primary">{{ liga.nombre }}</h1>
+            <span class="badge bg-info fs-6">Estado: {{ liga.get_estado_display }}</span>
+        </div>
+        <div>
+            <a href="{% url 'liga_list' %}" class="btn btn-secondary">Volver al listado</a>
+            {% if liga.estado == 'Inscripcion' and liga.equipos.count > 1 %}
+            <a href="{% url 'generar_fixture_liga' liga.id %}" class="btn btn-success fw-bold text-white shadow-sm">
+                Generar Fixture
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white fw-bold">
+                    Equipos Inscritos ({{ liga.equipos.count }})
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for equipo_inscrito in liga.equipos.all %}
+                    <li class="list-group-item">{{ equipo_inscrito.nombre }}</li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">Aun no hay equipos inscritos.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white fw-bold">
+                    Fixture y Partidos
+                </div>
+                <div class="card-body">
+                    {% if partidos %}
+                    <ul class="list-group">
+                        {% for partido_fixture in partidos %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span class="badge bg-secondary">{{ partido_fixture.fase }}</span>
+                            <span class="fw-bold">{{ partido_fixture.equipo_local.nombre }}</span>
+                            <span class="mx-3 text-muted">vs</span>
+                            <span class="fw-bold">{{ partido_fixture.equipo_visitante.nombre }}</span>
+
+                            <button class="btn btn-sm btn-outline-primary ms-auto" disabled>Asignar Cancha</button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <h5 class="text-muted">Aun no se ha generado el fixture.</h5>
+                        <p>Presiona el boton verde de arriba para hacer el sorteo.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
