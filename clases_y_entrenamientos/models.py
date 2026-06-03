@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.dispatch import receiver
 from gestion.models import Cliente, Profesor
 from django.utils import timezone
+from django.utils.timezone import localtime
 
 
 class Clase(models.Model):
@@ -38,7 +39,7 @@ class Clase(models.Model):
 
     def __str__(self):
         if self.nombre and self.horario:
-            return self.nombre + ' ' + self.horario.strftime('%d/%m/%Y %H:%M')
+            return self.nombre + ' ' + localtime(self.horario).strftime('%d/%m/%Y %H:%M')
         else:
             return 'Clase sin nombre'
 
@@ -80,7 +81,7 @@ class Clase(models.Model):
         return {
             'id': self.id,
             'nombre': self.nombre,
-            'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+            'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
             'profesor': str(self.profesor) if self.profesor else 'Sin profesor',
             'cupo_maximo': self.cupo_maximo,
             'inscriptos': self.alumnos.count(),
@@ -92,13 +93,13 @@ class Clase(models.Model):
         return {
             'id': self.id,
             'nombre': self.nombre,
-            'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+            'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
             'profesor': str(self.profesor) if self.profesor else 'Sin profesor',
             'cupo_maximo': self.cupo_maximo,
             'inscriptos': self.alumnos.count(),
             'alumnos': [{'id': a.id, 'nombre': str(a)} for a in self.alumnos.all()],
             'estado': self.estado,
-            'fecha_impresion': timezone.now().strftime('%d/%m/%Y %H:%M:%S')
+            'fecha_impresion': localtime(timezone.now()).strftime('%d/%m/%Y %H:%M:%S')
         }
 
     def generar_reporte_clase(self):
@@ -114,7 +115,7 @@ class Clase(models.Model):
             'clase': {
                 'id': self.id,
                 'nombre': self.nombre,
-                'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+                'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
                 'profesor': str(self.profesor) if self.profesor else 'Sin profesor',
                 'cupo_maximo': self.cupo_maximo,
                 'inscriptos': total_inscriptos,
@@ -133,7 +134,7 @@ class Clase(models.Model):
 
                 } for a in asistencias
             ],
-            'fecha_reporte': timezone.now().strftime('%d/%m/%Y %H:%M:%S')
+            'fecha_reporte': localtime(timezone.now()).strftime('%d/%m/%Y %H:%M:%S')
         }
 
     def generar_reporte_asistencia(self):
@@ -142,7 +143,7 @@ class Clase(models.Model):
         presentes = asistencias.filter(asistencia=True).count()
         return {
             'clase': self.nombre,
-            'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+            'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
             'total_alumnos_inscriptos': self.alumnos.count(),
             'total_registros_asistencia': total_registros,
             'presentes': presentes,
@@ -215,7 +216,7 @@ class Entrenamiento(models.Model):
 
     def __str__(self):
         if self.nombre and self.horario:
-            return self.nombre + ' ' + self.horario.strftime('%d/%m/%Y %H:%M')
+            return self.nombre + ' ' + localtime(self.horario).strftime('%d/%m/%Y %H:%M')
         else:
             return 'Entrenamiento sin nombre'
 
@@ -255,7 +256,7 @@ class Entrenamiento(models.Model):
         return {
             'id': self.id,
             'nombre': self.nombre,
-            'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+            'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
             'entrenador': str(self.entrenador) if self.entrenador else 'Sin entrenador',
             'cupo_maximo': self.cupo_maximo,
             'inscriptos': self.alumnos.count(),
@@ -268,13 +269,13 @@ class Entrenamiento(models.Model):
         return {
             'id': self.id,
             'nombre': self.nombre,
-            'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+            'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
             'entrenador': str(self.entrenador) if self.entrenador else 'Sin entrenador',
             'cupo_maximo': self.cupo_maximo,
             'inscriptos': self.alumnos.count(),
             'alumnos': [{'id': a.id, 'nombre': str(a)} for a in self.alumnos.all()],
             'estado': self.estado,
-            'fecha_impresion': timezone.now().strftime('%d/%m/%Y %H:%M:%S')
+            'fecha_impresion': localtime(timezone.now()).strftime('%d/%m/%Y %H:%M:%S')
         }
 
     def generar_reporte_entrenamiento(self):
@@ -290,7 +291,7 @@ class Entrenamiento(models.Model):
             'entrenamiento': {
                 'id': self.id,
                 'nombre': self.nombre,
-                'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+                'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
                 'entrenador': str(self.entrenador) if self.entrenador else 'Sin entrenador',
                 'cupo_maximo': self.cupo_maximo,
                 'inscriptos': total_inscriptos,
@@ -309,7 +310,7 @@ class Entrenamiento(models.Model):
 
                 } for a in asistencias
             ],
-            'fecha_reporte': timezone.now().strftime('%d/%m/%Y %H:%M:%S')
+            'fecha_reporte': localtime(timezone.now()).strftime('%d/%m/%Y %H:%M:%S')
         }
 
     def eliminar_entrenamiento(self):
@@ -322,7 +323,7 @@ class Entrenamiento(models.Model):
         presentes = asistencias.filter(asistencia=True).count()
         return {
             'entrenamiento': self.nombre,
-            'horario': self.horario.strftime('%d/%m/%Y %H:%M'),
+            'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
             'total_alumnos_inscriptos': self.alumnos.count(),
             'total_registros_asistencia': total_registros,
             'presentes': presentes,
@@ -407,9 +408,9 @@ class AsistenciaClase(models.Model):
         reporte.update({
             'tipo': 'clase',
             'clase_nombre': self.clase.nombre,
-            'clase_horario': self.clase.horario.strftime('%d/%m/%Y %H:%M'),
+            'clase_horario': localtime(self.clase.horario).strftime('%d/%m/%Y %H:%M'),
             'profesor': str(self.clase.profesor) if self.clase.profesor else 'Sin profesor',
-            'fecha_reporte': timezone.now().strftime('%d/%m/%Y %H:%M'),
+            'fecha_reporte': localtime(timezone.now()).strftime('%d/%m/%Y %H:%M'),
         })
         return reporte
 
@@ -459,8 +460,8 @@ class AsistenciaEntrenamiento(models.Model):
         reporte.update({
             'tipo': 'entrenamiento',
             'entrenamiento_nombre': self.entrenamiento.nombre,
-            'entrenamiento_horario': self.entrenamiento.horario.strftime('%d/%m/%Y %H:%M'),
+            'entrenamiento_horario': localtime(self.entrenamiento.horario).strftime('%d/%m/%Y %H:%M'),
             'entrenador': str(self.entrenamiento.entrenador) if self.entrenamiento.entrenador else 'Sin entrenador',
-            'fecha_reporte': timezone.now().strftime('%d/%m/%Y %H:%M'),
+            'fecha_reporte': localtime(timezone.now()).strftime('%d/%m/%Y %H:%M'),
         })
         return reporte
