@@ -51,11 +51,15 @@
               {% endif %}
             </td>
             <td>
-              <a href="{% url 'clases_y_entrenamientos:clase_print' clase.id %}">Imprimir</a> |
-              <a href="{% url 'clases_y_entrenamientos:clase_update' clase.id %}">Editar</a> |
-              <a href="{% url 'clases_y_entrenamientos:clase_delete' clase.id %}">Eliminar</a> |
-              <a href="{% url 'clases_y_entrenamientos:tomar_asistencia_clase' clase.id %}">Tomar asistencia</a> |
-              <a href="{% url 'clases_y_entrenamientos:clase_reporte' clase.id %}">Reporte</a>
+              <a name="" id="" class="" href="{% url 'clases_y_entrenamientos:clase_print' clase.id %}"><img src="{% static 'clases_y_entrenamientos/third/bootstrap-icons/printer.svg' %}" alt="Imprimir" width="24" height="24" /></a>
+              {% if clase.estado in 'cancelada,finalizada' %}
+                <img src="{% static 'clases_y_entrenamientos/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24" style="opacity: 0.3;" />
+              {% else %}
+                <a name="" id="" class="" href="{% url 'clases_y_entrenamientos:clase_update' clase.id %}"><img src="{% static 'clases_y_entrenamientos/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24" /></a>
+              {% endif %}
+              <a name="" id="" class="" href="{% url 'clases_y_entrenamientos:clase_delete' clase.id %}"><img src="{% static 'clases_y_entrenamientos/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24" /></a>
+              <a name="" id="" class="" href="{% url 'clases_y_entrenamientos:tomar_asistencia_clase' clase.id %}"><img src="{% static 'clases_y_entrenamientos/third/bootstrap-icons/check2-square.svg' %}" alt="Tomar asistencia" width="24" height="24" /></a>
+              <a name="" id="" class="" href="{% url 'clases_y_entrenamientos:clase_reporte' clase.id %}"><img src="{% static 'clases_y_entrenamientos/third/bootstrap-icons/bar-chart.svg' %}" alt="Reporte" width="24" height="24" /></a>
             </td>
           </tr>
         {% empty %}
@@ -66,24 +70,25 @@
       </tbody>
     </table>
     <a href="{% url 'clases_y_entrenamientos:clase_create' %}" class="btn btn-primary">Nueva Clase</a>
+
+    {% if is_paginated %}
+      <nav class="mt-3">
+        <ul class="pagination">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+          {% endif %}
+          <li class="page-item active">
+            <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+          </li>
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
   </div>
-  {% if is_paginated %}
-    <nav class="mt-3">
-      <ul class="pagination">
-        {% if page_obj.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
-          </li>
-        {% endif %}
-        <li class="page-item active">
-          <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
-        </li>
-        {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
-  {% endif %}
 {% endblock %}

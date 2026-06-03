@@ -2,7 +2,6 @@
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="light">
   <head>
-  
     <title>
       {% block title %}
 
@@ -11,10 +10,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
-    <link href="{% static 'gestion/css/bootstrap.min.css' %}" rel="stylesheet" />
-    <link href="{% static 'gestion/icons/favicon152x152.png' %}" rel="icon" />
-    <script src="{% static 'gestion/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <link href="{% static 'gestion/css/style.css' %}" rel="stylesheet" />
+    <link href="{% static 'clases_y_entrenamientos/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'clases_y_entrenamientos/icons/favicon152x152.png' %}" rel="icon" />
+    <script src="{% static 'clases_y_entrenamientos/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <link href="{% static 'clases_y_entrenamientos/css/style.css' %}" rel="stylesheet" />
   </head>
   <body>
     <nav class="navbar navbar-expand-lg bg-primary bg-light" data-bs-theme="light">
@@ -47,9 +46,8 @@
                 </li>
               </ul>
             </li>
-
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Clases y Entrenamientos</a>
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Clases</a>
               <ul class="dropdown-menu">
                 <li>
                   <a class="dropdown-item" href="{% url 'clases_y_entrenamientos:clase_list' %}">Listar Clases</a>
@@ -57,9 +55,11 @@
                 <li>
                   <a class="dropdown-item" href="{% url 'clases_y_entrenamientos:clase_create' %}">Crear Clase</a>
                 </li>
-                <li>
-                  <hr class="dropdown-divider" />
-                </li>
+              </ul>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Entrenamientos</a>
+              <ul class="dropdown-menu">
                 <li>
                   <a class="dropdown-item" href="{% url 'clases_y_entrenamientos:entrenamiento_list' %}">Listar Entrenamientos</a>
                 </li>
