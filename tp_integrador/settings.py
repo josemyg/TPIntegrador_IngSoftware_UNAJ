@@ -135,3 +135,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Configuración de Email en Django
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+# 🚨 COMPLETAR CON TUS DATOS PARA PASAR LA PRUEBA
+EMAIL_HOST_USER = 'martiinleuno@gmail.com'
+EMAIL_HOST_PASSWORD = 'kkdh szzl lzwi penh'
+
+# El nombre que le va a aparecer al cliente cuando reciba el mail
+DEFAULT_FROM_EMAIL = 'Complejo Gol Ahora <martiinleuno@gmail.com>'
+

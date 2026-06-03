@@ -1,6 +1,6 @@
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView,  TemplateView
 from django.urls import reverse_lazy, reverse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from .models import Pago, Recibo, TipoPago
 from reservas.models import Reserva
@@ -9,7 +9,8 @@ import unicodedata
 from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.http import HttpResponse
-import io
+from django.core.mail import EmailMessage
+import io, base64, qrcode
 
 def eliminar_acentos(texto):
     if not texto: return ""
@@ -90,6 +91,52 @@ class PagoListView(ListView):
 
 #REGISTRO DE RECIBOS
 
+#envio de recibo por mail
+
+def enviar_recibo_email(request, recibo_id):
+    recibo = get_object_or_404(Recibo, id=recibo_id)
+    pago = recibo.pago
+    
+    # 🟢 SI EL USUARIO LE DIÓ A "CONFIRMAR ENVÍO" (POST)
+    if request.method == 'POST':
+        # Capturamos el mail que se escribió a mano en la web
+        email_destino = request.POST.get('email_cliente')
+        
+        if not email_destino:
+            return render(request, 'pagos/enviar_mail_form.html', {
+                'recibo': recibo, 
+                'error': 'Por favor, ingresá un correo electrónico válido.'
+            })
+
+        # --- Tu misma lógica indestructible del PDF ---
+        template = get_template('pagos/comprobante_pdf.html')
+        context = {'recibo': recibo, 'pago': pago}
+        html = template.render(context)
+        
+        result = io.BytesIO()
+        pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), result)
+        
+        if pdf.err:
+            return HttpResponse("Error al generar el PDF", status=500)
+        
+        # --- Construimos el Mail ---
+        asunto = f"Comprobante de Pago #{recibo.id} — Gol Ahora"
+        cuerpo = f"Hola,\n\nTe adjuntamos el comprobante de tu pago por ${pago.monto}.\n\n¡Gracias por elegir a Gol Ahora!"
+        
+        email = EmailMessage(subject=asunto, body=cuerpo, to=[email_destino])
+        email.attach(f"comprobante_{recibo.id}.pdf", result.getvalue(), "application/pdf")
+        
+        # --- Despachamos ---
+        email.send()
+        
+        # Volvemos al historial general con el deber cumplido
+        return redirect('pago_list')
+
+    # 🔵 SI EL USUARIO RECIÉN ENTRA A LA PANTALLA (GET)
+    # Le mostramos el formulario sencillo
+    return render(request, 'pagos/enviar_mail_form.html', {'recibo': recibo})
+
+
 def descargar_recibo_pdf(request, recibo_id):
     # 1. Buscamos el recibo real en la base de datos
     recibo = get_object_or_404(Recibo, id=recibo_id)
@@ -122,17 +169,44 @@ def descargar_recibo_pdf(request, recibo_id):
         
     return HttpResponse("Error interno al generar el PDF de auditoría", status=500)
 
+def mostrar_qr_pantalla(request, pago_id):
+    # 1. Buscamos el pago correspondiente
+    pago = get_object_or_404(Pago, id=pago_id)
+    
+    # 2. Fabricamos los datos que va a contener el QR
+    # Podés poner los datos de tu alias, un link de Mercado Pago simulado o texto de auditoría
+    datos_qr = f"GOL AHORA\nConcepto: {pago.get_origen_pago_display()}\nMonto a Abonar: ${pago.monto}\nID Control: #{pago.id}"
+    
+    # 3. Generamos el QR en el aire con la librería de Python
+    qr = qrcode.QRCode(version=1, box_size=10, border=2)
+    qr.add_data(datos_qr)
+    qr.make(fit=True)
+    
+    # 4. Guardamos la imagen en un buffer de memoria como PNG
+    img_qr = qr.make_image(fill_color="black", back_color="white")
+    buffer_qr = io.BytesIO()
+    img_qr.save(buffer_qr, format="PNG")
+    
+    # 5. Lo codificamos a Base64 para incrustarlo directo en la etiqueta <img> del HTML
+    qr_base64 = base64.b64encode(buffer_qr.getvalue()).decode('utf-8')
+    qr_data_url = f"data:image/png;base64,{qr_base64}"
+    
+    # 6. Renderizamos la página web pasando el pago y la imagen armada
+    return render(request, 'pagos/mostrar_qr.html', {
+        'pago': pago,
+        'qr_code': qr_data_url
+    })
 
 class ReciboListView(ListView):
     model = Recibo
-    template_name = 'pagos/recibo_list.html'
+    template_name = 'recibos/recibo_list.html'
     context_object_name = 'recibos'
     ordering = ['-id'] # Los más nuevos primero
 
 class ReciboUpdateView(UpdateView):
     model = Recibo
     form_class = ReciboForm
-    template_name = 'pagos/recibo_form.html'
+    template_name = 'recibos/recibo_form.html'
     success_url = reverse_lazy('recibo_list')
     def form_valid(self, form):
         # Primero dejamos que Django guarde la nueva fecha del Recibo
@@ -145,13 +219,13 @@ class ReciboUpdateView(UpdateView):
         pago_asociado = self.object.pago
         if pago_asociado and nuevo_monto is not None:
             pago_asociado.monto = nuevo_monto
-            pago_asociado.save() # 💾 Guarda en la tabla de pagos
+            pago_asociado.save()
             
         return response
 
 class ReciboDeleteView(DeleteView):
     model = Recibo
-    template_name = 'pagos/recibo_confirm_delete.html'
+    template_name = 'recibos/recibo_confirm_delete.html'
     success_url = reverse_lazy('recibo_list')
 
 class PagoCreateView(TemplateView):

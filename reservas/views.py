@@ -8,28 +8,6 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from django.views.generic import CreateView
 
-# LISTAR Y CREAR RESERVAS
-class ReservaCreateView(CreateView):
-    # ... sus configuraciones de model, fields, template_name, etc ...
-
-    def form_valid(self, form):
-        # 1. Primero dejamos que Django guarde la reserva en la base de datos
-        self.object = form.save()
-        
-        # 2. Buscamos una forma de pago por defecto (Ej: Efectivo o la primera que haya)
-        tipo_pago_base = TipoPago.objects.first()
-        
-        # 3. 🚀 CLAVE: Creamos el Pago automáticamente usando los datos de la reserva
-        Pago.objects.create(
-            reserva=self.object,                        # Le asociamos la reserva recién creada
-            monto=float(self.object.cancha.precio),     # Traemos el precio definido en el módulo de canchas
-            origen_pago='alquiler_cancha',               # Seteamos tu choice obligatorio
-            estado='PAGADO',                            # Lo marcamos como Pagado
-            tipo_pago=tipo_pago_base                    # Le asignamos la forma de pago por defecto
-        )
-        
-        # 4. Dejamos que continúe el flujo normal redirigiendo a get_success_url
-        return super().form_valid(form)
 
 def gestion_reservas(request):
 
