@@ -12,7 +12,7 @@
         <div>
             <a href="{% url 'liga_list' %}" class="btn btn-secondary">Volver al listado</a>
             {% if liga.estado == 'Inscripcion' and liga.equipos.count > 1 %}
-            <a href="{% url 'generar_fixture_liga' liga.id %}" class="btn btn-success fw-bold text-white shadow-sm">
+            <a href="{% url 'generar_fixture_liga' liga.id %}" class="btn btn-primary fw-bold text-white shadow-sm">
                 Generar Fixture
             </a>
             {% endif %}

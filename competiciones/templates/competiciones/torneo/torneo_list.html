@@ -9,8 +9,8 @@
         <a href="{% url 'torneo_create' %}" class="btn btn-primary">Crear Nuevo torneo</a>
     </div>
 
-    <table class="table table-striped align-middle shadow-sm">
-        <thead class="table-dark">
+    <table class="table table-striped">
+        <thead table-primary>
             <tr>
                 <th>Nombre</th>
                 <th>Estado</th>
@@ -31,7 +31,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4" class="text-center">No hay ligas registradas.</td>
+                <td colspan="4" class="text-center">No hay torneos registrados.</td>
             </tr>
             {% endfor %}
         </tbody>

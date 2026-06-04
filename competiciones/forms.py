@@ -2,21 +2,26 @@ from django import forms
 from .models import Equipo, Liga, Torneo
 
 class EquipoForm(forms.ModelForm):
-	class Meta:
-		model = Equipo
-		template_name = 'competiciones/equipo/equipo_form.html'
-		fields = '__all__'
-		widgets = {
-			'nombre': forms.TextInput(attrs={'class':'form-control'}),
-			'profesor': forms.Select(attrs={'class': 'form-select'}),
+    class Meta:
+        model = Equipo
+        template_name = 'competiciones/equipo/equipo_form.html'
+        fields = '__all__'
+        labels = {
+            'nombre': 'Nombre del Equipo',
+            'profesor': 'Profesor Asignado',
+            'clientes': 'Integrantes (Maximo 15)'
+        }
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class':'form-control'}),
+            'profesor': forms.Select(attrs={'class': 'form-select'}),
             'clientes': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}), 
         }
 
-		def clean_clientes(self):
-			clientes = self.cleaned_data.get('clientes')
-			if len(clientes) > 5:
-				raise forms.ValidationError("No se pueden seleccionar mas de 5 clientes.")
-			return clientes
+        def clean_clientes(self):
+            clientes = self.cleaned_data.get('clientes')
+            if len(clientes) > 5:
+                raise forms.ValidationError("No se pueden seleccionar mas de 5 clientes.")
+            return clientes
 
 class LigaForm(forms.ModelForm):
     class Meta:
@@ -35,7 +40,7 @@ class TorneoForm(forms.ModelForm):
         model = Torneo
         fields = ['nombre', 'estado', 'equipos', 'es_ida_y_vuelta']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Copa del Rey'}),
+            'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Copa Argentina'}),
             'estado': forms.Select(attrs={'class': 'form-select'}),
             'equipos': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
             'es_ida_y_vuelta': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

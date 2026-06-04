@@ -8,22 +8,25 @@ import random
 class EquipoListView(ListView):
 	model = Equipo
 	template_name = 'competiciones/equipo/equipo_list.html'
-	context_object_name = 'equipos'
+	context_object_name = 'equipo_list'
 
 class EquipoCreateView(CreateView):
 	model = Equipo
 	form_class = EquipoForm
 	template_name = 'competiciones/equipo/equipo_form.html'
 	success_url = reverse_lazy('equipo_list')
+
 class EquipoUpdateView(UpdateView):
 	model = Equipo
 	form_class = EquipoForm
 	template_name = 'competiciones/equipo/equipo_form.html'
 	success_url = reverse_lazy('equipo_list')
+
 class EquipoDeleteView(DeleteView):
 	model = Equipo
 	template_name = 'competiciones/equipo/equipo_confirm_delete.html'
 	success_url = reverse_lazy('equipo_list')
+
 class LigaListView(ListView):
     model = Liga
     template_name = 'competiciones/liga/liga_list.html'

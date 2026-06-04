@@ -9,8 +9,8 @@
         <a href="{% url 'liga_create' %}" class="btn btn-primary">Crear Nueva Liga</a>
     </div>
 
-    <table class="table table-striped align-middle shadow-sm">
-        <thead class="table-dark">
+    <table class="table table-striped">
+        <thead table-primary>
             <tr>
                 <th>Nombre de la Liga</th>
                 <th>Estado Actual</th>
@@ -33,7 +33,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4" class="text-center">No hay ligas registradas en el sistema aun.</td>
+                <td colspan="4" class="text-center">No hay ligas registradas.</td>
             </tr>
             {% endfor %}
         </tbody>

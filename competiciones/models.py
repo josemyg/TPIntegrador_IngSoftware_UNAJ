@@ -20,7 +20,7 @@ class Cancha(models.Model):
 # ==========================================
 class Equipo(models.Model):
     nombre = models.CharField("Nombre del Equipo", max_length=100, unique=True)
-    profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Profesor Asignado")
+    profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT, null=True, blank=True, verbose_name="Profesor Asignado")
     clientes = models.ManyToManyField(Cliente, blank=True, verbose_name="Integrantes (Clientes)")
 
     class Meta:
@@ -75,7 +75,7 @@ class Partido(models.Model):
     equipo_visitante = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='partidos_visitante')
     
     # Vinculado a la Cancha (Temporal) de arriba
-    cancha = models.ForeignKey(Cancha, on_delete=models.SET_NULL, null=True, blank=True)
+    cancha = models.ForeignKey(Cancha, on_delete=models.PROTECT, null=True, blank=True)
     fecha_hora = models.DateTimeField(null=True, blank=True) 
     
     fase = models.CharField(max_length=50) # Ej: "Fecha 1", "Semifinal"
