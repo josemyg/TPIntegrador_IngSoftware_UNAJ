@@ -5,7 +5,6 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.urls import reverse
 
-
 class Usuario(models.Model):
 
     id = models.AutoField("ID Usuario", primary_key=True)
@@ -22,7 +21,7 @@ class Usuario(models.Model):
     dni = models.CharField(("DNI"), max_length=20)
     user_django = models.OneToOneField(
         User,
-        on_delete = models.PROTECT,
+        on_delete = models.CASCADE,
         verbose_name = ('Usuario'),
         blank = True,
         null = True
@@ -43,25 +42,7 @@ class Usuario(models.Model):
 
     def modificarUsuario(self):
         return self.nombre
-    
 
-class TipoCancha(models.Model):
-
-    nombre = models.CharField(max_length=100, verbose_name="Tipo de Cancha")
-    capacidad = models.IntegerField(verbose_name="Capacidad (Jugadores)")
-    superficie = models.CharField(max_length=100, verbose_name="Superficie")
-    precio = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-    def __str__(self):
-        return f"{self.nombre} - {self.superficie}"
-    
-    class Meta:
-        verbose_name = "Tipo de Cancha"
-        verbose_name_plural = "Tipos de Canchas"
-
-    
 class Profesor(Usuario):
 
     estados = {
@@ -115,10 +96,3 @@ def crear_Cliente(sender, instance, created, **kwargs):
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")        
-
-
-
-
-
-        
-    

@@ -5,30 +5,29 @@ from tu_app.models import Profesor
 
 def crear_profesores_argentinos():
     # Lista de nombres comunes en Argentina
-    nombres = ['María', 'Juan', 'Ana', 'Pedro', 'Lucía', 'José', 'Camila', 'Matías', 'Valentina', 'Diego',
-               'Florencia', 'Agustín', 'Mariana', 'Sebastián', 'Teresa', 'Andrés', 'Rocío', 'Emanuel', 'Julieta',
+    nombres = ['Maria', 'Juan', 'Ana', 'Pedro', 'Lucia', 'Jose', 'Camila', 'Matias', 'Valentina', 'Diego',
+               'Florencia', 'Agustin', 'Mariana', 'Sebastian', 'Teresa', 'Andres', 'Rocio', 'Emanuel', 'Julieta',
                'Gonzalo', 'Paula', 'Santiago', 'Carolina', 'Luis', 'Marina', 'Jorge', 'Catalina', 'Nicolas',
-               'Marta', 'Federico', 'Isabella', 'Oscar', 'Alejandra', 'Rodrigo', 'Elisa', 'Hernán', 'Clara',
-               'Benjamín', 'Sofía', 'Eduardo', 'Melisa', 'Ricardo', 'Lucas', 'Ariadna', 'Enrique', 'Mía',
-               'Rafael', 'Raquel', 'Fabián', 'Natalia', 'Horacio', 'Victoria', 'Gerardo', 'Elsa', 'Lautaro',
+               'Marta', 'Federico', 'Isabella', 'Oscar', 'Alejandra', 'Rodrigo', 'Elisa', 'Hernan', 'Clara',
+               'Benjamin', 'Sofia', 'Eduardo', 'Melisa', 'Ricardo', 'Lucas', 'Ariadna', 'Enrique', 'Mia',
+               'Rafael', 'Raquel', 'Fabian', 'Natalia', 'Horacio', 'Victoria', 'Gerardo', 'Elsa', 'Lautaro',
                'Paulina', 'Manuel', 'Estela', 'Arturo', 'Delfina', 'Raimundo', 'Carmen', 'Emilio', 'Nieves',
                'Pablo', 'Cecilia', 'Agustina', 'Bruno', 'Dolores', 'Cristian', 'Margarita', 'Alfredo', 'Lara',
-               'Sergio', 'Gabriela', 'Hugo', 'Amelia', 'Luciano', 'Adrián', 'Rosa', 'Mariano', 'Ivana', 'Enzo']
+               'Sergio', 'Gabriela', 'Hugo', 'Amelia', 'Luciano', 'Adrian', 'Rosa', 'Mariano', 'Ivana', 'Enzo']
     
     # Lista de apellidos comunes en Argentina
-    apellidos = ['González', 'Rodríguez', 'Martínez', 'Pérez', 'Sánchez', 'López', 'Fernández', 'Gómez',
-                 'Ramírez', 'Díaz', 'Vázquez', 'Molina', 'Ojeda', 'Ríos', 'Moreno', 'Peralta', 'Cortés',
-                 'Ruiz', 'Vargas', 'Contreras', 'Pérez', 'Ortega', 'Cabrera', 'Zárate', 'Sánchez', 'Marrón',
-                 'Crespo', 'Giménez', 'López', 'Rojas', 'Cid', 'Brizuela', 'Villafañe', 'Pignata', 'Funes',
-                 'García', 'Saavedra', 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Cáceres', 'Pérez', 'Vidal',
-                 'Ramón', 'Correa', 'Giménez', 'Valenzuela', 'Bustos', 'Gómez', 'Villagra', 'Carrillo',
-                 'Moreno', 'Quintana', 'Tirado', 'Cortez', 'Bautista', 'Serrano', 'Hernández', 'López',
-                 'Gómez', 'Soto', 'Rojas', 'Cáceres', 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Cárcamo',
-                 'Carrasco', 'Bustos', 'Gómez', 'Villafañe', 'Pignata', 'Funes', 'García', 'Saavedra',
-                 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Cáceres', 'Carrillo', 'Moreno', 'Quintana',
-                 'Tirado', 'Cortez', 'Bautista', 'Serrano', 'Hernández', 'López', 'Gómez', 'Soto', 'Rojas',
-                 'Cáceres', 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Cáceres', 'Carrillo', 'Moreno']
-    
+    apellidos = ['Gonzalez', 'Rodriguez', 'Martinez', 'Perez', 'Sanchez', 'Lopez', 'Fernandez', 'Gomez',
+                 ' Ramirez', 'Diaz', 'Vazquez', 'Molina', 'Ojeda', 'Rios', 'Moreno', 'Peralta', 'Cortes',
+                 'Ruiz', 'Vargas', 'Contreras', 'Perez', 'Ortega', 'Cabrera', 'Zarate', 'Sanchez', 'Marron',
+                 'Crespo', 'Gimenez', 'Lopez', 'Rojas', 'Cid', 'Brizuela', 'Villafan', 'Pignata', 'Funes',
+                 'Garcia', 'Saavedra', 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Caceres', 'Perez', 'Vidal',
+                 'Ramon', 'Correa', 'Gimenez', 'Valenzuela', 'Bustos', 'Gomez', 'Villagra', 'Carrillo',
+                 'Moreno', 'Quintana', 'Tirado', 'Cortez', 'Bautista', 'Serrano', 'Hernandez', 'Lopez',
+                 'Gomez', 'Soto', 'Rojas', 'Caceres', 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Cacamo',
+                 'Carrasco', 'Bustos', 'Gomez', 'Villafan', 'Pignata', 'Funes', 'Garcia', 'Saavedra',
+                 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Caceres', 'Carrillo', 'Moreno', 'Quintana',
+                 'Tirado', 'Cortez', 'Bautista', 'Serrano', 'Hernandez', 'Lopez', 'Gomez', 'Soto', 'Rojas',
+                 'Caceres', 'Carrizo', 'Llanos', 'Acosta', 'Torres', 'Caceres', 'Carrillo', 'Moreno']    
     # Lista de títulos habilitantes
     titulos = ['Licenciado/a en Educación', 'Profesor/a de Educación Básica', 'Maestro/a en Pedagogía',
                'Educador/a en Formación', 'Título Superior en Enseñanza', 'Profesor/a de Nivel Medio',
