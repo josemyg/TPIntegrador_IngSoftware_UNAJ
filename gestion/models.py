@@ -5,6 +5,7 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.urls import reverse
 
+
 class Usuario(models.Model):
 
     id = models.AutoField("ID Usuario", primary_key=True)
@@ -37,13 +38,29 @@ class Usuario(models.Model):
     def get_absolute_url(self):
         return reverse("Usuario_detail", kwargs={"pk": self.pk})
 
-    def registrarUsuario():
+    def registrarUsuario(self):
         return self.nombre
 
-    def modificarUsuario():
+    def modificarUsuario(self):
         return self.nombre
+    
 
+class TipoCancha(models.Model):
+    nombre = models.CharField(max_length=100, verbose_name="Tipo de Cancha")
+    capacidad = models.IntegerField(verbose_name="Capacidad (Jugadores)")
+    superficie = models.CharField(max_length=100, verbose_name="Superficie")
+    precio = models.DecimalField(
+        max_digits=10,
+        decimal_places=2
+    )
+    def __str__(self):
+        return f"{self.nombre} - {self.superficie}"
+    
+    class Meta:
+        verbose_name = "Tipo de Cancha"
+        verbose_name_plural = "Tipos de Canchas"
 
+    
 class Profesor(Usuario):
 
     estados = {

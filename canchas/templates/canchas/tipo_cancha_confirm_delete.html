@@ -1,0 +1,32 @@
+{% extends 'canchas/base.html' %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card border-danger shadow-sm">
+            <div class="card-header bg-danger text-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="bi bi-exclamation-triangle-fill"></i> ¿Confirmar eliminación?</h5>
+            </div>
+            <div class="card-body p-4 text-center">
+                <p class="fs-5 text-dark">
+                    Estás a punto de eliminar la cancha:
+                </p>
+                <h4 class="text-dark my-3 fw-bold">{{ object.nombre }}</h4>
+                <p class="text-muted small">Superficie: {{ object.get_superficie_display }} | Capacidad: {{ object.capacidad }} jug.</p>
+                
+                <hr class="my-4">
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-around">
+                        <a href="{% url 'tipo_cancha_list' %}" class="btn btn-light border">Cancelar</a>
+                        <button type="submit" class="btn btn-danger px-4">Sí, Eliminar Registro</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

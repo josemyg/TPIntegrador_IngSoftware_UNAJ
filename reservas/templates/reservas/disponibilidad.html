@@ -1,0 +1,91 @@
+<h2>Consultar disponibilidad</h2>
+
+<form method="get">
+
+    <label>Cancha:</label> <!-- Etiqueta para el campo de selección de cancha. -->
+ 
+    <select name="cancha"> <!-- Campo de selección para elegir una cancha. -->
+
+        <option value="">Seleccione</option> <!-- Opción por defecto para seleccionar una cancha. -->
+ 
+        {% for cancha in canchas %}
+            <option
+                value="{{ cancha.id }}" 
+                {% if cancha.id|stringformat:"s" == cancha_id %}
+                    selected
+                {% endif %}
+            > <!-- Opción para cada cancha disponible, con el valor del ID de la cancha. -->
+                {{ cancha.nombre }}
+            </option>
+        {% endfor %}
+
+    </select>
+
+    <label>Fecha:</label>
+
+    <input
+        type="date"
+        name="fecha"
+        value="{{ fecha }}"
+    >
+
+    <button type="submit">
+        Buscar
+    </button>
+
+</form>
+
+<hr>
+
+{% if reservas != None %}
+
+    <h3>Horarios ocupados</h3>
+
+    {% if reservas %}
+
+        <ul>
+
+            {% for reserva in reservas %}
+
+                <li>
+                    {{ reserva.hora_inicio }}
+                    -
+                    {{ reserva.hora_fin }}
+                    ({{ reserva.estado }})
+                </li>
+
+            {% endfor %}
+
+        </ul>
+
+    {% else %}
+
+        <p>
+            No existen reservas para esa cancha en esa fecha.
+        </p>
+
+    {% endif %}
+
+{% endif %}
+
+<hr>
+
+<h3>Horarios libres</h3>
+
+{% if horarios_libres %}
+
+    <ul>
+
+        {% for horario in horarios_libres %}
+
+            <li>{{ horario }}</li>
+
+        {% endfor %}
+
+    </ul>
+
+{% else %}
+
+    <p>No hay horarios disponibles.</p>
+
+{% endif %}

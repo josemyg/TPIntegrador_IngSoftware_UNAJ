@@ -1,0 +1,20 @@
+{% extends 'reservas/form_reservas.html' %} 
+
+{% block title %}
+Crear
+{% endblock %}
+
+{% block create %}
+Reserva
+{% endblock %}
+
+{% block name %} 
+Continuar al pago
+{% endblock %}
+
+{% block button_link %}
+    <a href="{% url 'lista_reservas' %}"
+       class="btn btn-danger">
+        Cancelar
+    </a>
+{% endblock %}

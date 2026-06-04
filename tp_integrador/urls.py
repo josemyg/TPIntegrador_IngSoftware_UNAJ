@@ -22,9 +22,10 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('gestion.urls')),
-    path('competiciones/', include('competiciones.urls')),
-    path('clases_y_entrenamientos/', include('clases_y_entrenamientos.urls')),
+    path('reservas/', include('reservas.urls')),
+    path('canchas/', include('canchas.urls')),
     path('descuentos/', include('descuentos.urls')),
+    path('pagos/', include('pagos.urls')),
 ]
 
 
