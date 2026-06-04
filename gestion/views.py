@@ -11,7 +11,8 @@ class ProfesorListView(ListView):
     template_name = "gestion/profesor/profesor_list.html"
     context_object_name = 'profesor_list'
     queryset = Profesor.objects.all()
-    
+    paginate_by = 20
+
 class ProfesorCreateView(CreateView):
     model = Profesor
     #permission_required = 'Profesor.add_Profesor'
@@ -28,6 +29,7 @@ class ProfesorUpdateView(UpdateView):
 class ProfesorDeleteView(DeleteView):
     model = Profesor
     template_name = "gestion/profesor/profesor_delete_form.html"
+    success_url = reverse_lazy('profesor_list')
 
 def inicio(request):
     return render(request, 'principal.html')

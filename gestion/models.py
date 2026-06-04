@@ -33,10 +33,7 @@ class Usuario(models.Model):
         verbose_name_plural = ("Usuarios")
 
     def __str__(self):
-        if self.nombre and self.apellido:
-            return self.nombre + ' ' + self.apellido
-        else:
-            return 'Sin nombre'
+        return self.nombre + ' ' + self.apellido
 
     def get_absolute_url(self):
         return reverse("Usuario_detail", kwargs={"pk": self.pk})
@@ -70,16 +67,7 @@ class Profesor(Usuario):
 def crear_Usuario(sender, instance, created, **kwargs):
     if created:
         nombre = instance.nombre+'_'+instance.apellido
-        print(nombre)
         user = User.objects.create_user(nombre,instance.email, 'f.123456')
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")
-class Cliente(models.Model):
-    nombre = models.CharField(("Nombre"), max_length=100)
-    email = models.EmailField(("Correo Electrónico"), max_length=254)
-    class Meta:
-        verbose_name = ("Cliente")
-        verbose_name_plural = ("Clientes")
-    def __str__(self):
-        return self.nombre
