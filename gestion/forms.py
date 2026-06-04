@@ -34,7 +34,7 @@ class ClienteForm(forms.ModelForm):
         model = Cliente
         template_name = 'gestion/cliente/cliente_form.html'
         fields = '__all__'
-        exclude = ['estado','user_django']
+        exclude = ['estado']
 
         widgets = {
             'id': forms.TextInput(attrs={'class':'form-control'}),
@@ -51,4 +51,6 @@ class ClienteForm(forms.ModelForm):
             'dni': forms.TextInput(attrs={'class':'form-control'}),
             'fechaAlta': forms.TextInput(attrs={'class':'form-control'}),
             'esSocio': forms.CheckboxInput(attrs={'class':'form-check-input'}),
-        }  
+        }
+
+

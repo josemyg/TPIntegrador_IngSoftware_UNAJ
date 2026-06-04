@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clases_y_entrenamientos',
-    'gestion',
-   
+    'gestion',   
+    'descuentos',
 ]
 
 MIDDLEWARE = [

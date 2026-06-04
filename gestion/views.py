@@ -11,12 +11,14 @@ from django.shortcuts import redirect, get_object_or_404
 from .models import Profesor
 
 
+
 class ProfesorListView(ListView):
     model = Profesor
     template_name = "gestion/profesor/profesor_list.html"
     context_object_name = 'profesor_list'
     queryset = Profesor.objects.all()
-    
+    paginate_by = 20
+
 class ProfesorCreateView(CreateView):
     model = Profesor
     #permission_required = 'Profesor.add_Profesor'
@@ -87,5 +89,13 @@ class ClientePrintView(DetailView):
     template_name = "gestion/cliente/cliente_print.html"
     context_object_name = 'cliente'
 
+
+
+
 def inicio(request):
     return render(request, 'principal.html')
+
+
+
+
+

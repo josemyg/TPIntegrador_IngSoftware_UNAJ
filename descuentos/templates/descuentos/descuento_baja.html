@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ficha de descuento{% endblock title %}
+
+{% block content %}
+<div class="container">
+
+    <h1>Ficha del Descuento</h1>
+
+    <hr>
+
+    <p><b>Tipo:</b> {{ descuento.tipo }}</p>
+    <p><b>Cantidad:</b> {{ descuento.cantidad }}%</p>
+    <p><b>Estado:</b> {{ descuento.estado }}</p>
+
+    <form action="{% url 'descuento_baja' descuento.id %}" method="post">
+
+        {% csrf_token %}
+
+        {% if descuento.estado == 'activo' %}
+            <button type="submit" class="btn btn-primary">
+                Dar de baja
+            </button>
+        {% endif %}
+
+    </form>
+
+</div>
+{% endblock %}

@@ -2,14 +2,14 @@
 <!doctype html>
 <html lang="es" data-bs-theme="light">
 <head>
-  <title>{% block title %} {% endblock %}</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  
-  <link href="{% static 'gestion/css/bootstrap.min.css'%}" rel="stylesheet">
-  <link href="{% static 'gestion/icons/favicon152x152.png' %}" rel="icon" >
-  <script src="{% static 'gestion/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <link href="{% static 'gestion/css/style.css'%}" rel="stylesheet">
+    <title>{% block title %} {% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="{% static 'gestion/css/bootstrap.min.css'%}" rel="stylesheet">
+    <link href="{% static 'gestion/icons/favicon152x152.png' %}" rel="icon">
+    <script src="{% static 'gestion/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <link href="{% static 'gestion/css/style.css'%}" rel="stylesheet">
 </head>
 <body>
 
@@ -59,6 +59,61 @@
               <li><a class="dropdown-item" href="{% url 'clases_y_entrenamientos:entrenamiento_create' %}">Crear Entrenamiento</a></li>
             </ul>
           </li>
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Clientes
+  </a>
+
+  <ul class="dropdown-menu">
+    <li>
+      <a class="dropdown-item" href="{% url 'cliente_create' %}">
+        Registrar Cliente
+      </a>
+    </li>
+
+    <li>
+      <a class="dropdown-item" href="{% url 'cliente_list' %}">
+        Listar Clientes
+      </a>
+    </li>
+  </ul>
+</li>
+
+<li class="nav-item dropdown">
+
+  <a class="nav-link dropdown-toggle" href="#" role="button"
+     data-bs-toggle="dropdown" aria-expanded="false">
+    Descuentos
+  </a>
+
+  <ul class="dropdown-menu">
+
+    <li>
+      <a class="dropdown-item" href="{% url 'descuento_create' %}">
+        Registrar Descuento
+      </a>
+    </li>
+
+    <li>
+      <a class="dropdown-item" href="{% url 'descuento_list' %}">
+        Listar Descuentos
+      </a>
+    </li>
+    
+    <li>
+      <a class="dropdown-item" href="{% url 'tipodescuento_create' %}">
+        Registrar Tipo de descuento
+      </a>
+    </li>
+
+    <li>
+      <a class="dropdown-item" href="{% url 'tipodescuento_list' %}">
+        Listar Tipos de descuento
+      </a>
+    </li>
+
+  </ul>
+
+</li>
         </ul>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#barranavegacion" aria-controls="barranavegacion" aria-expanded="false" aria-label="Toggle navigation">
