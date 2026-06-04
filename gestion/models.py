@@ -1,11 +1,9 @@
 from django.db import models
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.urls import reverse
-
 
 class Usuario(models.Model):
 
@@ -64,17 +62,12 @@ class Profesor(Usuario):
         verbose_name = ("Profesor/a")
         verbose_name_plural = ("Profesores")
 
-
-
     def verificar_estado_profesor(self):
-
         if self.certificado:
             self.estado = "activo"
         else:
             self.estado = "en_validación"
-
         self.save()
-      
 
 @receiver(post_save, sender=Profesor)
 def crear_Usuario(sender, instance, created, **kwargs):
@@ -85,15 +78,10 @@ def crear_Usuario(sender, instance, created, **kwargs):
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")
 
- 
-
-    
-
 class Cliente(Usuario):
     fechaAlta = models.CharField(("Fecha de Alta"), max_length=20)
     estado = models.CharField(("Estado"), max_length=50)
     esSocio = models.BooleanField(("Es Socio"), default=False)
-
 
     class Meta:
         verbose_name = ("Cliente")

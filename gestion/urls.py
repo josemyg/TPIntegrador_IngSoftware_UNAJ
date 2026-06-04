@@ -13,7 +13,8 @@ urlpatterns = [
     path("eliminarprofesor/<pk>", ProfesorDeleteView.as_view(), name="profesor_delete"),
     path("modificarprofesor/<pk>", ProfesorUpdateView.as_view(), name="profesor_update"),
     path("imprimirprofesor/<pk>", ProfesorPrintView.as_view(), name="profesor_print"),
-    path('verificarprofesor/<int:pk>/',ProfesorVerificar,name='profesor_verificar'),
+    path('verificarprofesor/<int:pk>/',ProfesorVerificarView.as_view(),name='profesor_verificar'),
+    path('confirmarverificacionprofesor/<int:pk>/',views.ConfirmarVerificacionProfesor,name='profesor_confrimarverificacion'),
 
 
     # CLIENTE
@@ -26,16 +27,4 @@ urlpatterns = [
 
     # VistaCliente
     path('inicio/', views.inicio, name='inicio'),
-
-    
-    # RUTAS DE CLASES 
-    
-
-    
-    
-    # RUTAS DE ENTRENAMIENTOS
-
-
-
-
 ]   

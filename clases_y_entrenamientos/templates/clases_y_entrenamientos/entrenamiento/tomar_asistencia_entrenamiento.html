@@ -8,7 +8,7 @@
         {% csrf_token %}
         <table class="table">
             <thead>
-                <tr><th>Alumno</th><th>¿Presente?</th></tr>
+                <tr><th scope="col">Alumno</th><th scope="col">¿Presente?</th></tr>
             </thead>
             <tbody>
                 {% for alumno in entrenamiento.alumnos.all %}

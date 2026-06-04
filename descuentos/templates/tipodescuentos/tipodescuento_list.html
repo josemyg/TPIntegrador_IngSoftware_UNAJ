@@ -7,51 +7,55 @@ Lista de descuentos
 
 {% block content %}
 
-<div class="container">
+<div class="container mt-4">
 
-    <h1>Lista de tipos de descuentos</h1>
+    <div class="container">
 
-    <table class="table table-striped">
+        <h1>Lista de tipos de descuentos</h1>
 
-        <thead>
+        <table class="table table-striped">
 
-            <tr class="table-primary">
+            <thead>
 
-                <th scope="col">Nombre</th>
-                <th scope="col"></th>
+                <tr class="table-primary">
 
-            </tr>
+                    <th scope="col">Nombre</th>
+                    <th scope="col"></th>
 
-        </thead>
+                </tr>
 
-        <tbody>
+            </thead>
 
-        {% for tipodescuento in tipodescuento_list %}
+            <tbody>
 
-            <tr>
+                {% for tipodescuento in tipodescuento_list %}
 
-                <td>{{ tipodescuento.nombreDescuento }}</td>
+                <tr>
 
-                <td>
+                    <td>{{ tipodescuento.nombreDescuento }}</td>
 
-                    <a href="{% url 'tipodescuento_update' tipodescuento.id %}">
-                        <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"/>
-                    </a>
+                    <td>
 
-                    <a href="{% url 'tipodescuento_delete' tipodescuento.id %}">
-                        <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"/>
-                    </a>
+                        <a href="{% url 'tipodescuento_update' tipodescuento.id %}">
+                            <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar"
+                                width="24" height="24" />
+                        </a>
 
-                </td>
+                        <a href="{% url 'tipodescuento_delete' tipodescuento.id %}">
+                            <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24"
+                                height="24" />
+                        </a>
 
-            </tr>
+                    </td>
 
-        {% endfor %}
+                </tr>
 
-        </tbody>
+                {% endfor %}
 
-    </table>
+            </tbody>
 
-</div>
+        </table>
 
-{% endblock %}
+    </div>
+
+    {% endblock %}

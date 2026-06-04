@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Ficha del Profesor
+{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Ficha del Profesor</h1>
+
+    <hr>
+
+    <p><b>Nombre:</b> {{ profesor.nombre }}</p>
+    <p><b>Apellido:</b> {{ profesor.apellido }}</p>
+    <p><b>Email:</b> {{ profesor.email }}</p>
+    <p><b>Teléfono:</b> {{ profesor.telefono }}</p>
+    <p><b>DNI:</b> {{ profesor.dni }}</p>
+    <p><b>Estado:</b> {{ profesor.estado }}</p>
+
+    <p><b>Certificado:</b></p>
+
+    {% if profesor.certificado %}
+       <embed src="{{ profesor.certificado.url }}" type="application/pdf" width="100%" height="500px" />
+    {% else %}
+        <p>No hay certificado cargado.</p>
+    {% endif %}
+
+    <hr>
+
+
+    <form action="{% url 'profesor_confrimarverificacion' profesor.id %}" method="post">
+
+        {% csrf_token %}
+
+        {% if profesor.estado == 'en_validación' %}
+            <button type="submit" class="btn btn-primary">
+                Confirmar Verificación Profesor
+            </button>
+        {% endif %}
+
+        <a class="btn btn-danger m-2"
+           href="{% url 'profesor_list' %}">
+            Cancelar
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -4,37 +4,41 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Gestion de Equipos</h1>
-        <a href="{% url 'equipo_create' %}" class="btn btn-primary">Crear Nuevo Equipo</a>
-    </div>
 
-    <table class="table table-striped">
-        <thead table-primary>
-            <tr>
-                <th>Nombre del Equipo</th>
-                <th>Profesor</th>
-                <th>Integrantes</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for equipo in equipo_list %}
-            <tr>
-                <td class="fw-bold">{{ equipo.nombre }}</td>
-                <td>{{ equipo.profesor|default:"Sin asignar" }}</td>
-                <td>{{ equipo.clientes.count }} / 15</td>
-                <td>
-                    <a href="{% url 'equipo_update' equipo.id %}" class="btn btn-sm btn-warning">Editar</a>
-                    <a href="{% url 'equipo_delete' equipo.id %}" class="btn btn-sm btn-danger">Eliminar</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-center">No hay equipos registrados.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Gestion de Equipos</h1>
+            <a href="{% url 'equipo_create' %}" class="btn btn-primary">Crear Nuevo Equipo</a>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr class="table-primary">
+                    <th scope="col">Nombre del Equipo</th>
+                    <th scope="col">Profesor</th>
+                    <th scope="col">Integrantes</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for equipo in equipo_list %}
+                <tr>
+                    <td class="fw-bold">{{ equipo.nombre }}</td>
+                    <td>{{ equipo.profesor|default:"Sin asignar" }}</td>
+                    <td>{{ equipo.clientes.count }} / 15</td>
+                    <td>
+                        <a href="{% url 'equipo_update' equipo.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'equipo_delete' equipo.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No hay equipos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
+
 {% endblock %}

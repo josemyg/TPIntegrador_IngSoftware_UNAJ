@@ -1,19 +1,21 @@
 {% load static %}
 <!doctype html>
 <html lang="es" data-bs-theme="light">
-<head>
-    <title>{% block title %} {% endblock %}</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link href="{% static 'gestion/css/bootstrap.min.css'%}" rel="stylesheet">
-    <link href="{% static 'gestion/icons/favicon152x152.png' %}" rel="icon">
-    <script src="{% static 'gestion/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-    <link href="{% static 'gestion/css/style.css'%}" rel="stylesheet">
+<head>
+  <title>{% block title %} {% endblock %}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="{% static 'gestion/css/bootstrap.min.css'%}" rel="stylesheet">
+  <link href="{% static 'gestion/icons/favicon152x152.png' %}" rel="icon">
+  <script src="{% static 'gestion/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <link href="{% static 'gestion/css/style.css'%}" rel="stylesheet">
 </head>
+
 <body>
 
-  <nav class="navbar navbar-expand-lg bg-primary bg-light" data-bs-theme="light">
+  <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">Gol Ahora</a>
       <div class="collapse navbar-collapse" id="barranavegacion">
@@ -47,76 +49,93 @@
               </li>
             </ul>
           </li>
-          
+          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Clases y Entrenamientos
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'clases_y_entrenamientos:clase_list' %}">Listar Clases</a></li>
               <li><a class="dropdown-item" href="{% url 'clases_y_entrenamientos:clase_create' %}">Crear Clase</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="{% url 'clases_y_entrenamientos:entrenamiento_list' %}">Listar Entrenamientos</a></li>
-              <li><a class="dropdown-item" href="{% url 'clases_y_entrenamientos:entrenamiento_create' %}">Crear Entrenamiento</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li><a class="dropdown-item" href="{% url 'clases_y_entrenamientos:entrenamiento_list' %}">Listar
+                  Entrenamientos</a></li>
+              <li><a class="dropdown-item" href="{% url 'clases_y_entrenamientos:entrenamiento_create' %}">Crear
+                  Entrenamiento</a></li>
             </ul>
           </li>
-  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Clientes
-  </a>
 
-  <ul class="dropdown-menu">
-    <li>
-      <a class="dropdown-item" href="{% url 'cliente_create' %}">
-        Registrar Cliente
-      </a>
-    </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Equipos
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'equipo_create' %}">Registrar Equipo</a></li>
+              <li><a class="dropdown-item" href="{% url 'equipo_list' %}">Listar Equipos</a></li>
+            </ul>
+          </li>
 
-    <li>
-      <a class="dropdown-item" href="{% url 'cliente_list' %}">
-        Listar Clientes
-      </a>
-    </li>
-  </ul>
-</li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Ligas
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'liga_create' %}">Crear Liga</a></li>
+              <li><a class="dropdown-item" href="{% url 'liga_list' %}">Listar Ligas</a></li>
+            </ul>
+          </li>
 
-<li class="nav-item dropdown">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Torneos
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'torneo_create' %}">Crear Torneo</a></li>
+              <li><a class="dropdown-item" href="{% url 'torneo_list' %}">Listar Torneos</a></li>
+            </ul>
+          </li>
 
-  <a class="nav-link dropdown-toggle" href="#" role="button"
-     data-bs-toggle="dropdown" aria-expanded="false">
-    Descuentos
-  </a>
 
-  <ul class="dropdown-menu">
+          <li class="nav-item dropdown">
 
-    <li>
-      <a class="dropdown-item" href="{% url 'descuento_create' %}">
-        Registrar Descuento
-      </a>
-    </li>
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Descuentos
+            </a>
 
-    <li>
-      <a class="dropdown-item" href="{% url 'descuento_list' %}">
-        Listar Descuentos
-      </a>
-    </li>
-    
-    <li>
-      <a class="dropdown-item" href="{% url 'tipodescuento_create' %}">
-        Registrar Tipo de descuento
-      </a>
-    </li>
+            <ul class="dropdown-menu">
 
-    <li>
-      <a class="dropdown-item" href="{% url 'tipodescuento_list' %}">
-        Listar Tipos de descuento
-      </a>
-    </li>
+              <li>
+                <a class="dropdown-item" href="{% url 'descuento_create' %}">
+                  Registrar Descuento
+                </a>
+              </li>
 
-  </ul>
+              <li>
+                <a class="dropdown-item" href="{% url 'descuento_list' %}">
+                  Listar Descuentos
+                </a>
+              </li>
 
-</li>
+              <li>
+                <a class="dropdown-item" href="{% url 'tipodescuento_create' %}">
+                  Registrar Tipo de descuento
+                </a>
+              </li>
+
+              <li>
+                <a class="dropdown-item" href="{% url 'tipodescuento_list' %}">
+                  Listar Tipos de descuento
+                </a>
+              </li>
+
+            </ul>
+
+          </li>
         </ul>
       </div>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#barranavegacion" aria-controls="barranavegacion" aria-expanded="false" aria-label="Toggle navigation">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#barranavegacion"
+        aria-controls="barranavegacion" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
     </div>
@@ -125,4 +144,5 @@
   {% block content %}
   {% endblock %}
 </body>
+
 </html>

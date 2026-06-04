@@ -6,73 +6,68 @@ Lista de descuentos
 {% endblock title %}
 
 {% block content %}
+<div class="container mt-4">
 
-<div class="container">
+    <div class="container">
 
-    <h1>Lista de descuentos</h1>
+        <h1>Lista de descuentos</h1>
 
-    <table class="table table-striped">
+        <table class="table table-striped">
 
-        <thead>
-            <tr class="table-primary">
-                <th scope="col">Tipo</th>
-                <th scope="col">Cantidad</th>
-                <th scope="col">Estado</th>
-                <th scope="col">Acciones</th>
-            </tr>
-        </thead>
+            <thead>
+                <tr class="table-primary">
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Acciones</th>
+                </tr>
+            </thead>
 
-        <tbody>
+            <tbody>
 
-        {% for descuento in descuento_list %}
+                {% for descuento in descuento_list %}
 
-            <tr>
+                <tr>
 
-                <td>{{ descuento.tipo }}</td>
-                <td>{{ descuento.cantidad }}%</td>
-                <td>{{ descuento.estado }}</td>
+                    <td>{{ descuento.tipo }}</td>
+                    <td>{{ descuento.cantidad }}%</td>
+                    <td>{{ descuento.estado }}</td>
 
-                <td>
+                    <td>
 
-                    <a href="{% url 'descuento_update' descuento.id %}">
-                        <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}"
-                             alt="Editar"
-                             width="24"
-                             height="24">
-                    </a>
+                        <a href="{% url 'descuento_update' descuento.id %}">
+                            <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar"
+                                width="24" height="24">
+                        </a>
 
-                    <a href="{% url 'descuento_delete' descuento.id %}">
-                        <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}"
-                             alt="Eliminar"
-                             width="24"
-                             height="24">
-                    </a>
+                        <a href="{% url 'descuento_delete' descuento.id %}">
+                            <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24"
+                                height="24">
+                        </a>
 
-                    
-                    {% if descuento.estado == 'activo' %}
-                    <a href="{% url 'descuento_baja' descuento.id %}"
-                       onclick="return confirm('¿Seguro que querés dar de baja este descuento?');">
 
-                        <img src="{% static 'gestion/third/bootstrap-icons/x-circle.svg' %}"
-                             alt="Dar de baja"
-                             width="24"
-                             height="24">
+                        {% if descuento.estado == 'activo' %}
+                        <a href="{% url 'descuento_baja' descuento.id %}"
+                            onclick="return confirm('¿Seguro que querés dar de baja este descuento?');">
 
-                    </a>
-                    {% endif %}
+                            <img src="{% static 'gestion/third/bootstrap-icons/x-circle.svg' %}" alt="Dar de baja"
+                                width="24" height="24">
 
-                    
+                        </a>
+                        {% endif %}
 
-                </td>
 
-            </tr>
 
-        {% endfor %}
+                    </td>
 
-        </tbody>
+                </tr>
 
-    </table>
+                {% endfor %}
 
-</div>
+            </tbody>
 
-{% endblock %}
+        </table>
+
+    </div>
+
+    {% endblock %}

@@ -4,39 +4,43 @@
 
 {% block content %}
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Gestion de Ligas</h1>
-        <a href="{% url 'liga_create' %}" class="btn btn-primary">Crear Nueva Liga</a>
+
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1>Gestion de Ligas</h1>
+            <a href="{% url 'liga_create' %}" class="btn btn-primary">Crear Nueva Liga</a>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr class="table-primary">
+                    <th scope="col">Nombre de la Liga</th>
+                    <th scope="col">Estado Actual</th>
+                    <th scope="col">Equipos Inscritos</th>
+                    <th scope="col">Acciones Disponibles</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for liga_registrada in liga_list %}
+                <tr>
+                    <td class="fw-bold">{{ liga_registrada.nombre }}</td>
+                    <td>{{ liga_registrada.get_estado_display }}</td>
+                    <td>{{ liga_registrada.equipos.count }}</td>
+                    <td>
+                        <a href="{% url 'liga_detail' liga_registrada.id %}" class="btn btn-sm btn-info text-white">Ver
+                            Detalle / Fixture</a>
+
+                        <a href="{% url 'liga_update' liga_registrada.id %}" class="btn btn-sm btn-warning">Editar</a>
+                        <a href="{% url 'liga_delete' liga_registrada.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No hay ligas registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-
-    <table class="table table-striped">
-        <thead table-primary>
-            <tr>
-                <th>Nombre de la Liga</th>
-                <th>Estado Actual</th>
-                <th>Equipos Inscritos</th>
-                <th>Acciones Disponibles</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for liga_registrada in liga_list %}
-            <tr>
-                <td class="fw-bold">{{ liga_registrada.nombre }}</td>
-                <td>{{ liga_registrada.get_estado_display }}</td>
-                <td>{{ liga_registrada.equipos.count }}</td>
-                <td>
-                    <a href="{% url 'liga_detail' liga_registrada.id %}" class="btn btn-sm btn-info text-white">Ver Detalle / Fixture</a>
-
-                    <a href="{% url 'liga_update' liga_registrada.id %}" class="btn btn-sm btn-warning">Editar</a>
-                    <a href="{% url 'liga_delete' liga_registrada.id %}" class="btn btn-sm btn-danger">Eliminar</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" class="text-center">No hay ligas registradas.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 </div>
 {% endblock %}
