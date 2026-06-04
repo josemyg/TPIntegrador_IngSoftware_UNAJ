@@ -70,9 +70,9 @@ class Torneo(Competicion):
 # 4. EL MODELO DE PARTIDO 
 # ==========================================
 class Partido(models.Model):
-    competicion = models.ForeignKey(Competicion, on_delete=models.CASCADE, related_name='partidos')
-    equipo_local = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='partidos_local')
-    equipo_visitante = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='partidos_visitante')
+    competicion = models.ForeignKey(Competicion, on_delete=models.PROTECT, related_name='partidos')
+    equipo_local = models.ForeignKey(Equipo, on_delete=models.PROTECT, related_name='partidos_local')
+    equipo_visitante = models.ForeignKey(Equipo, on_delete=models.PROTECT, related_name='partidos_visitante')
     
     # Vinculado a la Cancha (Temporal) de arriba
     cancha = models.ForeignKey(Cancha, on_delete=models.PROTECT, null=True, blank=True)

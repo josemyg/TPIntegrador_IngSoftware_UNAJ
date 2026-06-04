@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'canchas',
     'descuentos',
     'pagos',
+    'competiciones',
+    'clases_y_entrenamientos',
 ]
 
 MIDDLEWARE = [

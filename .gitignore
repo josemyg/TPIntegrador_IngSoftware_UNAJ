@@ -18,3 +18,4 @@ canchas/migrations/0001_initial.py
 db.sqlite3
 reservas/migrations/0001_initial.py
 pagos/migrations/0001_initial.py
+db.sqlite3

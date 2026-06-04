@@ -365,7 +365,7 @@ class Entrenamiento(models.Model):
 
 class AsistenciaClase(models.Model):
     clase = models.ForeignKey(
-        'Clase', on_delete=models.CASCADE, related_name='asistencias_clase')
+        'Clase', on_delete=models.PROTECT, related_name='asistencias_clase')
     alumno = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     asistencia = models.BooleanField(default=False)
 
@@ -417,7 +417,7 @@ class AsistenciaClase(models.Model):
 
 class AsistenciaEntrenamiento(models.Model):
     entrenamiento = models.ForeignKey(
-        'Entrenamiento', on_delete=models.CASCADE, related_name='asistencias_entrenamiento')
+        'Entrenamiento', on_delete=models.PROTECT, related_name='asistencias_entrenamiento')
     alumno = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
     asistencia = models.BooleanField(default=False)
 
