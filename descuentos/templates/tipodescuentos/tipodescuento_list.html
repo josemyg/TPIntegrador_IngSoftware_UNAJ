@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Lista de descuentos
+{% endblock title %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Lista de tipos de descuentos</h1>
+
+    <table class="table table-striped">
+
+        <thead>
+
+            <tr class="table-primary">
+
+                <th scope="col">Nombre</th>
+                <th scope="col"></th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        {% for tipodescuento in tipodescuento_list %}
+
+            <tr>
+
+                <td>{{ tipodescuento.nombreDescuento }}</td>
+
+                <td>
+
+                    <a href="{% url 'tipodescuento_update' tipodescuento.id %}">
+                        <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"/>
+                    </a>
+
+                    <a href="{% url 'tipodescuento_delete' tipodescuento.id %}">
+                        <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"/>
+                    </a>
+
+                </td>
+
+            </tr>
+
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}

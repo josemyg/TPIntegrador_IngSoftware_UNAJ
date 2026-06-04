@@ -1,3 +1,8 @@
-.vs/
-__pycache__/
+@"
 db.sqlite3
+venv/
+__pycache__/
+*.pyc
+archivo/
+.vscode/
+"@ | Out-File -Encoding utf8 .gitignore
