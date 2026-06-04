@@ -46,7 +46,7 @@ def generate_random_email(nombre, apellido):
     dominios = ["gmail.com", "hotmail.com", "yahoo.com", "outlook.com"]
     return f"{nombre.lower()}.{apellido.lower()}@{random.choice(dominios)}"
 
-def main():
+def crear_clientes():
     for _ in range(100):
         # Generar datos aleatorios
         nombre = random.choice(nombres)
@@ -80,5 +80,8 @@ def main():
         )
         client.save()
 
-if __name__ == "__main__":
-    main()
+if __name__ == "__crear_clientes__":
+    crear_clientes()
+
+
+crear_clientes()
