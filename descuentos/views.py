@@ -3,9 +3,9 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views import generic
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
-from .forms import DescuentoForm
+from .forms import DescuentoForm, TipoDescuentoForm
 from django.shortcuts import redirect, get_object_or_404
-from .models import Descuento
+from .models import Descuento, TipoDescuento
 
 
 
@@ -39,14 +39,37 @@ class DescuentoPrintView(DetailView):
     context_object_name = 'descuento'
 
 
-
 def DescuentoBaja(request, pk):
-
     descuento = get_object_or_404(Descuento, pk=pk)
-
     descuento.darDescuento_Baja()
-
     return redirect('descuento_list')
+
+class TipoDescuentoListView(ListView):
+    model = TipoDescuento
+    template_name = "tipodescuentos/tipodescuento_list.html"
+    context_object_name = 'tipodescuento_list'
+    queryset = TipoDescuento.objects.all()
+
+
+class TipoDescuentoCreateView(CreateView):
+    model = TipoDescuento
+    form_class = TipoDescuentoForm
+    template_name = "tipodescuentos/tipodescuento_form.html"
+    success_url = reverse_lazy('tipodescuento_list')
+
+
+class TipoDescuentoUpdateView(UpdateView):
+    model = TipoDescuento
+    form_class = TipoDescuentoForm
+    template_name = "tipodescuentos/tipodescuento_form.html"
+    success_url = reverse_lazy('tipodescuento_list')
+
+
+class TipoDescuentoDeleteView(DeleteView):
+    model = TipoDescuento
+    template_name = "tipodescuentos/tipodescuento_delete_form.html"
+    success_url = reverse_lazy('tipodescuento_list')
+
 
 
 def inicio(request):

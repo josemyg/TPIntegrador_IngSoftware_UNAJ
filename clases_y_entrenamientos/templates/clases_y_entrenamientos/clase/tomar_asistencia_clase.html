@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Tomar asistencia - {{ clase.nombre }}</h1>
+    <form method="post">
+        {% csrf_token %}
+        <table class="table">
+            <thead>
+                <tr><th scope="col">Alumno</th><th scope="col">¿Presente?</th></tr>
+            </thead>
+            <tbody>
+                {% for alumno in clase.alumnos.all %}
+                <tr>
+                    <td>{{ alumno }}</td>
+                    <td><input type="checkbox" name="alumno_{{ alumno.id }}"></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="2">No hay alumnos inscriptos en esta clase.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">Guardar asistencia</button>
+        <a href="{% url 'clases_y_entrenamientos:clase_print' clase.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

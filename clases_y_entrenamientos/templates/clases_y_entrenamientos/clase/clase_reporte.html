@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Reporte de Clase
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>Reporte de Clase</h1>
+    <hr />
+    <h2>{{ reporte.clase.nombre }}</h2>
+    <p>
+      <strong>Horario:</strong> {{ reporte.clase.horario }}
+    </p>
+    <p>
+      <strong>Profesor:</strong> {{ reporte.clase.profesor }}
+    </p>
+    <p>
+      <strong>Cupo máximo:</strong> {{ reporte.clase.cupo_maximo }}
+    </p>
+    <p>
+      <strong>Inscriptos:</strong> {{ reporte.clase.inscriptos }}
+    </p>
+    <p>
+      <strong>Estado:</strong> {{ reporte.clase.estado|default:'-' }}
+    </p>
+
+    <h3>Resumen de asistencia</h3>
+    <ul>
+      <li>Total registros de asistencia: {{ reporte.resumen_asistencia.total_registros }}</li>
+      <li>Presentes: {{ reporte.resumen_asistencia.presentes }}</li>
+      <li>Ausentes: {{ reporte.resumen_asistencia.ausentes }}</li>
+      <li>Porcentaje de asistencia: {{ reporte.resumen_asistencia.porcentaje_asistencia }}%</li>
+    </ul>
+
+    <h3>Detalle de asistencia</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr class="table-primary">
+          <th scope="col">Alumno</th>
+          <th scope="col">Asistió</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in reporte.detalle_asistencia %}
+          <tr>
+            <td>{{ a.alumno }}</td>
+            <td>{{ a.asistencia|yesno:'Sí,No' }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2">No hay registros de asistencia.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p>
+      <em>Fecha del reporte: {{ reporte.fecha_reporte }}</em>
+    </p>
+    <a href="{% url 'clases_y_entrenamientos:clase_list' %}" class="btn btn-secondary">Volver</a>
+  </div>
+{% endblock %}
