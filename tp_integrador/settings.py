@@ -129,4 +129,4 @@ STATIC_ROOT = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+#X_FRAME_OPTIONS = 'SAMEORIGIN'

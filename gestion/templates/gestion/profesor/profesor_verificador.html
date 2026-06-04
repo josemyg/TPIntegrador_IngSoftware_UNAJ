@@ -4,6 +4,7 @@
 {% block title %}
 Ficha del Profesor
 {% endblock title %}
+{% block head %}{% endblock %}
 
 {% block content %}
 
@@ -23,9 +24,22 @@ Ficha del Profesor
     <p><b>Certificado:</b></p>
 
     {% if profesor.certificado %}
-       <embed src="{{ profesor.certificado.url }}" type="application/pdf" width="100%" height="500px" />
+
+    <div id="pdf-viewer" style="height: 100vh"></div>
+
+    <script type="module">
+        import EmbedPDF from '{% static 'gestion/third/embed-pdf-viewer/snippet-dist/dist/embedpdf.js' %}';
+
+        EmbedPDF.init({
+            type: 'container',
+            target: document.getElementById('pdf-viewer'),
+            src: '{{ profesor.certificado.url }}',
+            disabledCategories: ['annotation', 'print', 'form', 'redaction', 'document', 'zoom', 'panel', 'insert'],
+            theme: { preference: 'system' }
+        });
+    </script>
     {% else %}
-        <p>No hay certificado cargado.</p>
+    <p>No hay certificado cargado.</p>
     {% endif %}
 
     <hr>
@@ -36,18 +50,18 @@ Ficha del Profesor
         {% csrf_token %}
 
         {% if profesor.estado == 'en_validación' %}
-            <button type="submit" class="btn btn-primary">
-                Confirmar Verificación Profesor
-            </button>
+        <button type="submit" class="btn btn-primary">
+            Confirmar Verificación Profesor
+        </button>
         {% endif %}
 
-        <a class="btn btn-danger m-2"
-           href="{% url 'profesor_list' %}">
+        <a class="btn btn-danger m-2" href="{% url 'profesor_list' %}">
             Cancelar
         </a>
 
     </form>
 
 </div>
+
 
 {% endblock %}
