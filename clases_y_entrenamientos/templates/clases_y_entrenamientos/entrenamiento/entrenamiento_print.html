@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ficha de Entrenamiento{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Ficha de Entrenamiento</h1>
+    <hr>
+    <p><b>Nombre:</b> {{ datos_imprimir.nombre }}</p>
+    <p><b>Horario:</b> {{ datos_imprimir.horario }}</p>
+    <p><b>Entrenador:</b> {{ datos_imprimir.entrenador|default:"Sin asignar" }}</p>
+    <p><b>Cupo máximo:</b> {{ datos_imprimir.cupo_maximo }}</p>
+    <p><b>Inscriptos:</b> {{ datos_imprimir.inscriptos }}</p>
+    <p><b>Estado:</b> {{ datos_imprimir.estado|default:"-" }}</p>
+
+    <h3>Alumnos inscriptos</h3>
+    <ul>
+        {% for alumno in datos_imprimir.alumnos %}
+            <li>{{ alumno.nombre }}</li>
+        {% empty %}
+            <li>No hay alumnos</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Resumen de asistencia</h3>
+    <p>Presentes: {{ reporte_asistencia.presentes }} | Ausentes: {{ reporte_asistencia.ausentes }}</p>
+
+    
+    <button onclick="window.print()" class="btn btn-primary">Imprimir</button>
+    <a href="{% url 'clases_y_entrenamientos:entrenamiento_list' %}" class="btn btn-secondary">Volver</a>
+</div>
+{% endblock %}
