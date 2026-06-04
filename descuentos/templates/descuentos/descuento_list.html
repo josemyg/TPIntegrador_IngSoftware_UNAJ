@@ -14,16 +14,12 @@ Lista de descuentos
     <table class="table table-striped">
 
         <thead>
-
             <tr class="table-primary">
-
                 <th scope="col">Tipo</th>
                 <th scope="col">Cantidad</th>
                 <th scope="col">Estado</th>
-                <th scope="col"></th>
-
+                <th scope="col">Acciones</th>
             </tr>
-
         </thead>
 
         <tbody>
@@ -33,24 +29,39 @@ Lista de descuentos
             <tr>
 
                 <td>{{ descuento.tipo }}</td>
-
                 <td>{{ descuento.cantidad }}%</td>
-
                 <td>{{ descuento.estado }}</td>
 
                 <td>
 
                     <a href="{% url 'descuento_update' descuento.id %}">
-                        <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"/>
+                        <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}"
+                             alt="Editar"
+                             width="24"
+                             height="24">
                     </a>
 
                     <a href="{% url 'descuento_delete' descuento.id %}">
-                        <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"/>
+                        <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}"
+                             alt="Eliminar"
+                             width="24"
+                             height="24">
                     </a>
 
-                    <a href="{% url 'descuento_verificar' descuento.id %}">
-                        <img src="{% static 'gestion/third/bootstrap-icons/x-circle.svg' %}" alt="Dar de baja" width="24" height="24"/>
+                    
+                    {% if descuento.estado == 'activo' %}
+                    <a href="{% url 'descuento_baja' descuento.id %}"
+                       onclick="return confirm('¿Seguro que querés dar de baja este descuento?');">
+
+                        <img src="{% static 'gestion/third/bootstrap-icons/x-circle.svg' %}"
+                             alt="Dar de baja"
+                             width="24"
+                             height="24">
+
                     </a>
+                    {% endif %}
+
+                    
 
                 </td>
 

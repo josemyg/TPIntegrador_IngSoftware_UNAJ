@@ -1,9 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Lista de clientes{% endblock title %}
+{% block title %}
+Ficha del Profesor
+{% endblock title %}
 
 {% block content %}
+
 <div class="container">
 
     <h1>Ficha del Profesor</h1>
@@ -17,15 +20,34 @@
     <p><b>DNI:</b> {{ profesor.dni }}</p>
     <p><b>Estado:</b> {{ profesor.estado }}</p>
 
+    <p><b>Certificado:</b></p>
+
+    {% if profesor.certificado %}
+        <a href="{{ profesor.certificado.url }}"
+           target="_blank"
+           class="btn btn-info">
+            Ver certificado
+        </a>
+    {% else %}
+        <p>No hay certificado cargado.</p>
+    {% endif %}
+
+    <hr>
+
     <form action="{% url 'profesor_verificar' profesor.id %}" method="post">
 
         {% csrf_token %}
 
-{% if profesor.estado == 'en_validación' %}
-        <button type="submit" class="btn btn-primary">
-            Verificar Profesor
-        </button>
-{% endif %}
+        {% if profesor.estado == 'en_validación' %}
+            <button type="submit" class="btn btn-primary">
+                Verificar Profesor
+            </button>
+        {% endif %}
+
+        <a class="btn btn-danger m-2"
+           href="{% url 'profesor_list' %}">
+            Cancelar
+        </a>
 
     </form>
 
