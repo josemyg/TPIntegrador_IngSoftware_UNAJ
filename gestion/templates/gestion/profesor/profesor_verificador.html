@@ -7,8 +7,9 @@ Ficha del Profesor
 {% block head %}{% endblock %}
 
 {% block content %}
+<div class="container mt-4">
 
-<div class="container">
+        <div class="container">
 
     <h1>Ficha del Profesor</h1>
 
@@ -19,7 +20,7 @@ Ficha del Profesor
     <p><b>Email:</b> {{ profesor.email }}</p>
     <p><b>Teléfono:</b> {{ profesor.telefono }}</p>
     <p><b>DNI:</b> {{ profesor.dni }}</p>
-    <p><b>Estado:</b> {{ profesor.estado }}</p>
+    <p><b>Estado:</b> {{ profesor.get_estado_display }}</p>
 
     <p><b>Certificado:</b></p>
 
@@ -63,5 +64,5 @@ Ficha del Profesor
 
 </div>
 
-
+</div>
 {% endblock %}
