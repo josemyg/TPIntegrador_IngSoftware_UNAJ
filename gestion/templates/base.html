@@ -132,6 +132,16 @@
               <li><a class="dropdown-item" href="{% url 'tipo_cancha_list' %}">Listar Tipos de Canchas</a></li>
             </ul>
           </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Reservas
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'crear_reserva' %}">Registrar Reserva</a></li>
+              <li><a class="dropdown-item" href="{% url 'consultar_disponibilidad' %}">Consultar Disponibilidad</a></li>
+              <li><a class="dropdown-item" href="{% url 'lista_reservas' %}">Listar Reservas</a></li>
+            </ul>
+          </li>
         </ul>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#barranavegacion"
