@@ -50,7 +50,7 @@ Ficha del Profesor
 
         {% csrf_token %}
 
-        {% if profesor.estado == 'en_validación' && profesor.certificado %}
+        {% if profesor.estado == 'en_validación' and profesor.certificado %}
         <button type="submit" class="btn btn-primary">
             Confirmar Verificación Profesor
         </button>

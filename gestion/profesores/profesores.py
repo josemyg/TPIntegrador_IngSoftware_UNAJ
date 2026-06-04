@@ -85,7 +85,7 @@ def crear_profesores_argentinos():
         telefono = f"+54 11 {random.randint(1000, 9999)}-{random.randint(1000, 9999)}"
         
         # Generar email aleatorio con dominio .ar
-        email = f"{nombre.lower()}.{apellido.lower()}{random.choice(sufijos)}@example.com.ar"
+        email = f"{nombre.lower()}.{apellido.lower()}{random.choice(sufijos)}@unaj.edu.ar"
         
         # Generar DNI aleatorio (formato argentino: 8 dígitos)
         dni = f"{random.randint(10000000, 99999999)}"
