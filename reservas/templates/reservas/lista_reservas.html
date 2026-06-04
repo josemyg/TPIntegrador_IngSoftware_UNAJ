@@ -9,76 +9,29 @@ Lista de Reservas
 
 {% block content %} 
 
+
+
  <!-- contenido visual -->
 
+  
+
 <div class="container py-5"> <!-- clase de bootstrap con márgenes automáticos, ancho responsive y contenido centrado. padding top y bottom = 5-->
+    
+    <h2>Gestión de Reservas</h2>
 
-    <!-- TITULO -->
-    <div class="text-center mb-5">
+    <div class="mb-3">
+    <a href="{% url 'crear_reserva' %}"
+       class="btn btn-success">
+        <i class="bi bi-plus-circle"></i>
+        Nueva Reserva
+    </a>
 
-        <h1 class="main-title"> <!-- aplica la clase css:main-title {font-weight: bold;color: #0d6efd;} -->
-            Reservas de canchas
-        </h1>
+    <a href="{% url 'consultar_disponibilidad' %}"
+       class="btn btn-primary">
+        Ver disponibilidad de canchas
+    </a>
+</div>
 
-    </div>
-
-    <!-- FORMULARIO -->
-    <div class="card shadow-lg p-4 mb-5"> <!-- crea tarjeta visual con sombra, padding = 4, margin bottom = 5 -->
-
-        <h3 class="mb-4"> <!--Agrega margen inferior.-->
-            Agregar Reserva
-        </h3>
-
-        <form method="POST" class="row g-4"> <!--POST: Mandá los datos ocultos al servidor.Bootstrap Grid System.gap=4-->
-
-            {% csrf_token %} <!--token de seguridad-->
-
-            {% if form.non_field_errors %} <!-- Si hay errores que no están asociados a un campo específico, se muestra este bloque. Esto es útil para mostrar errores generales del formulario, como problemas de validación que no pertenecen a un campo en particular. -->
-
-                 <div class="alert alert-danger">
-
-                    {{ form.non_field_errors }} <!-- Muestra los errores generales del formulario dentro de una alerta de Bootstrap con estilo de peligro (rojo). -->
-
-                </div>
-
-            {% endif %}
-
-            {% for field in form %} <!--Recorre todos los campos del formulario-->
-
-                <div class="col-md-6"> <!--Bootstrap divide la pantalla en 12 columnas.-->
-
-                    <label class="form-label fw-semibold">  <!--label = nombre de campo. --> 
-                        {{ field.label }} <!--muestra el nombre del campo definido en el formulario.-->
-                    </label> 
-
-                    {{ field }}
-
-                    {% if field.errors %}
-
-                        <div class="text-danger mt-1">
-
-                            {{ field.errors }}
-
-                        </div>
-
-                    {% endif %}
-
-                </div>
-
-            {% endfor %}
-
-            <div class="col-12"> <!--El botón ocupa toda la fila.-->
-
-                <button type="submit"
-                        class="btn btn-primary btn-custom w-100"> <!--btn-primary: color azul. btn-custom: clase personalizada para estilos adicionales. w-100: ancho completo del contenedor padre.-->
-                    Guardar Reserva
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
 
     <!-- FILTROS -->
 <div class="card shadow-lg p-4 mb-4"> <!-- crea tarjeta visual con sombra, padding = 4, margin bottom = 4 -->

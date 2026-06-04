@@ -3,7 +3,7 @@ from .models import Reserva
 from canchas.models import TipoCancha
 from .forms import ReservaForm
 from django.db.models import Q
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta,time
 from django.contrib import messages
 
 # LISTAR Y CREAR RESERVAS
@@ -15,12 +15,12 @@ def gestion_reservas(request):
 
         if form.is_valid():
 
-            reserva = form.save()
+            reserva = form.save() 
 
             return redirect(
                 'pago_create_reserva',
-                reserva_id=reserva.id
-            ) # Si el formulario es válido, se guarda la nueva reserva en la base de datos y luego se redirige al usuario a la vista de creación de pago para esa reserva específica, pasando el ID de la reserva recién creada como argumento.
+                reserva_id=reserva.id 
+            )
     else:
         form = ReservaForm() # Si el método de la solicitud no es POST, se crea una instancia vacía del formulario ReservaForm para mostrarlo al usuario y permitirle crear una nueva reserva.
 
@@ -69,6 +69,34 @@ def gestion_reservas(request):
         }
     ) # Renderiza la plantilla 'reservas/lista_reservas.html' con el contexto que incluye la lista de reservas filtradas, el formulario para crear nuevas reservas y la lista de canchas disponibles para los filtros. Esto permite mostrar la lista de reservas al usuario y proporcionar opciones para crear nuevas reservas y filtrar las existentes.
 
+#REGISTRAR RESERVA
+
+def crear_reserva(request):
+
+    if request.method == 'POST':
+
+        form = ReservaForm(request.POST)
+
+        if form.is_valid():
+
+            reserva = form.save()
+
+            return redirect(
+                'pago_create_reserva',
+                reserva_id=reserva.id
+            )
+
+    else:
+
+        form = ReservaForm()
+
+    return render(
+        request,
+        'reservas/crear_reserva.html',
+        {
+            'form': form
+        }
+    )
 
 # EDITAR RESERVA
 def editar_reserva(request, id):
@@ -152,3 +180,63 @@ def cancelar_reserva(request, id):
     reserva.save()
 
     return redirect('lista_reservas')
+
+# CONSULTAR DISPONIBILIDAD
+def consultar_disponibilidad(request):
+
+    canchas = TipoCancha.objects.filter(estado='activo') # Obtiene todas las canchas que tienen un estado de 'activo' 
+
+    reservas = None # Inicializa reservas como None para el caso que no haya fecha y cancha en la solicitud GET.
+    horarios_libres = []
+    fecha = request.GET.get('fecha') 
+    cancha_id = request.GET.get('cancha') # Obtiene la fecha y el ID de la cancha de los parámetros de la solicitud GET.
+
+    if fecha and cancha_id:
+
+        reservas = Reserva.objects.filter(
+            fecha=fecha,
+            tipo_cancha_id=cancha_id
+        ).exclude(
+            estado='CANCELADA' # se filtran las reservas para esa fecha y cancha específica, excluyendo aquellas que estén canceladas.
+        ).order_by('hora_inicio') # se ordenan las reservas por la hora de inicio para mostrar la disponibilidad de manera cronológica.
+        
+        hora_actual = datetime.combine(
+            datetime.today(),
+            time(8, 0)
+        )
+
+        hora_cierre = datetime.combine(
+            datetime.today(),
+            time(23, 0)
+        )
+
+        while hora_actual < hora_cierre:
+
+            inicio = hora_actual.time()
+
+            fin = (hora_actual + timedelta(hours=1)).time()
+
+            ocupado = reservas.filter(
+                hora_inicio__lt=fin,
+                hora_fin__gt=inicio
+            ).exists()
+
+            if not ocupado:
+
+                horarios_libres.append(
+                    f"{inicio.strftime('%H:%M')} - {fin.strftime('%H:%M')}"
+                )
+
+            hora_actual += timedelta(hours=1)
+
+    return render(
+        request,
+        'reservas/disponibilidad.html',
+        {
+            'canchas': canchas,
+            'reservas': reservas,
+            'fecha': fecha,
+            'cancha_id': cancha_id,
+            'horarios_libres': horarios_libres,
+        }
+    )

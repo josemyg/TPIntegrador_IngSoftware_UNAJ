@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6">
+            
+            <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold text-dark mb-1">Enviar Comprobante</h3>
+                    <p class="text-muted small mb-0">Enviar el recibo del Pago #{{ recibo.pago.id }} por correo electrónico.</p>
+                </div>
+
+                {% if error %}
+                    <div class="alert alert-danger small py-2 rounded-3 mb-3">
+                        <i class="bi bi-exclamation-triangle me-1"></i> {{ error }}
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="email_cliente" class="form-label fw-semibold text-secondary small mb-1">Correo Electrónico del Cliente</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted"><i class="bi bi-person-at"></i></span>
+                            <input type="email" name="email_cliente" id="email_cliente" class="form-control bg-light" placeholder="ejemplo@cliente.com" required>
+                        </div>
+                        <div class="form-text small text-muted">El archivo PDF se generará y adjuntará de forma automática.</div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a href="{% url 'pago_list' %}" class="btn btn-light w-100 border py-2 fw-semibold small">
+                                Volver al Historial
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold small">
+                                <i class="bi bi-send me-1"></i> Enviar Correo
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

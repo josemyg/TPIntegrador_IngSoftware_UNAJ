@@ -1,7 +1,10 @@
+from datetime import date, datetime
 from django.db import models
 from django.utils import timezone
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from canchas.models import TipoCancha
-#from gestion.models import Usuario
+from pagos.models import Pago, TipoPago
 
 class Reserva(models.Model):
 
@@ -13,13 +16,13 @@ class Reserva(models.Model):
 
     cliente = models.ForeignKey(
         'gestion.Usuario',
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name="Cliente"
-    ) # Relación de clave foránea con el modelo Usuario, que representa al cliente que realiza la reserva. on_delete=models.CASCADE significa que si el cliente es eliminado, también se eliminarán sus reservas asociadas. verbose_name se utiliza para mostrar un nombre legible en el panel de administración de Django.
+    ) # Campo de clave foránea que se relaciona con el modelo Usuario de la aplicación de gestión, con una restricción de eliminación en cascada para proteger los datos relacionados y un nombre legible en el panel de administración.
 
     tipo_cancha = models.ForeignKey(
         TipoCancha,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name="Tipo de Cancha"
     )
 
@@ -44,12 +47,14 @@ class Reserva(models.Model):
 
     def calcular_precio(self):
 
-        inicio = self.hora_inicio.hour
-        fin = self.hora_fin.hour
-
-        horas = fin - inicio
-
-        self.precio_final = horas * self.tipo_cancha.precio_hora # Calcula el precio final multiplicando la cantidad de horas reservadas por el precio por hora del tipo de cancha seleccionado.
+        fecha = date.today()
+        # Combina la fecha actual con la hora de inicio de la reserva para obtener un objeto datetime que representa el momento en que comienza la reserva.
+        dt_inicio = datetime.combine(fecha, self.hora_inicio)
+        # Combina la fecha actual con la hora de fin de la reserva para obtener un objeto datetime que representa el momento en que termina la reserva.
+        dt_fin = datetime.combine(fecha, self.hora_fin)
+        diferencia = (dt_fin - dt_inicio).total_seconds() / 3600  # Horas en decimal
+        # Calcula el precio final multiplicando la cantidad de horas reservadas por el precio por hora del tipo de cancha seleccionado.
+        self.precio_final = diferencia * float(self.tipo_cancha.precio_hora)
 
     def save(self, *args, **kwargs):
 
@@ -59,3 +64,40 @@ class Reserva(models.Model):
 
     def __str__(self):
         return f"{self.cliente} - {self.fecha}" # Sobrescribe el método __str__ para mostrar el nombre del cliente y la fecha de la reserva en la representación de cadena de la reserva. Esto es útil para identificar fácilmente las reservas en el panel de administración y en otros lugares donde se muestre la reserva como texto.
+
+
+
+@receiver(post_save, sender=Reserva)
+def crear_pago_automatico(sender, instance, created, **kwargs):
+    if created:
+        tipo_pago = TipoPago.objects.filter(nombre='Efectivo').first()
+        if not tipo_pago:
+            tipo_pago = TipoPago.objects.create(nombre='Efectivo', estado='activo')
+
+        Pago.objects.create(
+            reserva=instance,
+            monto=instance.precio_final,
+            estado='PENDIENTE',
+            tipo_pago=tipo_pago,
+            origen_pago='alquiler_cancha',
+        )
+
+@receiver(post_save, sender=Pago)
+def actualizar_estado_reserva(sender, instance, **kwargs):
+
+    reserva = instance.reserva
+
+    nuevo_estado = reserva.estado
+
+    if instance.estado == 'PAGADO':
+        nuevo_estado = 'CONFIRMADA'
+
+    elif instance.estado == 'RECHAZADO':
+        nuevo_estado = 'CANCELADA'
+
+    elif instance.estado == 'PENDIENTE':
+        nuevo_estado = 'PENDIENTE'
+
+    if reserva.estado != nuevo_estado:
+        reserva.estado = nuevo_estado
+        reserva.save(update_fields=['estado'])
