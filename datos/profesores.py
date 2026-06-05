@@ -116,7 +116,7 @@ def crear_profesores_argentinos():
             # Campos específicos del Profesor
             titulo_habilitante=random.choice(titulos),
             institucion_habilitante=random.choice(instituciones),
-            estado=random.choice(['activo', 'inactivo', 'baja', 'en_validación'])
+            estado=random.choice(['activo', 'inactivo', 'baja', 'en_validacion'])
         )
         
         profesor.save()

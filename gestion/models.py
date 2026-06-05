@@ -49,7 +49,7 @@ class Profesor(Usuario):
     'activo': 'Activo',
     'inactivo': 'Inactivo',
     'baja': 'Baja',
-    'en_validación':'En espera de Validación',
+    'en_validacion':'En espera de Validación',
     }
 
     titulo_habilitante = models.CharField(("Título Habilitante"), max_length=100)
@@ -60,6 +60,7 @@ class Profesor(Usuario):
     class Meta:
         verbose_name = ("Profesor/a")
         verbose_name_plural = ("Profesores")
+        ordering = ["-id"]
 
     def verificar_estado_profesor(self):
         if self.certificado:

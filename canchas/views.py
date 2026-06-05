@@ -12,6 +12,7 @@ from django.views.decorators.http import require_POST
 class TipoCanchaListView(ListView):
     model = TipoCancha
     template_name = 'canchas/tipo_cancha_list.html'
+    paginate_by = 20
     context_object_name = 'tipos_canchas'
 
 # RF-12: Registrar tipo de cancha
@@ -59,6 +60,7 @@ class TipoCanchaListView(ListView):
     model = TipoCancha
     template_name = 'canchas/tipo_cancha_list.html'
     context_object_name = 'tipos_canchas'
+    paginate_by = 20
 
     def get_queryset(self):
         query = self.request.GET.get('b', '').strip()

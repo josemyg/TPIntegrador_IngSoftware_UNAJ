@@ -13,7 +13,7 @@ class ProfesorForm(forms.ModelForm):
         exclude = ['estado','user_django']
         widgets = {
             'id': forms.TextInput(attrs={'class':'form-control'}),
-            'nombre': forms.TextInput(attrs={'class':'form-control'}),
+            'nombre': forms.TextInput(attrs={'class':'form-control form-control-lg bg-light border-0 rounded-2 fs-4 py-2.5'}),
             'apellido': forms.TextInput(attrs={'class':'form-control'}),
             'direccion': forms.TextInput(attrs={'class':'form-control'}),
             'localidad': forms.TextInput(attrs={'class':'form-control'}),
