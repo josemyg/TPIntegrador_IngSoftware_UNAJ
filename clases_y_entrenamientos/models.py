@@ -103,7 +103,7 @@ class Clase(models.Model):
         }
 
     def generar_reporte_clase(self):
-        asistencias = self.asistencias_clase.all().select_related('alumno')
+        asistencias = self.asistencias_clase.all().select_related('alumno').order_by('alumno__apellido')
         total_inscriptos = self.alumnos.count()
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()
@@ -138,7 +138,7 @@ class Clase(models.Model):
         }
 
     def generar_reporte_asistencia(self):
-        asistencias = self.asistencias_clase.all().select_related('alumno')
+        asistencias = self.asistencias_clase.all().select_related('alumno').order_by('alumno__apellido')
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()
         return {
@@ -279,7 +279,7 @@ class Entrenamiento(models.Model):
         }
 
     def generar_reporte_entrenamiento(self):
-        asistencias = self.asistencias_entrenamiento.all().select_related('alumno')
+        asistencias = self.asistencias_entrenamiento.all().select_related('alumno').order_by('alumno__apellido')
         total_inscriptos = self.alumnos.count()
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()
@@ -318,7 +318,7 @@ class Entrenamiento(models.Model):
 
     def generar_reporte_asistencia(self):
         """Reporte de asistencia para este entrenamiento."""
-        asistencias = self.asistencias_entrenamiento.all().select_related('alumno')
+        asistencias = self.asistencias_entrenamiento.all().select_related('alumno').order_by('alumno__apellido')
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()
         return {
