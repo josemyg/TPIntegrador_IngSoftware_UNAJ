@@ -29,7 +29,7 @@ class ClaseForm(forms.ModelForm):
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'cupo_maximo': forms.NumberInput(attrs={'class': 'form-control'}),
             'profesor': forms.Select(attrs={'class': 'form-control'}),
-            'alumnos': forms.CheckboxSelectMultiple(attrs={'class': 'form-control form-check-input'}),
+            'alumnos': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
             'estado': forms.Select(attrs={'class': 'form-control'}),
         }
 
@@ -83,7 +83,7 @@ class EntrenamientoForm(forms.ModelForm):
             'nombre': forms.TextInput(attrs={'class': 'form-control'}),
             'cupo_maximo': forms.NumberInput(attrs={'class': 'form-control'}),
             'entrenador': forms.Select(attrs={'class': 'form-control'}),
-            'alumnos': forms.CheckboxSelectMultiple(attrs={'class': 'form-control form-check-input'}),
+            'alumnos': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
             'estado': forms.Select(attrs={'class': 'form-control'}),
         }
 

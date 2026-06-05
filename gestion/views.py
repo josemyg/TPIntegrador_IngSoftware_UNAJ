@@ -19,9 +19,8 @@ class ProfesorListView(ListView):
 
 class ProfesoresaValidarListView(ListView):
     model = Profesor
-    template_name = 'gestion/profesor/profesor_list.html'
+    template_name = 'gestion/profesor/profesor_list_validar.html'
     context_object_name = 'profesor_list'
-    #queryset = Profesor.objects.all()
     queryset = Profesor.objects.filter(estado='en_validacion')
     paginate_by = 20
 
@@ -58,7 +57,7 @@ class ProfesorVerificarView(DetailView):
 def ConfirmarVerificacionProfesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     profesor.verificar_estado_profesor()
-    return redirect('profesor_list')
+    return redirect('profesoresavalidar_list')
 
 class ClienteListView(ListView):
     model = Cliente

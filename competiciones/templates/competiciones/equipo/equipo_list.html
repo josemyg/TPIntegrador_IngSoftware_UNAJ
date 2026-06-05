@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Equipos{% endblock %}
 
@@ -27,8 +28,8 @@
                     <td>{{ equipo.profesor|default:"Sin asignar" }}</td>
                     <td>{{ equipo.clientes.count }} / 15</td>
                     <td>
-                        <a href="{% url 'equipo_update' equipo.id %}" class="btn btn-sm btn-warning">Editar</a>
-                        <a href="{% url 'equipo_delete' equipo.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        <a name="" id="" class="" href="{% url 'equipo_update' equipo.id %}"><img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"/></a>
+                        <a name="" id="" class="" href="{% url 'equipo_delete' equipo.id %}"><img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"/></a>
                     </td>
                 </tr>
                 {% empty %}

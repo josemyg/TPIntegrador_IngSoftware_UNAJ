@@ -13,7 +13,7 @@ class EquipoForm(forms.ModelForm):
         }
         widgets = {
             'nombre': forms.TextInput(attrs={'class':'form-control'}),
-            'profesor': forms.Select(attrs={'class': 'form-select'}),
+            'profesor': forms.Select(attrs={'class': 'form-control'}),
             'clientes': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}), 
         }
 
@@ -29,7 +29,7 @@ class LigaForm(forms.ModelForm):
         fields = ['nombre', 'estado', 'equipos', 'puntos_victoria', 'puntos_empate']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Superliga 2026'}),
-            'estado': forms.Select(attrs={'class': 'form-select'}),
+            'estado': forms.Select(attrs={'class': 'form-control'}),
             'equipos': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
             'puntos_victoria': forms.NumberInput(attrs={'class': 'form-control'}),
             'puntos_empate': forms.NumberInput(attrs={'class': 'form-control'}),

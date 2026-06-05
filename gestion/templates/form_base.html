@@ -20,7 +20,12 @@
                             <div class="col-sm-6 col-form-label text-dark mb-1">
                                 {{ field.label_tag }}
                             </div>
-                            <div class="col-sm-12">{{ field }}</div>
+                            <div class="col-sm-12">
+                                {% if field.widget.attrs.type == 'checkbox' %}
+                                    <span class="form-check-input">{{ field }}</span>
+                                {% endif %}
+                                {{ field }}
+                            </div>
                             {% if field.errors %}
                                 <p></p>
                                 <div>
@@ -31,16 +36,23 @@
                             <p></p>
                         </div>
                     {% endfor %}
-                    </div>
 
-                    <div class="row justify-content-center">
-                        <div class="col-8">
-                            <button type="submit" name="" id="" class="btn btn-primary">{% block boton_save %}Guardar{% endblock %}</button>
-                            {% block button_link %}{% endblock %}
-                        </div>
+                    <div class="col-8">
+                        <button type="submit" name="" id="" class="btn btn-primary">{% block boton_save %}Guardar{% endblock %}</button>
+                        {% block button_link %}{% endblock %}
                     </div>
                 </div>
+            </div>
         </form>
     </div>
+    <script>
+        function removeFormCheckInputClass() {
+            const divs = document.querySelectorAll('div.form-check-input');
+            divs.forEach(div => {
+                div.className = div.className.replace('form-check-input', '');
+            });
+        }
+        removeFormCheckInputClass()
+    </script>
 
 {% endblock %}
