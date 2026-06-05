@@ -13,6 +13,9 @@ from .models import Entrenamiento
 from .forms import EntrenamientoForm
 from .models import AsistenciaEntrenamiento
 from django.contrib import messages
+from django.http import HttpResponse
+from xhtml2pdf import pisa
+from django.template.loader import get_template
 
 
 class ClaseListView(ListView):
@@ -186,3 +189,22 @@ def tomar_asistencia_entrenamiento(request, pk):
         entrenamiento.save()
         return redirect('clases_y_entrenamientos:entrenamiento_print', pk=entrenamiento.pk)
     return render(request, 'clases_y_entrenamientos/entrenamiento/tomar_asistencia_entrenamiento.html', {'entrenamiento': entrenamiento})
+
+
+def generar_pdf(template_src, context):
+    template = get_template(template_src)
+    html = template.render(context)
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="reporte.pdf"'
+    pisa.CreatePDF(html, dest=response)
+    return response
+
+def reporte_clase_pdf(request, pk):
+    clase = get_object_or_404(Clase, pk=pk)
+    reporte = clase.generar_reporte_clase()
+    return generar_pdf('clases_y_entrenamientos/clase/clase_reporte_pdf.html', {'reporte': reporte})
+
+def reporte_entrenamiento_pdf(request, pk):
+    entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
+    reporte = entrenamiento.generar_reporte_entrenamiento()
+    return generar_pdf('clases_y_entrenamientos/entrenamiento/entrenamiento_reporte_pdf.html', {'reporte': reporte})

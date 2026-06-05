@@ -13,6 +13,7 @@ urlpatterns = [
     path('clase/<int:pk>/imprimir/', views.ClasePrintView.as_view(), name='clase_print'),
     path('clase/<int:pk>/tomar-asistencia/', views.tomar_asistencia_clase, name='tomar_asistencia_clase'),
     path('clase/<int:pk>/reporte/', views.ClaseReporteView.as_view(), name='clase_reporte'),
+    path('clase/<int:pk>/reporte/pdf/', views.reporte_clase_pdf, name='clase_reporte_pdf'),
 
 
      # RUTAS DE ENTRENAMIENTOS
@@ -23,4 +24,5 @@ urlpatterns = [
     path('entrenamiento/<int:pk>/imprimir/', views.EntrenamientoPrintView.as_view(), name='entrenamiento_print'),
     path('entrenamiento/<int:pk>/tomar-asistencia/', views.tomar_asistencia_entrenamiento, name='tomar_asistencia_entrenamiento'),
     path('entrenamiento/<int:pk>/reporte/', views.EntrenamientoReporteView.as_view(), name='entrenamiento_reporte'),
+    path('entrenamiento/<int:pk>/reporte/pdf/', views.reporte_entrenamiento_pdf, name='entrenamiento_reporte_pdf'),
 ]

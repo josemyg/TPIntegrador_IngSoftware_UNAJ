@@ -59,5 +59,6 @@
       <em>Fecha del reporte: {{ reporte.fecha_reporte }}</em>
     </p>
     <a href="{% url 'clases_y_entrenamientos:clase_list' %}" class="btn btn-secondary">Volver</a>
+    <a href="{% url 'clases_y_entrenamientos:clase_reporte_pdf' reporte.clase.id %}" class="btn btn-danger">Descargar PDF</a>
   </div>
 {% endblock %}

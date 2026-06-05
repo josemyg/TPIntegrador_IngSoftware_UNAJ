@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Reporte de Entrenamiento</title>
+  </head>
+  <body>
+    <h1>Reporte de Entrenamiento</h1>
+    <hr />
+    <h2>{{ reporte.entrenamiento.nombre }}</h2>
+    <p>
+      <strong>Horario:</strong> {{ reporte.entrenamiento.horario }}
+    </p>
+    <p>
+      <strong>Entrenador:</strong> {{ reporte.entrenamiento.entrenador }}
+    </p>
+    <p>
+      <strong>Cupo máximo:</strong> {{ reporte.entrenamiento.cupo_maximo }}
+    </p>
+    <p>
+      <strong>Inscriptos:</strong> {{ reporte.entrenamiento.inscriptos }}
+    </p>
+    <p>
+      <strong>Estado:</strong> {{ reporte.entrenamiento.estado }}
+    </p>
+
+    <h3>Resumen de asistencia</h3>
+    <ul>
+      <li>Total registros: {{ reporte.resumen_asistencia.total_registros }}</li>
+      <li>Presentes: {{ reporte.resumen_asistencia.presentes }}</li>
+      <li>Ausentes: {{ reporte.resumen_asistencia.ausentes }}</li>
+      <li>Porcentaje: {{ reporte.resumen_asistencia.porcentaje_asistencia }}%</li>
+    </ul>
+
+    <h3>Detalle de asistencia</h3>
+    <table border="1" width="100%">
+      <thead>
+        <tr>
+          <th>Alumno</th>
+          <th>Asistió</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in reporte.detalle_asistencia %}
+          <tr>
+            <td>{{ a.alumno }}</td>
+            <td>
+              {% if a.asistencia %}
+                Sí
+              {% else %}
+                No
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p>
+      <em>Fecha del reporte: {{ reporte.fecha_reporte }}</em>
+    </p>
+  </body>
+</html>
