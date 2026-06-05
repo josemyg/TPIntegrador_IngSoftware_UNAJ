@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
@@ -74,7 +75,7 @@ class Pago(models.Model):
 
 
 class Recibo(models.Model):
-    fecha = models.DateTimeField(auto_now=False, auto_now_add=False)
+    fecha = models.DateTimeField(default=timezone.now)
     pago = models.OneToOneField(Pago, on_delete=models.PROTECT, related_name='recibo')
 
     def __str__(self):

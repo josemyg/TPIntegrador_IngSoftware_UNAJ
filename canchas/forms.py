@@ -25,6 +25,7 @@ class TipoCanchaForm(forms.ModelForm):
             'estado': forms.Select(attrs={
                 'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
             }),
+
         }
 
     # VOLUNTARIO: Validación personalizada (Por ejemplo, para que no pongan capacidades locas o negativas)

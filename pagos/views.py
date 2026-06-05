@@ -1,3 +1,4 @@
+
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView,  TemplateView
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -288,18 +289,22 @@ class PagoReservaCreateView(CreateView):
 
     def form_valid(self, form):
 
-        pago = form.save(commit=False)
-
-        pago.reserva = self.reserva
-        pago.monto = self.reserva.precio_final
-        pago.origen_pago = 'alquiler_cancha'
-        pago.estado = 'PAGADO'
-
-        pago.save()
-
-        Recibo.objects.create(
-            pago=pago
-        )
+        pago, creado = Pago.objects.get_or_create(
+            reserva=self.reserva,
+            defaults={
+                'monto': self.reserva.precio_final,
+                'origen_pago': 'alquiler_cancha',
+                'estado': 'PAGADO',
+                 'tipo_pago': form.cleaned_data.get('tipo_pago'),
+                 'descuento': form.cleaned_data.get('descuento'),
+            })
+        
+        if not creado:
+            return redirect('lista_reservas')
+        
+        Recibo.objects.get_or_create(
+            pago=pago)
+         
 
         self.reserva.estado = 'CONFIRMADA'
         self.reserva.save()
