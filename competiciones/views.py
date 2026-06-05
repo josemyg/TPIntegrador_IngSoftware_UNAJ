@@ -31,6 +31,7 @@ class LigaListView(ListView):
     model = Liga
     template_name = 'competiciones/liga/liga_list.html'
     context_object_name = 'liga_list'
+    paginate_by = 20
 
 class LigaCreateView(CreateView):
     model = Liga
@@ -55,6 +56,8 @@ class TorneoListView(ListView):
     model = Torneo
     template_name = 'competiciones/torneo/torneo_list.html'
     context_object_name = 'torneo_list'
+    paginate_by = 20
+    order_by = ['-id']
 
 class TorneoCreateView(CreateView):
     model = Torneo
@@ -87,18 +90,18 @@ class LigaDetailView(DetailView):
         contexto['partidos'] = self.object.partidos.all().order_by('id')
         return contexto
 
-def generar_fixture_liga(request, liga_id):
-    liga_actual = get_object_or_404(Liga, pk=liga_id)
+def generar_fixture_liga(request, pk):
+    liga_actual = get_object_or_404(Liga, pk=pk)
     
     # 1. Seguro: Evitar regenerar si ya hay partidos
     if liga_actual.partidos.exists():
-        return redirect('liga_detail', pk=liga_id)
+        return redirect('liga_detail', pk=pk)
         
     lista_equipos = list(liga_actual.equipos.all())
     
     # 2. Seguro: Minimo 2 equipos para jugar
     if len(lista_equipos) < 2:
-        return redirect('liga_detail', pk=liga_id) 
+        return redirect('liga_detail', pk=pk) 
         
     # Mezclamos para que el sorteo sea aleatorio cada vez
     random.shuffle(lista_equipos)
@@ -137,5 +140,5 @@ def generar_fixture_liga(request, liga_id):
     liga_actual.estado = 'En_Curso'
     liga_actual.save()
     
-    return redirect('liga_detail', pk=liga_id)
+    return redirect('liga_detail', pk=pk)
 # Create your views here.

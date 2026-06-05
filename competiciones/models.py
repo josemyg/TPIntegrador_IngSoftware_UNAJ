@@ -1,19 +1,6 @@
 from django.db import models
-from gestion.models import Profesor
-
-# ==========================================
-# 1. MODELOS TEMPORALES 
-# TODO: Borrar esto y hacer import cuando se haga el merge
-# ==========================================
-
-class Cliente(models.Model):
-    nombre = models.CharField(max_length=100)
-    def __str__(self): return self.nombre
-
-class Cancha(models.Model):
-    nombre = models.CharField(max_length=100)
-    def __str__(self): return self.nombre
-
+from gestion.models import Profesor, Cliente
+from canchas.models import Cancha
 
 # ==========================================
 # 2. MODELO DE EQUIPO

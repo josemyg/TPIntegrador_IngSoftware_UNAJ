@@ -25,16 +25,7 @@ class ReciboForm(forms.ModelForm):
     )
     class Meta:
         model = Recibo
-        fields = ['fecha'] # O los campos que estés editando del recibo
-        widgets = {
-            # 🟢 CLAVE: Esto transforma el input de texto aburrido en un calendario nativo
-            'fecha': forms.DateInput(
-                attrs={
-                    'type': 'datetime-local',
-                    'class': 'form-control' # Mantiene tus estilos limpios
-                }
-            ),
-        }
+        fields = []  # fecha se genera automáticamente con auto_now_add=True
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

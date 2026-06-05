@@ -3,12 +3,12 @@
 
 {% block content %}
 
-    <div class="container mt-4">
+    <div class="container my-5">
 
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {% comment %} <h1>{% block create %} {% endblock %} </h1> {% endcomment %}
+            {% comment %} <h1 class="fw-bold text-dark mb-0">{% block create %} {% endblock %} </h1> {% endcomment %}
 
                 <div class="card shadow w-50 mx-auto">
                     <div class="card-header bg-primary text-white">
@@ -16,8 +16,8 @@
                     </div>
                     <div class="card-body">
                     {% for field in form %}
-                        <div class="row">
-                            <div class="col-sm-6 col-form-label">
+                        <div class="row form-group">
+                            <div class="col-sm-6 col-form-label text-dark mb-1">
                                 {{ field.label_tag }}
                             </div>
                             <div class="col-sm-12">{{ field }}</div>

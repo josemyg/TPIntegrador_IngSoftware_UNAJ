@@ -28,5 +28,5 @@ urlpatterns = [
     
     # rUTAS DE FIXTURE
     path('ligas/<int:pk>/', views.LigaDetailView.as_view(), name='liga_detail'),
-    path('ligas/<int:liga_id>/generar-fixture/', views.generar_fixture_liga, name='generar_fixture_liga'),
+    path('ligas/<int:pk>/generar-fixture/', views.generar_fixture_liga, name='generar_fixture_liga'),
 ]

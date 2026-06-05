@@ -13,7 +13,16 @@ class ProfesorListView(ListView):
     model = Profesor
     template_name = "gestion/profesor/profesor_list.html"
     context_object_name = 'profesor_list'
-    queryset = Profesor.objects.all()
+    #queryset = Profesor.objects.all()
+    queryset = Profesor.objects.exclude(estado='baja').exclude(estado='en_validacion')
+    paginate_by = 20
+
+class ProfesoresaValidarListView(ListView):
+    model = Profesor
+    template_name = 'gestion/profesor/profesor_list.html'
+    context_object_name = 'profesor_list'
+    #queryset = Profesor.objects.all()
+    queryset = Profesor.objects.filter(estado='en_validacion')
     paginate_by = 20
 
 class ProfesorCreateView(CreateView):
@@ -55,7 +64,8 @@ class ClienteListView(ListView):
     model = Cliente
     template_name = "gestion/cliente/cliente_list.html"
     context_object_name = 'cliente_list'
-    queryset = Cliente.objects.all()
+    paginate_by = 20
+    queryset = Cliente.objects.exclude(estado='baja')
 
 class ClienteCreateView(CreateView):
     model = Cliente

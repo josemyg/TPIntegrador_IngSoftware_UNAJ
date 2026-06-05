@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="fw-bold text-dark mb-0">Control de Canchas</h1>
+            <p class="text-muted small mb-0">Inventario y estado de los campos de juego del complejo.</p>
+        </div>
+        <a href="{% url 'cancha_create' %}" class="btn btn-primary">Agregar Cancha</a>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr class="table-primary">
+                        <th>Nombre</th>
+                        <th>Tipo</th>
+                        <th>Disponibilidad</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody class="small">
+                    {% for cancha in canchas %}
+                    <tr>
+                        <td>{{ cancha.nombre }}</td>
+                        <td>
+                            <span class="badge bg-light text-dark border px-2 py-1.5">
+                                {{ cancha.tipo.nombre }} / {{ cancha.tipo.get_superficie_display }} / {{ cancha.tipo.capacidad }} jugadores
+                            </span>
+                        </td>
+                        <td>
+                            {% if cancha.estado == 'DISPONIBLE' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Disponible</span>
+                            {% elif cancha.estado == 'OCUPADA' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Ocupada</span>
+                            {% else %}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Mantenimiento</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-center">
+                            <div class="d-inline-flex gap-1">
+                                
+                                {% if cancha.estado == 'DISPONIBLE' %}
+                                    <a name="" id="" class="" href="{% url 'cancha_bloquear' cancha.id %}"><img src="{% static 'gestion/third/bootstrap-icons/tools.svg' %}" alt="Poner en Mantenimiento" width="24" height="24"/></a>
+                                {% else %}
+                                    <a name="" id="" class="" href="{% url 'cancha_activar' cancha.id %}"><img src="{% static 'gestion/third/bootstrap-icons/tools.svg' %}" alt="Habilitar" width="24" height="24"/></a>
+                                    <a href="{% url 'cancha_activar' cancha.id %}" class="btn btn-sm btn-outline-success d-flex align-items-center gap-1 py-1 rounded-2" title="Habilitar Cancha">
+                                        <i class="bi bi-shield-check"></i> Habilitar
+                                    </a>
+                                {% endif %}
+                                <a name="" id="" class="" href="{% url 'cancha_update' cancha.id %}"><img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"/></a>
+                                <a name="" id="" class="" href="{% url 'cancha_delete' cancha.id %}"><img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"/></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <i class="bi bi-info-circle fs-3 d-block mb-2 opacity-50"></i>
+                            No hay canchas cargadas en el sistema.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

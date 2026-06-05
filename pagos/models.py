@@ -74,7 +74,7 @@ class Pago(models.Model):
 
 
 class Recibo(models.Model):
-    fecha = models.DateTimeField(auto_now=False, auto_now_add=False)
+    fecha = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Emisión")
     pago = models.OneToOneField(Pago, on_delete=models.PROTECT, related_name='recibo')
 
     def __str__(self):

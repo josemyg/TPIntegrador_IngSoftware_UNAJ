@@ -1,76 +1,77 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrar Cobro</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    
-    <link rel="stylesheet" href="{% static 'pagos/css/style.css' %}">
-</head>
-<body class="py-5">
 
-<div class="row justify-content-center m-0">
-    <div class="col-12 col-sm-10 col-md-8 col-lg-6 text-center">
-        
-        <div class="form-card text-start">
-            <div class="form-icon-header">
-                <i class="bi bi-cash-coin fs-2"></i>
+{% block title %}Gol Ahora — Registrar Cobro{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'pagos/css/style.css' %}">
+
+<div class="container my-5">
+    <div class="row justify-content-center m-0">
+        <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+            
+            <div class="card border border-light-subtle shadow p-4 bg-white rounded-3">
+                
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex p-3 bg-success bg-opacity-10 text-success rounded-circle mb-2">
+                        <i class="bi bi-cash-coin fs-2"></i>
+                    </div>
+                    <h2 class="fw-bold text-dark mb-1">Registrar Cobro</h2>
+                    <p class="text-secondary small mb-0">Ingresá los datos del pago recibido para emitir el recibo oficial en el sistema.</p>
+                </div>
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-secondary mb-1">Concepto del Servicio</label>
+                        {{ form.origen_pago }}
+                        {% if form.origen_pago.errors %}
+                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.origen_pago.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-secondary mb-1">Forma de Pago</label>
+                        {{ form.tipo_pago }}
+                        {% if form.tipo_pago.errors %}
+                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.tipo_pago.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small text-secondary mb-1">Descuento Aplicable</label>
+                        {{ form.descuento }}
+                        {% if form.descuento.errors %}
+                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.descuento.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small text-secondary mb-1">Monto Total ($)</label>
+                        {{ form.monto }}
+                        {% if form.monto.errors %}
+                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.monto.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <hr class="my-4 text-muted opacity-25">
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <a href="{% url 'pago_list' %}" class="btn btn-light btn-lg w-100 rounded-3 fs-6 fw-semibold py-2.5 border border-secondary-subtle">
+                                Cancelar
+                            </a>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 fs-6 fw-semibold shadow-sm py-2.5">
+                                <i class="bi bi-check-circle me-1"></i> Procesar Cobro
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
 
-            <h2 class="fw-extrabold text-dark text-center mb-1">Registrar Cobro</h2>
-            <p class="text-secondary small text-center mb-4">Ingresá los datos del pago recibido para emitir el recibo oficial.</p>
-
-            <form method="post" novalidate>
-                {% csrf_token %}
-                
-                <div class="mb-4">
-                    <label class="form-label fw-semibold mb-1">Concepto del Servicio</label>
-                    {{ form.origen_pago }}
-                    {% if form.origen_pago.errors %}<div class="text-danger small mt-1">{{ form.origen_pago.errors.0 }}</div>{% endif %}
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-semibold mb-1">Forma de Pago</label>
-                    {{ form.tipo_pago }}
-                    {% if form.tipo_pago.errors %}<div class="text-danger small mt-1">{{ form.tipo_pago.errors.0 }}</div>{% endif %}
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-semibold mb-1">Descuento Aplicable</label>
-                    {{ form.descuento }}
-                    {% if form.descuento.errors %}<div class="text-danger small mt-1">{{ form.descuento.errors.0 }}</div>{% endif %}
-                </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-semibold mb-1">Monto Total ($)</label>
-                    {{ form.monto }}
-                    {% if form.monto.errors %}<div class="text-danger small mt-1">{{ form.monto.errors.0 }}</div>{% endif %}
-                </div>
-
-                <hr class="my-4 opacity-25">
-
-                <div class="row g-2">
-                    <div class="col-6">
-                        <a href="{% url 'pago_list' %}" class="btn btn-light btn-lg w-100 rounded-3 fs-6 fw-semibold py-2.5 border">
-                            Cancelar
-                        </a>
-                    </div>
-                    <div class="col-6">
-                        <button type="submit" class="btn btn-dark btn-lg w-100 rounded-3 fs-6 fw-semibold shadow-sm py-2.5">
-                            <i class="bi bi-check-circle me-1"></i> Procesar Cobro
-                        </button>
-                    </div>
-                </div>
-            </form>
         </div>
-
     </div>
-</div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock %}

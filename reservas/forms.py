@@ -154,35 +154,32 @@ class ReservaForm(forms.ModelForm):
 
         if hora_inicio and hora_fin and tipo_cancha:
 
-            inicio = datetime.combine(
-                datetime.today(),
-                hora_inicio
-            )
-
-            fin = datetime.combine(
-                datetime.today(),
-                hora_fin
-            )
-
+            # 1. Calculamos la duración de la reserva que intenta sacar el usuario
+            inicio = datetime.combine(datetime.today(), hora_inicio)
+            fin = datetime.combine(datetime.today(), hora_fin)
+            
+            if fin <= inicio:
+                raise forms.ValidationError("La hora de fin debe ser posterior a la hora de inicio.")
+                
             duracion = fin - inicio
+            # Buscamos el límite analizando el NOMBRE del tipo de cancha dinámicamente
+            nombre_cancha = tipo_cancha.nombre.lower() 
+            
+            # Seteamos 1 hora por defecto por si no coincide con ninguna
+            limite_horas = 1 
 
-            limites = {
+            # Reglas basada en lo que contenga el nombre:
+            if '5' in nombre_cancha:
+                limite_horas = 1  # Máximo 1 hora para Fútbol 5
+            elif '7' in nombre_cancha or '11' in nombre_cancha:
+                limite_horas = 2  # Máximo 2 horas para Fútbol 7 o 11
 
-                'Futbol 5': timedelta(hours=1),
+            max_duracion = timedelta(hours=limite_horas)
 
-                'Futbol 7': timedelta(hours=2),
-
-                'Futbol 11': timedelta(hours=2),
-            }
-
-            max_duracion = limites.get(
-                tipo_cancha.nombre
-            )
-
-            if max_duracion and duracion > max_duracion:
-
+            # 3. Validamos
+            if duracion > max_duracion:
                 raise forms.ValidationError(
-                    f'La duración máxima para {tipo_cancha.nombre} es {max_duracion}.'
+                    f'La duración máxima para las reservas de {tipo_cancha.nombre} es de {limite_horas} hora(s).'
                 )
 
         # VALIDAR SUPERPOSICIÓN DE RESERVAS

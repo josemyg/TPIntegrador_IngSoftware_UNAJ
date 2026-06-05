@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block title %}Gol Ahora - Gestión{% endblock title %}
+{% block container %}{% endblock %}
+
 {% block content %}
     <div class="jumbotron-section background-image" style="background-image: url('{% static 'gestion/images/gol_ahora.jpg'%}');">
                 <div class="col-lg-8 col-md-10">    
@@ -34,7 +36,7 @@
                 </div>
 
     </div>
-
+  {% block container_end %}{% endblock %}
 
 
 {% endblock %}

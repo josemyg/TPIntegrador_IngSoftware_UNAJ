@@ -6,11 +6,11 @@ Lista de descuentos
 {% endblock title %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container my-5">
 
     <div class="container">
 
-        <h1>Lista de descuentos</h1>
+        <h1 class="fw-bold text-dark mb-0">Lista de descuentos</h1>
 
         <table class="table table-striped">
 
@@ -18,7 +18,7 @@ Lista de descuentos
                 <tr class="table-primary">
                     <th scope="col">Tipo</th>
                     <th scope="col">Cantidad</th>
-                    <th scope="col">Estado</th>
+                    <th class="text-center" scope="col">Estado</th>
                     <th scope="col">Acciones</th>
                 </tr>
             </thead>
@@ -31,33 +31,22 @@ Lista de descuentos
 
                     <td>{{ descuento.tipo }}</td>
                     <td>{{ descuento.cantidad }}%</td>
-                    <td>{{ descuento.estado }}</td>
+                    {% if descuento.estado == 'suspendido' %}
+                    <td class="align-middle text-center"><span class="badge bg-warning">{{ descuento.get_estado_display }}</span></td>
+                    {% elif descuento.estado == 'activo' %}
+                    <td class="align-middle text-center"><span class="badge bg-success">{{ descuento.get_estado_display }}</span></td>
+                    {% elif descuento.estado == 'programado' %}
+                    <td class="align-middle text-center"><span class="badge bg-light">{{ descuento.get_estado_display }}</span></td>
+                    {% elif descuento.estado == 'vencido' or descuento.estado == 'baja' %}
+                    <td class="align-middle text-center"><span class="badge bg-danger">{{ descuento.get_estado_display }}</span></td>
+                    {% endif %}
 
                     <td>
-
-                        <a href="{% url 'descuento_update' descuento.id %}">
-                            <img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar"
-                                width="24" height="24">
-                        </a>
-
-                        <a href="{% url 'descuento_delete' descuento.id %}">
-                            <img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24"
-                                height="24">
-                        </a>
-
-
+                        <a href="{% url 'descuento_update' descuento.id %}"><img src="{% static 'gestion/third/bootstrap-icons/pencil-square.svg' %}" alt="Editar" width="24" height="24"></a>
                         {% if descuento.estado == 'activo' %}
-                        <a href="{% url 'descuento_baja' descuento.id %}"
-                            onclick="return confirm('¿Seguro que querés dar de baja este descuento?');">
-
-                            <img src="{% static 'gestion/third/bootstrap-icons/x-circle.svg' %}" alt="Dar de baja"
-                                width="24" height="24">
-
-                        </a>
+                        <a href="{% url 'descuento_baja' descuento.id %}" onclick="return confirm('¿Seguro que querés dar de baja este descuento?');"><img src="{% static 'gestion/third/bootstrap-icons/x-circle.svg' %}" alt="Dar de baja" width="24" height="24"></a>
                         {% endif %}
-
-
-
+                        <a href="{% url 'descuento_delete' descuento.id %}"><img src="{% static 'gestion/third/bootstrap-icons/trash.svg' %}" alt="Eliminar" width="24" height="24"></a>
                     </td>
 
                 </tr>

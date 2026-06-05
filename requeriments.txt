@@ -3,3 +3,4 @@ django-filter
 pillow
 xhtml2pdf
 qrcode
+gunicorn

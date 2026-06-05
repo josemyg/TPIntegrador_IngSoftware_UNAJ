@@ -10,6 +10,7 @@
   <link href="{% static 'gestion/css/bootstrap.min.css'%}" rel="stylesheet">
   <link href="{% static 'gestion/icons/favicon152x152.png' %}" rel="icon">
   <script src="{% static 'gestion/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'gestion/third/chart.js/chart.min.js' %}"></script>
   <link href="{% static 'gestion/css/style.css'%}" rel="stylesheet">
   {% block head %}{% endblock %}
 </head>
@@ -31,6 +32,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'profesor_create' %}">Registrar Profesor/a</a></li>
               <li><a class="dropdown-item" href="{% url 'profesor_list' %}">Listar Profesores</a></li>
+              <li><a class="dropdown-item" href="{% url 'profesoresavalidar_list' %}">Listar Profesores a Validar</a></li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -128,6 +130,8 @@
               Canchas
             </a>
             <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'cancha_create' %}">Registrar Cancha</a></li>
+              <li><a class="dropdown-item" href="{% url 'cancha_list' %}">Canchas</a></li>
               <li><a class="dropdown-item" href="{% url 'tipo_cancha_create' %}">Crear Tipos de Cancha</a></li>
               <li><a class="dropdown-item" href="{% url 'tipo_cancha_list' %}">Listar Tipos de Canchas</a></li>
             </ul>
@@ -142,6 +146,23 @@
               <li><a class="dropdown-item" href="{% url 'lista_reservas' %}">Listar Reservas</a></li>
             </ul>
           </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Pagos
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'pago_create' %}">Registrar Pago</a></li>
+              <li><a class="dropdown-item" href="{% url 'pago_list' %}">Listar Pagos</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Recibo
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'recibo_list' %}">Listar Recibos</a></li>
+            </ul>
+          </li>
         </ul>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#barranavegacion"
@@ -150,9 +171,12 @@
       </button>
     </div>
   </nav>
+  {% block container %}<div class="container my-5">{% endblock %}
+  
 
   {% block content %}
   {% endblock %}
+  {% block container_end %}</div>{% endblock %}
 </body>
 
 </html>

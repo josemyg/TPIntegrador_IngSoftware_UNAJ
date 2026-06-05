@@ -25,3 +25,7 @@ db.sqlite3
 db.sqlite3
 db.sqlite3
 db.sqlite3
+competiciones/migrations/0002_alter_partido_cancha_delete_cliente_and_more.py
+gestion/templatetags/__pycache__/pagination.cpython-312.pyc
+gestion/templatetags/__pycache__/__init__.cpython-312.pyc
+gestion/templatetags/__pycache__/pagination.cpython-312.pyc

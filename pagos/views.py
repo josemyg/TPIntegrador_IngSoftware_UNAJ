@@ -20,9 +20,13 @@ def confirmar_pago(request, pk):
     # Buscamos el pago usando su clave primaria (ID)
     pago = get_object_or_404(Pago, pk=pk)
     
-    # Cambiamos el estado a PAGADO
-    pago.estado = 'PAGADO'
-    pago.save()
+    if pago.estado != 'PAGADO':
+        pago.estado = 'PAGADO'
+        pago.save()
+    
+    # Si el pago ya tiene un recibo asociado, no hacemos nada. Si no, lo creamos automáticamente.
+    Recibo.objects.get_or_create(pago=pago)
+    messages.success(request, f"Pago #{pago.id} confirmado. Se emitió el recibo de cobro oficial.")
     
     # Redirigimos al usuario de vuelta al listado general de pagos
     return redirect('pago_list')
@@ -34,10 +38,16 @@ def cambiar_estado_pago(request, pk):
         pago = get_object_or_404(Pago, pk=pk)
         nuevo_estado = request.POST.get('estado')
         opciones = dict(Pago.ESTADOS_PAGO).keys()
+
         if nuevo_estado in opciones:
             pago.estado = nuevo_estado
             pago.save()
-            messages.success(request, f"Estado de Pago #{pago.id} actualizado a {pago.get_estado_display()}")
+
+            if nuevo_estado == 'PAGADO':
+                Recibo.objects.get_or_create(pago=pago)
+                messages.success(request, f"Estado actualizado. Se generó el recibo para el Pago #{pago.id}.")
+            else:
+                messages.success(request, f"Estado de Pago #{pago.id} actualizado a {pago.get_estado_display()}")
         else:
             messages.error(request, "Estado inválido")
 
@@ -132,7 +142,6 @@ def enviar_recibo_email(request, recibo_id):
         # Volvemos al historial general con el deber cumplido
         return redirect('pago_list')
 
-    # 🔵 SI EL USUARIO RECIÉN ENTRA A LA PANTALLA (GET)
     # Le mostramos el formulario sencillo
     return render(request, 'pagos/enviar_mail_form.html', {'recibo': recibo})
 
@@ -242,8 +251,6 @@ class PagoCreateView(TemplateView):
                 return redirect('liga_create')    # Va al de ligas
             elif origen == 'inscripcion_torneo':
                 return redirect('torneo_create')  # Va al de torneos
-            elif origen == 'otros_servicios':
-              return redirect('restobar_create') # Va al de restobar
         
         # Si no hay parámetro, simplemente muestra la botonera selectora
         return super().get(request, *args, **kwargs)
@@ -288,18 +295,22 @@ class PagoReservaCreateView(CreateView):
 
     def form_valid(self, form):
 
-        pago = form.save(commit=False)
-
-        pago.reserva = self.reserva
-        pago.monto = self.reserva.precio_final
-        pago.origen_pago = 'alquiler_cancha'
-        pago.estado = 'PAGADO'
-
-        pago.save()
-
-        Recibo.objects.create(
-            pago=pago
-        )
+        pago, creado = Pago.objects.get_or_create(
+            reserva=self.reserva,
+            defaults={
+                'monto': self.reserva.precio_final,
+                'origen_pago': 'alquiler_cancha',
+                'estado': 'PAGADO',
+                 'tipo_pago': form.cleaned_data.get('tipo_pago'),
+                 'descuento': form.cleaned_data.get('descuento'),
+            })
+        
+        if not creado:
+            return redirect('lista_reservas')
+        
+        Recibo.objects.get_or_create(
+            pago=pago)
+         
 
         self.reserva.estado = 'CONFIRMADA'
         self.reserva.save()

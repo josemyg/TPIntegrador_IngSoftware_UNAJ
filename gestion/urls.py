@@ -8,6 +8,7 @@ from .views import *
 urlpatterns = [
     path('', views.inicio, name = 'inicio'),
     path('listaprofesores', ProfesorListView.as_view(), name = 'profesor_list'),
+    path('listaprofesoresaverificar', ProfesoresaValidarListView.as_view(), name = 'profesoresavalidar_list'),
     path("crearprofesor", ProfesorCreateView.as_view(), name="profesor_create"),
     path("modificarprofesor/<pk>", ProfesorUpdateView.as_view(), name="profesor_update"), 
     path("eliminarprofesor/<pk>", ProfesorDeleteView.as_view(), name="profesor_delete"),

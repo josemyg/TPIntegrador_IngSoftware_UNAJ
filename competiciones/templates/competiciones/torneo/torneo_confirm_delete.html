@@ -3,7 +3,7 @@
 {% block title %}Eliminar Torneo{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container my-5">
     <div class="alert alert-danger shadow w-50 mx-auto text-center">
         <h4 class="alert-heading">Confirmar Eliminacion</h4>
         <p>Estas a punto de borrar el torneo llamado <strong>{{ torneo.nombre }}</strong>. Esta accion no se puede deshacer.</p>
@@ -14,5 +14,4 @@
             <a href="{% url 'torneo_list' %}" class="btn btn-secondary px-4">Cancelar y volver</a>
         </form>
     </div>
-</div>
 {% endblock %}

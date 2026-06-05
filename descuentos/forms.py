@@ -10,7 +10,7 @@ class DescuentoForm(forms.ModelForm):
         exclude = ['estado','user_django']
 
         widgets = {
-            'tipo': forms.Select(attrs={'class':'form-select'}),
+            'tipo': forms.Select(attrs={'class':'form-control'}),
             'cantidad': forms.NumberInput(attrs={'class':'form-control'}),
         }
 
