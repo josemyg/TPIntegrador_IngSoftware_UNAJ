@@ -1,93 +1,106 @@
-{% extends 'form_base.html' %} 
+{% extends 'base.html' %}
+{% load static %}
 
-<h2>Consultar disponibilidad</h2>
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white py-3">
+            <h3 class="mb-0 fs-4 fw-bold">
+                <i class="bi bi-calendar-check me-2"></i>Disponibilidad de Canchas
+            </h3>
+        </div>
 
-<form method="get">
+        <div class="card-body p-4">
+            <form method="get" class="row g-3 align-items-end mb-4">
+                
+                <div class="col-12 col-md-5">
+                    <label class="form-label fw-semibold text-secondary">Cancha</label>
+                    <select name="cancha" class="form-select border-2 py-2">
+                        <option value="">Seleccione una cancha...</option>
+                        {% for cancha in canchas %}
+                            <option value="{{ cancha.id }}" {% if cancha.id|stringformat:"s" == cancha_id %}selected{% endif %}>
+                                {{ cancha.nombre }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <label>Cancha:</label> <!-- Etiqueta para el campo de selección de cancha. -->
- 
-    <select name="cancha"> <!-- Campo de selección para elegir una cancha. -->
+                <div class="col-12 col-md-4">
+                    <label class="form-label fw-semibold text-secondary">Fecha</label>
+                    <input type="date" name="fecha" value="{{ fecha }}" class="form-select border-2 py-2">
+                </div>
 
-        <option value="">Seleccione</option> <!-- Opción por defecto para seleccionar una cancha. -->
- 
-        {% for cancha in canchas %}
-            <option
-                value="{{ cancha.id }}" 
-                {% if cancha.id|stringformat:"s" == cancha_id %}
-                    selected
-                {% endif %}
-            > <!-- Opción para cada cancha disponible, con el valor del ID de la cancha. -->
-                {{ cancha.nombre }}
-            </option>
-        {% endfor %}
+                <div class="col-12 col-md-3">
+                    <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold py-2">
+                        <i class="bi bi-search me-1"></i> Buscar Disponibilidad
+                    </button>
+                </div>
+            </form>
 
-    </select>
+            <hr class="my-4 opacity-25">
 
-    <label>Fecha:</label>
+            {% if query_ejecutada or reservas != None %}
+                <div class="row g-4">
+                    
+                    <div class="col-12 col-md-6">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <h4 class="fs-5 fw-bold text-danger mb-3">
+                                <i class="bi bi-calendar-x-fill me-1"></i> Horarios Ocupados
+                            </h4>
+                            
+                            {% if reservas %}
+                                <ul class="list-group">
+                                    {% for reserva in reservas %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
+                                            <span>
+                                                <i class="bi bi-clock text-secondary me-2"></i>
+                                                <strong>{{ reserva.hora_inicio|time:"H:i" }}</strong> - <strong>{{ reserva.hora_fin|time:"H:i" }}</strong>
+                                            </span>
+                                            <span class="badge {% if reserva.estado == 'CONFIRMADA' %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill small text-uppercase">
+                                                {{ reserva.estado }}
+                                            </span>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p class="text-muted small mb-0 p-2">
+                                    <i class="bi bi-info-circle me-1"></i> No existen reservas para esta cancha en la fecha seleccionada.
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
 
-    <input
-        type="date"
-        name="fecha"
-        value="{{ fecha }}"
-    >
+                    <div class="col-12 col-md-6">
+                        <div class="p-3 bg-light rounded-3 border h-100">
+                            <h4 class="fs-5 fw-bold text-success mb-3">
+                                <i class="bi bi-calendar-check-fill me-1"></i> Horarios Libres
+                            </h4>
+                            
+                            {% if horarios_libres %}
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for horario in horarios_libres %}
+                                        <span class="badge bg-white text-dark border border-success border-2 p-2.5 fs-6 font-monospace rounded-3 shadow-sm">
+                                            <i class="bi bi-unlock text-success me-1"></i>{{ horario }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <p class="text-muted small mb-0 p-2">
+                                    <i class="bi bi-exclamation-triangle me-1"></i> No hay horarios disponibles para el resto del día.
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
 
-    <button type="submit">
-        Buscar
-    </button>
+                </div>
+            {% else %}
+                <div class="text-center py-4 text-secondary">
+                    <i class="bi bi-arrow-up-circle fs-2 d-block mb-2 text-primary opacity-50"></i>
+                    Por favor, selecciona una cancha y una fecha para consultar el estado de los turnos.
+                </div>
+            {% endif %}
 
-</form>
-
-<hr>
-
-{% if reservas != None %}
-
-    <h3>Horarios ocupados</h3>
-
-    {% if reservas %}
-
-        <ul>
-
-            {% for reserva in reservas %}
-
-                <li>
-                    {{ reserva.hora_inicio }}
-                    -
-                    {{ reserva.hora_fin }}
-                    ({{ reserva.estado }})
-                </li>
-
-            {% endfor %}
-
-        </ul>
-
-    {% else %}
-
-        <p>
-            No existen reservas para esa cancha en esa fecha.
-        </p>
-
-    {% endif %}
-
-{% endif %}
-
-<hr>
-
-<h3>Horarios libres</h3>
-
-{% if horarios_libres %}
-
-    <ul>
-
-        {% for horario in horarios_libres %}
-
-            <li>{{ horario }}</li>
-
-        {% endfor %}
-
-    </ul>
-
-{% else %}
-
-    <p>No hay horarios disponibles.</p>
-
-{% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
