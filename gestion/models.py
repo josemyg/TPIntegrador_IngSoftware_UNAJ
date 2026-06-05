@@ -24,7 +24,7 @@ class Usuario(models.Model):
         on_delete = models.CASCADE,
         verbose_name = ('Usuario'),
         blank = True,
-        null = True
+        null = True,
         )
 
     class Meta:
