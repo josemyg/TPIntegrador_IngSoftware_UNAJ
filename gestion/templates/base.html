@@ -171,11 +171,12 @@
       </button>
     </div>
   </nav>
-  <div class="container my-5">
+  {% block container %}<div class="container my-5">{% endblock %}
+  
 
   {% block content %}
   {% endblock %}
-  </div>
+  {% block container_end %}</div>{% endblock %}
 </body>
 
 </html>
