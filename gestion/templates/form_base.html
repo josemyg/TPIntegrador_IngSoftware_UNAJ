@@ -3,12 +3,12 @@
 
 {% block content %}
 
-    <div class="container mt-4">
+    <div class="container my-5">
 
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {% comment %} <h1>{% block create %} {% endblock %} </h1> {% endcomment %}
+            {% comment %} <h1 class="fw-bold text-dark mb-0">{% block create %} {% endblock %} </h1> {% endcomment %}
 
                 <div class="card shadow w-50 mx-auto">
                     <div class="card-header bg-primary text-white">

@@ -5,14 +5,12 @@
 
 {% block title %}Lista de profesores{% endblock title %}
 {% block content %}
-<div class="container mt-4">
+<div class="container my-5">
 
-        <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1>Lista de profesores</h1>
-    <a href="{% url 'profesor_create' %}" class="btn btn-primary">Nuevo Profesor/a</a>
-    </div>
-
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="fw-bold text-dark mb-0">Lista de profesores</h1>
+            <a href="{% url 'profesor_create' %}" class="btn btn-primary">Nuevo Profesor/a</a>
+        </div>
             <table class="table">
                 <thead>
                     <tr class="table-primary">
@@ -95,7 +93,4 @@
                 </ul>
             </nav>
         {% endif %}
-
-        </div>
-    </div>
-{% endblock %}
+    {% endblock %}

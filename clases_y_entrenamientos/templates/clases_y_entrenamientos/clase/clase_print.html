@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container">
-    <h1>Ficha de Clase</h1>
+    <h1 class="fw-bold text-dark mb-0">Ficha de Clase</h1>
     <hr>
     <p><b>Nombre:</b> {{ datos_imprimir.nombre }}</p>
     <p><b>Horario:</b> {{ datos_imprimir.horario }}</p>
@@ -29,5 +29,4 @@
     
     <button onclick="window.print()" class="btn btn-primary">Imprimir</button>
     <a href="{% url 'clases_y_entrenamientos:clase_list' %}" class="btn btn-secondary">Volver</a>
-</div>
 {% endblock %}

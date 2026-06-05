@@ -6,10 +6,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container my-5">
   <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-3">
-        <h1>Lista de Entrenamientos</h1>
+        <h1 class="fw-bold text-dark mb-0">Lista de Entrenamientos</h1>
         <a href="{% url 'clases_y_entrenamientos:entrenamiento_create' %}" class="btn btn-primary">Nuevo Entrenamiento</a>
         </div>
     <table class="table table-striped">
@@ -94,5 +94,4 @@
       </ul>
     </nav>
   {% endif %}
-  </div>
-{% endblock %}
+  {% endblock %}
