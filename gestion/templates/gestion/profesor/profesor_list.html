@@ -21,8 +21,8 @@
                         <th class="d-none d-md-table-cell" scope="col">EMail</th>
                         <th class="d-none d-md-table-cell" scope="col">Teléfono</th>
                         <th class="d-none d-md-table-cell" scope="col">Localidad</th>
-                        <th class="d-none d-md-table-cell text-center" scope="col">Estado</th>
-                        <th scope="col text-center">Acciones</th>
+                        <th class="text-center" scope="col">Estado</th>
+                        <th class="text-center" scope="col">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -40,15 +40,15 @@
                     <td class="d-none d-md-table-cell">{{ profesor.telefono }}</td>
                     <td class="d-none d-md-table-cell">{{ profesor.localidad }}</td>
                     {% if profesor.estado == 'en_validacion' %}
-                    <td class="d-none d-md-table-cell align-middle text-center"><span class="badge bg-warning">{{ profesor.get_estado_display }}</span></td>
+                    <td class="align-middle text-center"><span class="badge bg-warning">{{ profesor.get_estado_display }}</span></td>
                     {% elif profesor.estado == 'activo' %}
-                    <td class="d-none d-md-table-cell align-middle text-center"><span class="badge bg-success">{{ profesor.get_estado_display }}</span></td>
+                    <td class="align-middle text-center"><span class="badge bg-success">{{ profesor.get_estado_display }}</span></td>
                     {% elif profesor.estado == 'inactivo' %}
-                    <td class="d-none d-md-table-cell align-middle text-center"><span class="badge  bg-light">{{ profesor.get_estado_display }}</span></td>
+                    <td class="align-middle text-center"><span class="badge  bg-light">{{ profesor.get_estado_display }}</span></td>
                     {% elif profesor.estado == 'baja' %}
-                    <td class="d-none d-md-table-cell align-middle text-center"><span class="badge bg-danger">{{ profesor.get_estado_display }}</span></td>
+                    <td class="align-middle text-center"><span class="badge bg-danger">{{ profesor.get_estado_display }}</span></td>
                     {% endif %}
-                    <td class="d-none d-md-table-cell text-end">
+                    <td class="text-end">
                         <div>
                     {% if profesor.estado == 'en_validacion' %}
                         <a name="" id="" class="" href="{% url 'profesor_verificar' profesor.id %}"><img src="{% static 'gestion/third/bootstrap-icons/check-circle.svg' %}" alt="Verificar" width="24" height="24"/></a>

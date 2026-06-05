@@ -13,7 +13,7 @@ class ProfesorForm(forms.ModelForm):
         exclude = ['estado','user_django']
         widgets = {
             'id': forms.TextInput(attrs={'class':'form-control'}),
-            'nombre': forms.TextInput(attrs={'class':'form-control form-control-lg bg-light border-0 rounded-2 fs-4 py-2.5'}),
+            'nombre': forms.TextInput(attrs={'class':'form-control'}),
             'apellido': forms.TextInput(attrs={'class':'form-control'}),
             'direccion': forms.TextInput(attrs={'class':'form-control'}),
             'localidad': forms.TextInput(attrs={'class':'form-control'}),
@@ -26,7 +26,7 @@ class ProfesorForm(forms.ModelForm):
             'dni': forms.TextInput(attrs={'class':'form-control'}),
             'titulo_habilitante':forms.TextInput(attrs={'class':'form-control'}),
             'institucion_habilitante':forms.TextInput(attrs={'class':'form-control'}),
-            'certificado':forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'certificado':forms.ClearableFileInput(attrs={'class': 'form-control','type': 'file'}),
         }
 
 class ClienteForm(forms.ModelForm):
@@ -34,7 +34,7 @@ class ClienteForm(forms.ModelForm):
         model = Cliente
         template_name = 'gestion/cliente/cliente_form.html'
         fields = '__all__'
-        exclude = ['estado']
+        exclude = ['estado','user_django']
 
         widgets = {
             'id': forms.TextInput(attrs={'class':'form-control'}),
@@ -50,7 +50,7 @@ class ClienteForm(forms.ModelForm):
             'email': forms.TextInput(attrs={'class':'form-control'}),
             'dni': forms.TextInput(attrs={'class':'form-control'}),
             'fechaAlta': forms.TextInput(attrs={'class':'form-control'}),
-            'esSocio': forms.CheckboxInput(attrs={'class':'form-check-input'}),
+            'esSocio': forms.CheckboxInput(attrs={'class':'form-control form-check-input'}),
         }
 
 
