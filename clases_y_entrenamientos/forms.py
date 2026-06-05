@@ -42,21 +42,12 @@ class ClaseForm(forms.ModelForm):
             raise ValidationError(
                 'No puede seleccionar más alumnos que el cupo máximo.')
 
-        if self.instance.pk:  # solo al editar, no al crear
-            estado_actual = self.instance.estado
-            estado_nuevo = cleaned.get('estado')
-            if estado_actual != estado_nuevo:
-                transiciones_validas = {
-                    'programada': ['en_curso', 'cancelada'],
-                    'en_curso': ['finalizada', 'cancelada'],
-                    'finalizada': [],
-                    'cancelada': [],
-                }
-                if estado_nuevo not in transiciones_validas.get(estado_actual, []):
-                    raise ValidationError(
-                        f'No se puede cambiar el estado de "{estado_actual}" a "{estado_nuevo}".')
-
         return cleaned
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:  # si es creación, ocultar estado
+            self.fields.pop('estado')
 
 
 class EntrenamientoForm(forms.ModelForm):
@@ -95,18 +86,10 @@ class EntrenamientoForm(forms.ModelForm):
         if alumnos is not None and cupo is not None and len(alumnos) > cupo:
             raise ValidationError(
                 'No puede seleccionar más alumnos que el cupo máximo.')
-        if self.instance.pk:  # solo al editar, no al crear
-            estado_actual = self.instance.estado
-            estado_nuevo = cleaned.get('estado')
-            if estado_actual != estado_nuevo:
-                transiciones_validas = {
-                    'programada': ['en_curso', 'cancelada'],
-                    'en_curso': ['finalizada', 'cancelada'],
-                    'finalizada': [],
-                    'cancelada': [],
-                }
-                if estado_nuevo not in transiciones_validas.get(estado_actual, []):
-                    raise ValidationError(
-                        f'No se puede cambiar el estado de "{estado_actual}" a "{estado_nuevo}".')
 
         return cleaned
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance.pk:  # si es creación, ocultar estado
+            self.fields.pop('estado')

@@ -108,8 +108,8 @@ class Clase(models.Model):
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()
         ausentes = total_registros - presentes
-        porcentaje = (presentes / total_inscriptos *
-                      100) if total_inscriptos > 0 else 0
+        porcentaje = (presentes / total_registros *
+                      100) if total_registros > 0 else 0
 
         return {
             'clase': {
@@ -284,8 +284,8 @@ class Entrenamiento(models.Model):
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()
         ausentes = total_registros - presentes
-        porcentaje = (presentes / total_inscriptos *
-                      100) if total_inscriptos > 0 else 0
+        porcentaje = (presentes / total_registros *
+                      100) if total_registros > 0 else 0
 
         return {
             'entrenamiento': {

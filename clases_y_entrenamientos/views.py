@@ -39,6 +39,14 @@ class ClaseUpdateView(UpdateView):
     template_name = 'clases_y_entrenamientos/clase/clase_form.html'
     success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.object.asistencias_clase.exists():
+            form.fields.pop('alumnos')
+            form.fields.pop('horario')
+            form.fields.pop('cupo_maximo')
+        return form
+    
     def form_valid(self, form):
         messages.success(self.request, 'Clase modificada correctamente.')
         return super().form_valid(form)
@@ -79,13 +87,15 @@ class ClaseReporteView(DetailView):
 
 def tomar_asistencia_clase(request, pk):
     clase = get_object_or_404(Clase, pk=pk)
-    if clase.estado in ['cancelada', 'finalizada']:
+    if clase.estado in ['cancelada']:
         messages.error(request, f'No se puede tomar asistencia: la clase "{clase.nombre}" está {clase.get_estado_display()}.')
         return redirect('clases_y_entrenamientos:clase_list')
     if request.method == 'POST':
         for alumno in clase.alumnos.all():
             asistio = request.POST.get(f'alumno_{alumno.id}') == 'on'
             AsistenciaClase.generar_asistencia(clase, alumno, asistio)
+        clase.estado = 'finalizada'
+        clase.save()
         return redirect('clases_y_entrenamientos:clase_print', pk=clase.pk)
     return render(request, 'clases_y_entrenamientos/clase/tomar_asistencia_clase.html', {'clase': clase})
 
@@ -116,6 +126,15 @@ class EntrenamientoUpdateView(UpdateView):
     form_class = EntrenamientoForm
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html'
     success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
+    
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if self.object.asistencias_entrenamiento.exists():
+            form.fields.pop('alumnos')
+            form.fields.pop('horario')
+            form.fields.pop('cupo_maximo')
+        return form
+    
     def form_valid(self, form):
         messages.success(self.request, 'Entrenamiento modificado correctamente.')
         return super().form_valid(form)
@@ -156,13 +175,14 @@ class EntrenamientoReporteView(DetailView):
 
 def tomar_asistencia_entrenamiento(request, pk):
     entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
-    if entrenamiento.estado in ['cancelado', 'finalizado']:
+    if entrenamiento.estado in ['cancelado']:
         messages.error(request, f'No se puede tomar asistencia: el entrenamiento "{entrenamiento.nombre}" está {entrenamiento.get_estado_display()}.')
         return redirect('clases_y_entrenamientos:entrenamiento_list')
     if request.method == 'POST':
         for alumno in entrenamiento.alumnos.all():
             asistio = request.POST.get(f'alumno_{alumno.id}') == 'on'
-            AsistenciaEntrenamiento.generar_asistencia(
-                entrenamiento, alumno, asistio)
+            AsistenciaEntrenamiento.generar_asistencia(entrenamiento, alumno, asistio)
+        entrenamiento.estado = 'finalizado'
+        entrenamiento.save()
         return redirect('clases_y_entrenamientos:entrenamiento_print', pk=entrenamiento.pk)
     return render(request, 'clases_y_entrenamientos/entrenamiento/tomar_asistencia_entrenamiento.html', {'entrenamiento': entrenamiento})

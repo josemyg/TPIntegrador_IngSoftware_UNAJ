@@ -1,33 +1,68 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Ficha de Entrenamiento{% endblock %}
+{% block title %}
+  Ficha de Entrenamiento
+{% endblock %}
 
 {% block content %}
-<div class="container">
+  <div class="container">
     <h1>Ficha de Entrenamiento</h1>
-    <hr>
-    <p><b>Nombre:</b> {{ datos_imprimir.nombre }}</p>
-    <p><b>Horario:</b> {{ datos_imprimir.horario }}</p>
-    <p><b>Entrenador:</b> {{ datos_imprimir.entrenador|default:"Sin asignar" }}</p>
-    <p><b>Cupo máximo:</b> {{ datos_imprimir.cupo_maximo }}</p>
-    <p><b>Inscriptos:</b> {{ datos_imprimir.inscriptos }}</p>
-    <p><b>Estado:</b> {{ datos_imprimir.estado|default:"-" }}</p>
+    <hr />
+    <p>
+      <b>Nombre:</b> {{ datos_imprimir.nombre }}
+    </p>
+    <p>
+      <b>Horario:</b> {{ datos_imprimir.horario }}
+    </p>
+    <p>
+      <b>Entrenador:</b> {{ datos_imprimir.entrenador|default:'Sin asignar' }}
+    </p>
+    <p>
+      <b>Cupo máximo:</b> {{ datos_imprimir.cupo_maximo }}
+    </p>
+    <p>
+      <b>Inscriptos:</b> {{ datos_imprimir.inscriptos }}
+    </p>
+    <p>
+      <b>Estado:</b> {{ datos_imprimir.estado|default:'-' }}
+    </p>
 
     <h3>Alumnos inscriptos</h3>
     <ul>
-        {% for alumno in datos_imprimir.alumnos %}
-            <li>{{ alumno.nombre }}</li>
-        {% empty %}
-            <li>No hay alumnos</li>
-        {% endfor %}
+      {% for alumno in datos_imprimir.alumnos %}
+        <li>{{ alumno.nombre }}</li>
+      {% empty %}
+        <li>No hay alumnos</li>
+      {% endfor %}
     </ul>
 
     <h3>Resumen de asistencia</h3>
     <p>Presentes: {{ reporte_asistencia.presentes }} | Ausentes: {{ reporte_asistencia.ausentes }}</p>
 
-    
+    <h3>Detalle de asistencia</h3>
+    <table class="table table-striped">
+      <thead>
+        <tr class="table-primary">
+          <th>Alumno</th>
+          <th>Asistió</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in reporte_asistencia.detalle %}
+          <tr>
+            <td>{{ a.alumno }}</td>
+            <td>{{ a.asistencia|yesno:'Sí,No' }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2">No hay registros de asistencia.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
     <button onclick="window.print()" class="btn btn-primary">Imprimir</button>
     <a href="{% url 'clases_y_entrenamientos:entrenamiento_list' %}" class="btn btn-secondary">Volver</a>
-</div>
+  </div>
 {% endblock %}
