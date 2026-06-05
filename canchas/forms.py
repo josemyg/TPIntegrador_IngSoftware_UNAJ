@@ -1,5 +1,5 @@
 from django import forms
-from .models import TipoCancha
+from .models import TipoCancha, Cancha
 
 class TipoCanchaForm(forms.ModelForm):
     class Meta:
@@ -41,3 +41,21 @@ class TipoCanchaForm(forms.ModelForm):
         if precio < 0:
             raise forms.ValidationError("El precio por hora no puede ser un número negativo.")
         return precio
+    
+class CanchaForm(forms.ModelForm):
+    class Meta:
+        model = Cancha
+        fields = ['nombre', 'tipo', 'estado']
+        
+        widgets = {
+            'nombre': forms.TextInput(attrs={
+                'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'placeholder': 'Completar campo...'
+            }),
+            'tipo': forms.Select(attrs={
+                'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+            }),
+            'estado': forms.Select(attrs={
+                'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+            }),
+        }

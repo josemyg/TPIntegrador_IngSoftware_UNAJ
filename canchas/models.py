@@ -40,3 +40,42 @@ class TipoCancha(models.Model):
     class Meta:
         verbose_name = "Tipo de Cancha"
         verbose_name_plural = "Tipos de Canchas"
+
+
+class Cancha(models.Model):
+    ESTADO_CHOICES = [
+        ('activo', 'Activo / Disponible'),
+        ('mantenimiento', 'En Mantenimiento'),
+        ('inactivo', 'Inactivo'),
+    ]
+
+    nombre = models.CharField(max_length=100)
+    
+    # 🔗 Relación con TipoCancha (La flecha de tu diagrama)
+    tipo = models.ForeignKey(TipoCancha, on_delete=models.PROTECT, related_name='canchas')
+    
+    estado = models.CharField(
+        max_length=20,
+        choices=ESTADO_CHOICES,
+        default='DISPONIBLE'
+    )
+
+    def __str__(self):
+        return f"{self.nombre} ({self.tipo.nombre})"
+
+    def consultarDisponibilidad(self, fecha, hora_inicio):
+        # lógica para consultar si la cancha está disponible en esa fecha y hora
+        pass
+
+    def activarCancha(self):
+        """Cambia el estado de vuelta a DISPONIBLE"""
+        self.estado = 'DISPONIBLE'
+        self.save()
+
+    def bloquearReservas(self):
+        self.estado = 'MANTENIMIENTO'
+        self.save()
+   
+
+    def consultarCancha(self):
+        return f"Cancha: {self.nombre} - Tipo: {self.tipo.nombre} - Estado: {self.estado}"

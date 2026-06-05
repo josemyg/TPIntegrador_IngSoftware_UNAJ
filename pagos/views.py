@@ -242,8 +242,6 @@ class PagoCreateView(TemplateView):
                 return redirect('liga_create')    # Va al de ligas
             elif origen == 'inscripcion_torneo':
                 return redirect('torneo_create')  # Va al de torneos
-            elif origen == 'otros_servicios':
-              return redirect('restobar_create') # Va al de restobar
         
         # Si no hay parámetro, simplemente muestra la botonera selectora
         return super().get(request, *args, **kwargs)
