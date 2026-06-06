@@ -3,7 +3,7 @@
 {% block title %}Detalle de la Liga{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
         <div>
             <h1 class="text-primary">{{ liga.nombre }}</h1>
@@ -12,7 +12,7 @@
         <div>
             <a href="{% url 'liga_list' %}" class="btn btn-secondary">Volver al listado</a>
             {% if liga.estado == 'Inscripcion' and liga.equipos.count > 1 %}
-            <a href="{% url 'generar_fixture_liga' liga.id %}" class="btn btn-success fw-bold text-white shadow-sm">
+            <a href="{% url 'generar_fixture_liga' liga.id %}" class="btn btn-primary fw-bold text-white shadow-sm">
                 Generar Fixture
             </a>
             {% endif %}
@@ -64,5 +64,4 @@
             </div>
         </div>
     </div>
-</div>
 {% endblock %}

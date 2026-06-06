@@ -1,0 +1,200 @@
+/* ==========================================================================
+   GOL AHORA — MODULO DE PAGOS (ESTILOS GENERALES)
+   ========================================================================== */
+
+/* Variables de diseño para mantener consistencia */
+:root {
+    --bg-main: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-dark: #1a1a1a;
+    --text-muted: #6c757d;
+    --primary-green: #198754;
+    --primary-green-hover: #157347;
+    --border-color: rgba(0, 0, 0, 0.08);
+}
+
+/* Tipografía y suavizado general */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background-color: #0d3b20 !important; /* Verde oscuro tipo césped de noche */
+    min-height: 100vh;
+    color: #020000;
+    -webkit-font-smoothing: antialiased;
+}
+
+.fw-extrabold {
+    font-weight: 800 !important;
+}
+
+/* ==========================================================================
+   1. NAVBAR SUPERIOR OSCURO
+   ========================================================================== */
+.pagos-navbar {
+    background-color: #121212;
+    padding: 0.8rem 2rem;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.navbar-brand-custom {
+    color: #ffffff !important;
+    font-weight: 800;
+    text-decoration: none;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.2s;
+}
+
+.navbar-brand-custom:hover {
+    opacity: 0.9;
+}
+
+.nav-link-custom {
+    color: #adadad !important;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s ease;
+}
+
+.nav-link-custom:hover {
+    color: #ffffff !important;
+}
+
+.nav-link-custom.active {
+    color: #ffffff !important;
+    border-bottom-color: var(--primary-green);
+}
+
+/* ==========================================================================
+   2. SECCIÓN DE LISTADO (TABLAS Y BUSCADOR)
+   ========================================================================== */
+
+/* Contenedores tipo tarjeta blanca */
+.card {
+    border: none !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 1px 10px rgba(0, 0, 0, 0.04);
+    border-radius: 12px !important;
+}
+
+/* Buscador */
+.input-group-text {
+    background-color: #f1f3f5 !important;
+    border-color: var(--border-color) !important;
+}
+
+.form-control {
+    border-color: var(--border-color) !important;
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15) !important;
+    border-color: var(--primary-green) !important;
+}
+
+/* Tablas Modernas */
+.table {
+    margin-bottom: 0 !important;
+}
+
+.table th {
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 1rem !important;
+    background-color: #ffef08 !important;
+    border-bottom: 2px solid var(--border-color) !important;
+}
+
+.table td {
+    padding: 1rem !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(25, 135, 84, 0.02) !important;
+    transition: background-color 0.2s ease;
+}
+
+/* Badges y estados */
+.badge {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+/* ==========================================================================
+   3. SECCIÓN DEL FORMULARIO DE PAGOS (TARJETA REGISTRAR COBRO)
+   ========================================================================== */
+.form-card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    padding: 2.5rem !important;
+    border: 1px solid var(--border-color);
+}
+
+/* Círculo decorativo superior para el icono de dinero */
+.form-icon-header {
+    background-color: #e8f5e9 !important;
+    color: var(--primary-green) !important;
+    width: 64px;
+    height: 64px;
+    line-height: 64px;
+    border-radius: 50%;
+    margin: 0 auto 1.5rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(25, 135, 84, 0.1);
+}
+
+/* Forzar que los inputs autogenerados por Django tengan estilo Bootstrap */
+.form-card select, 
+.form-card input[type="text"], 
+.form-card input[type="number"] {
+    display: block;
+    width: 100%;
+    padding: 0.4rem 0.8rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid var(--border-color);
+    appearance: none;
+    border-radius: 8px;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+/* Comportamiento al hacer foco en inputs/selects del formulario */
+.form-card select:focus, 
+.form-card input:focus {
+    outline: 0;
+    border-color: var(--primary-green);
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.2);
+}
+
+/* Botonera */
+.btn-dark {
+    background-color: #1a1a1a !important;
+    border-color: #1a1a1a !important;
+    transition: all 0.2s ease;
+}
+
+.btn-dark:hover {
+    background-color: #333333 !important;
+    transform: translateY(-1px);
+}
+
+.btn-light {
+    background-color: #f1f3f5 !important;
+    border-color: #dee2e6 !important;
+}
+
+.btn-light:hover {
+    background-color: #e2e6ea !important;
+}

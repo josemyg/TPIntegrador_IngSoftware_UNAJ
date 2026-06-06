@@ -1,10 +1,9 @@
 from django.db import models
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
-
+from django.urls import reverse
 
 class Usuario(models.Model):
 
@@ -22,7 +21,7 @@ class Usuario(models.Model):
     dni = models.CharField(("DNI"), max_length=20)
     user_django = models.OneToOneField(
         User,
-        on_delete = models.PROTECT,
+        on_delete = models.CASCADE,
         verbose_name = ('Usuario'),
         blank = True,
         null = True
@@ -33,20 +32,16 @@ class Usuario(models.Model):
         verbose_name_plural = ("Usuarios")
 
     def __str__(self):
-        if self.nombre and self.apellido:
-            return self.nombre + ' ' + self.apellido
-        else:
-            return 'Sin nombre'
+        return self.nombre + ' ' + self.apellido
 
     def get_absolute_url(self):
         return reverse("Usuario_detail", kwargs={"pk": self.pk})
 
-    def registrarUsuario():
+    def registrarUsuario(self):
         return self.nombre
 
-    def modificarUsuario():
+    def modificarUsuario(self):
         return self.nombre
-
 
 class Profesor(Usuario):
 
@@ -54,7 +49,7 @@ class Profesor(Usuario):
     'activo': 'Activo',
     'inactivo': 'Inactivo',
     'baja': 'Baja',
-    'en_validación':'En espera de Validación',
+    'en_validacion':'En espera de Validación',
     }
 
     titulo_habilitante = models.CharField(("Título Habilitante"), max_length=100)
@@ -65,21 +60,40 @@ class Profesor(Usuario):
     class Meta:
         verbose_name = ("Profesor/a")
         verbose_name_plural = ("Profesores")
+        ordering = ["-id"]
 
-@receiver(post_save, sender=Profesor)
-def crear_Usuario(sender, instance, created, **kwargs):
-    if created:
-        nombre = instance.nombre+'_'+instance.apellido
-        print(nombre)
-        user = User.objects.create_user(nombre,instance.email, 'f.123456')
-        user.save()
-        instance.user_django = user
-        print("Se ha creado el perfil de usuario correctamente")
-class Cliente(models.Model):
-    nombre = models.CharField(("Nombre"), max_length=100)
-    email = models.EmailField(("Correo Electrónico"), max_length=254)
+    def verificar_estado_profesor(self):
+        if self.certificado:
+            self.estado = "activo"
+        else:
+            self.estado = "en_validación"
+        self.save()
+
+class Cliente(Usuario):
+
+    fechaAlta = models.CharField(("Fecha de Alta"), max_length=20)
+    estado = models.CharField(("Estado"), max_length=50)
+    esSocio = models.BooleanField(("Es Socio"), default=False)
+
     class Meta:
         verbose_name = ("Cliente")
         verbose_name_plural = ("Clientes")
-    def __str__(self):
-        return self.nombre
+
+@receiver(post_save, sender=Profesor)
+def crear_Profesor(sender, instance, created, **kwargs):
+    if created:
+        nombre = instance.nombre+'_'+instance.apellido
+        user = User.objects.add_user(nombre,instance.email, 'f.123456')
+        user.save()
+        instance.user_django = user
+        print("Se ha creado el perfil de usuario correctamente")
+
+@receiver(post_save, sender=Cliente)
+def crear_Cliente(sender, instance, created, **kwargs):
+    if created:
+        nombre = instance.nombre+'_'+instance.apellido
+        print(nombre)
+        user = User.objects.add_user(nombre,instance.email, 'f.123456')
+        user.save()
+        instance.user_django = user
+        print("Se ha creado el perfil de usuario correctamente")        

@@ -1,26 +1,13 @@
 from django.db import models
-from gestion.models import Profesor
-
-# ==========================================
-# 1. MODELOS TEMPORALES 
-# TODO: Borrar esto y hacer import cuando se haga el merge
-# ==========================================
-
-class Cliente(models.Model):
-    nombre = models.CharField(max_length=100)
-    def __str__(self): return self.nombre
-
-class Cancha(models.Model):
-    nombre = models.CharField(max_length=100)
-    def __str__(self): return self.nombre
-
+from gestion.models import Profesor, Cliente
+from canchas.models import Cancha
 
 # ==========================================
 # 2. MODELO DE EQUIPO
 # ==========================================
 class Equipo(models.Model):
     nombre = models.CharField("Nombre del Equipo", max_length=100, unique=True)
-    profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Profesor Asignado")
+    profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT, null=True, blank=True, verbose_name="Profesor Asignado")
     clientes = models.ManyToManyField(Cliente, blank=True, verbose_name="Integrantes (Clientes)")
 
     class Meta:
@@ -70,12 +57,12 @@ class Torneo(Competicion):
 # 4. EL MODELO DE PARTIDO 
 # ==========================================
 class Partido(models.Model):
-    competicion = models.ForeignKey(Competicion, on_delete=models.CASCADE, related_name='partidos')
-    equipo_local = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='partidos_local')
-    equipo_visitante = models.ForeignKey(Equipo, on_delete=models.CASCADE, related_name='partidos_visitante')
+    competicion = models.ForeignKey(Competicion, on_delete=models.PROTECT, related_name='partidos')
+    equipo_local = models.ForeignKey(Equipo, on_delete=models.PROTECT, related_name='partidos_local')
+    equipo_visitante = models.ForeignKey(Equipo, on_delete=models.PROTECT, related_name='partidos_visitante')
     
     # Vinculado a la Cancha (Temporal) de arriba
-    cancha = models.ForeignKey(Cancha, on_delete=models.SET_NULL, null=True, blank=True)
+    cancha = models.ForeignKey(Cancha, on_delete=models.PROTECT, null=True, blank=True)
     fecha_hora = models.DateTimeField(null=True, blank=True) 
     
     fase = models.CharField(max_length=50) # Ej: "Fecha 1", "Semifinal"

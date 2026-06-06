@@ -1,9 +1,9 @@
-{% extends 'base.html' %}
+{% extends 'form_base.html' %}
 
 {% block title %}Gestion de Liga{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container my-5">
     <div class="card shadow w-50 mx-auto">
         <div class="card-header bg-primary text-white">
             <h3 class="mb-0">{% if object %}Editar{% else %}Nueva{% endif %} Liga</h3>
@@ -32,7 +32,7 @@
 
                 <div class="mb-4">
                     <label class="form-label fw-bold">Seleccionar Equipos Participantes</label>
-                    <div class="caja-scroll-clientes shadow-sm">
+                    <div>
                         {% for checkbox in form.equipos %}
                         <div class="form-check mb-2">
                             {{ checkbox.tag }}
@@ -51,5 +51,4 @@
             </form>
         </div>
     </div>
-</div>
 {% endblock %}

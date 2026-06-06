@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <form method="post">
+        {% csrf_token %}
+        <h3>¿Desea eliminar el Entrenamiento <b>{{ object.nombre }}</b> del día {{ object.horario|date:"d/m/Y H:i" }}?</h3>
+        <button type="submit" class="btn btn-danger">Borrar</button>
+        <a href="{% url 'clases_y_entrenamientos:entrenamiento_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+{% endblock %}

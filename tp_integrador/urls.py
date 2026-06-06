@@ -16,15 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from django.conf import settings
+from django.contrib.auth.views import LoginView, LogoutView, logout_then_login
+from django.contrib.auth.decorators import login_required
 
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('accounts/login/', LoginView.as_view(template_name='gestion/middleware/login.html'), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
     path('', include('gestion.urls')),
-    path('competiciones/', include('competiciones.urls')),
+    path('reservas/', include('reservas.urls')),
+    path('canchas/', include('canchas.urls')),
+    path('descuentos/', include('descuentos.urls')),
+    path('pagos/', include('pagos.urls')),
+    path('clases_y_entrenamientos/', include('clases_y_entrenamientos.urls')),
 ]
-
 
 if settings.DEBUG:
     from django.conf.urls.static import static 

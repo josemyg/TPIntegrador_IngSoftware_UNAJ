@@ -2,31 +2,41 @@
 {% load static %}
 
 {% block title %}Gol Ahora - Gestión{% endblock title %}
+{% block container %}{% endblock %}
+
 {% block content %}
-    <div class="container">
-        <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
-            <main class="px-3">
-                <div class="align-center">
-                    <h1>Gol Ahora</h1>
-                    <h2>Ingenieria de Software</h2>
-                    <h3>Equipo 6</h3>
-                    <p class="h5">Comisión 2 - 20:00 a 22:00 Hs.</p>
-                    <ul>
-                        <li>Arce, Marcos Esteban</li>
-                        <li>Bogado, Jennifer</li>
-                        <li>Dominguez, Jorge Fabian</li>
-                        <li>Leuno, Braian Martin</li>
-                        <li>Pradela, Axel</li>
-                        <li>Yedro, Jose Manuel</li>
-                    </ul>
-                    <h3>Docentes</h3>
-                    <ul>
-                        <li>Conde, Sergio Daniel</li>
-                        <li>Piñeiro, Juan</li>
-                    </ul>
+    <div class="jumbotron-section background-image" style="background-image: url('{% static 'gestion/images/gol_ahora.jpg'%}');">
+                <div class="col-lg-8 col-md-10">    
+                    <div class="golahora-content-wrapper">
+                        <div class="content-box text-white">
+                            <h1 class="display-1 fw-bold">Gol Ahora</h1>
+                            <h3 class="h3 text-white-50 mb-4 fw-light">Ingeniería de Software</h3>
+                            <h4 class="h4 text-white-50 mb-4 fw-light">Universidad Nacional Arturo Jauretche</h4>
+                            <div class="d-flex mb-4">
+                                <span class="badge bg-secondary p-2 mx-1">Equipo 6</span>
+                                <span class="ms-2">Comisión 2 - 20:00 a 22:00 Hs.</span>
+                            </div>
+                        
+                            <h5>Integrantes:</h5>
+                            <ul>
+                                <li>Arce, Marcos Esteban</li>
+                                <li>Bogado, Jennifer</li>
+                                <li>Dominguez, Jorge Fabian</li>
+                                <li>Leuno, Braian Martin</li>
+                                <li>Pradela, Axel</li>
+                                <li>Yedro, Jose Manuel</li>
+                            </ul>
+                            <h3>Docentes</h3>
+                            <ul >
+                                <li>Conde, Sergio Daniel</li>
+                                <li>Piñeiro, Juan</li>
+                            </ul>                            
+                        </div>
+                    </div>
                 </div>
-            </main>
-        </div>
+
     </div>
+  {% block container_end %}{% endblock %}
+
 
 {% endblock %}
