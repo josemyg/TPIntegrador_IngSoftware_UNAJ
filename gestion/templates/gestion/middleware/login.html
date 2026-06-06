@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+
+  <title>Gol Ahora - Inicio de Sesion</title>
+
+{% endblock header %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+
+
+
+    {% if next %}
+
+        {% if user.is_authenticated %}
+
+        <div class="" >
+            <a class=""></a>
+            <h4>¡Advertencia!</h4>
+            <p>Su cuenta no posee privilegios para acceder a este sitio.</p>
+        </div>
+        <p></p>
+
+        {% endif %}
+
+    {% endif %}
+{% block body %}<body>{% endblock %}
+
+    <div class="container">
+
+    <div class="container">
+        <div class="row justify-content-center mt-8">
+            <div class="col-md-6 col-lg-6">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="text-center mb-4">Gol Ahora</h1>
+                        <h3 class="text-center mb-4">Iniciar Sesión</h3>
+                        
+                        <!-- Toggle para cambiar entre login y registro -->
+                        <div class="mb-4 text-center">
+                            <button class="btn btn-link" onclick="toggleForm()">¿No tienes cuenta? Regístrate</button>
+                        </div>
+
+                        <form id="authForm" method="post">
+                            
+                            {% csrf_token %}
+                            <fieldset class="">
+
+                                <div class="mb-3 form-group">
+                                    <label for="text" class="form-label">Usuario</label>
+                                    <input type="text" name="username" class="form-control" id="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Contraseña</label>
+                                    <input type="password" name="password" class="form-control" id="password" required>
+                                </div>
+                                <div class="mb-3 text-end">
+                                    <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+
+                            </fieldset>
+
+                        </form>
+
+                        <div class="text-center mt-3">
+                            <p>¿No tienes cuenta? <a href="#" class="text-decoration-none">Regístrate</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% comment %}     <body class="">
+        
+        <p></p>
+        <div class="">
+          <h1 class="">Gol Ahora</h1>
+        </div>
+	
+		<div class="">
+			<span class="">Ing. de Software<a href=""></a></span>
+		</div>
+		<div class="">
+			<!-- login -->
+			<form class="" method="post">
+
+                {% csrf_token %}
+
+				<fieldset class="">
+
+					<div class="">
+						<div class="">
+							<span></span>
+							<input type="text" name="username" class="" required id="id_username" placeholder="Usuario">
+						</div>
+					</div>
+					<div class="">
+						<div class="">
+							<span class=""></span>
+							<input type="password" name="password" required id="id_password" placeholder="Contraseña">
+						</div>
+					</div>
+					<div class="">
+						<button type="submit" class="" value="login">Iniciar Sesion</button>
+					</div>
+				</fieldset>
+			</form>
+    
+    </body>
+ {% endcomment %}
+{% endblock content %}

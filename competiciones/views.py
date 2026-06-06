@@ -1,16 +1,17 @@
 from django.shortcuts import render
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,DetailView
 from .models import Equipo, Liga, Torneo
 from .forms import EquipoForm, LigaForm, TorneoForm
 import random
 
-class EquipoListView(ListView):
+class EquipoListView(PermissionRequiredMixin, ListView):
 	model = Equipo
 	template_name = 'competiciones/equipo/equipo_list.html'
 	context_object_name = 'equipo_list'
 
-class EquipoCreateView(CreateView):
+class EquipoCreateView(PermissionRequiredMixin, CreateView):
 	model = Equipo
 	form_class = EquipoForm
 	template_name = 'competiciones/equipo/equipo_form.html'
@@ -22,18 +23,18 @@ class EquipoUpdateView(UpdateView):
 	template_name = 'competiciones/equipo/equipo_form.html'
 	success_url = reverse_lazy('equipo_list')
 
-class EquipoDeleteView(DeleteView):
+class EquipoDeleteView(PermissionRequiredMixin, DeleteView):
 	model = Equipo
 	template_name = 'competiciones/equipo/equipo_confirm_delete.html'
 	success_url = reverse_lazy('equipo_list')
 
-class LigaListView(ListView):
+class LigaListView(PermissionRequiredMixin, ListView):
     model = Liga
     template_name = 'competiciones/liga/liga_list.html'
     context_object_name = 'liga_list'
     paginate_by = 20
 
-class LigaCreateView(CreateView):
+class LigaCreateView(PermissionRequiredMixin, CreateView):
     model = Liga
     form_class = LigaForm
     template_name = 'competiciones/liga/liga_form.html'
@@ -45,21 +46,21 @@ class LigaUpdateView(UpdateView):
     template_name = 'competiciones/liga/liga_form.html'
     success_url = reverse_lazy('liga_list')
 
-class LigaDeleteView(DeleteView):
+class LigaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Liga
     template_name = 'competiciones/liga/liga_confirm_delete.html'
     success_url = reverse_lazy('liga_list')
 
 
 # --- CRUD DE TORNEOS ---
-class TorneoListView(ListView):
+class TorneoListView(PermissionRequiredMixin, ListView):
     model = Torneo
     template_name = 'competiciones/torneo/torneo_list.html'
     context_object_name = 'torneo_list'
     paginate_by = 20
     order_by = ['-id']
 
-class TorneoCreateView(CreateView):
+class TorneoCreateView(PermissionRequiredMixin, CreateView):
     model = Torneo
     form_class = TorneoForm
     template_name = 'competiciones/torneo/torneo_form.html'
@@ -71,7 +72,7 @@ class TorneoUpdateView(UpdateView):
     template_name = 'competiciones/torneo/torneo_form.html'
     success_url = reverse_lazy('torneo_list')
 
-class TorneoDeleteView(DeleteView):
+class TorneoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Torneo
     template_name = 'competiciones/torneo/torneo_confirm_delete.html'
     success_url = reverse_lazy('torneo_list')
@@ -79,7 +80,7 @@ class TorneoDeleteView(DeleteView):
 # ==========================================
 # DETALLE DE LIGA Y GENERACION DE FIXTURE
 # ==========================================
-class LigaDetailView(DetailView):
+class LigaDetailView(PermissionRequiredMixin, DetailView):
     model = Liga
     template_name = 'competiciones/liga/liga_detail.html'
     context_object_name = 'liga'

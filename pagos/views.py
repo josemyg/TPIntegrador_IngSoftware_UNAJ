@@ -1,4 +1,5 @@
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView,  TemplateView
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
@@ -60,7 +61,7 @@ class PagoUpdateView(UpdateView):
     template_name = 'pagos/pago_edit.html'
     success_url = reverse_lazy('pago_list')
 
-class PagoDeleteView(DeleteView):
+class PagoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Pago
     template_name = 'pagos/pago_confirm_delete.html'
     success_url = reverse_lazy('pago_list')
@@ -70,7 +71,7 @@ class PagoDeleteView(DeleteView):
         # Dejar que el comportamiento por defecto (CASCADE) elimine el recibo asociado al borrar el pago
         return super().delete(request, *args, **kwargs)
 
-class PagoListView(ListView):
+class PagoListView(PermissionRequiredMixin, ListView):
     model = Pago
     template_name = 'pagos/pago_list.html'
     context_object_name = 'pagos'
@@ -206,7 +207,7 @@ def mostrar_qr_pantalla(request, pago_id):
         'qr_code': qr_data_url
     })
 
-class ReciboListView(ListView):
+class ReciboListView(PermissionRequiredMixin, ListView):
     model = Recibo
     template_name = 'recibos/recibo_list.html'
     context_object_name = 'recibos'
@@ -232,7 +233,7 @@ class ReciboUpdateView(UpdateView):
             
         return response
 
-class ReciboDeleteView(DeleteView):
+class ReciboDeleteView(PermissionRequiredMixin, DeleteView):
     model = Recibo
     template_name = 'recibos/recibo_confirm_delete.html'
     success_url = reverse_lazy('recibo_list')
@@ -266,7 +267,7 @@ class PagoCreateView(TemplateView):
 
 #pago reserva
 
-class PagoReservaCreateView(CreateView):
+class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
     model = Pago
     form_class = PagoForm
     template_name = 'pagos/pago_form.html'

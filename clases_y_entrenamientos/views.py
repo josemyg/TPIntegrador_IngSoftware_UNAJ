@@ -13,16 +13,17 @@ from .models import Entrenamiento
 from .forms import EntrenamientoForm
 from .models import AsistenciaEntrenamiento
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
-class ClaseListView(ListView):
+class ClaseListView(PermissionRequiredMixin, ListView):
     model = Clase
     template_name = 'clases_y_entrenamientos/clase/clase_list.html'
     context_object_name = 'clase_list'
     paginate_by = 10
 
 
-class ClaseCreateView(CreateView):
+class ClaseCreateView(PermissionRequiredMixin, CreateView):
     model = Clase
     form_class = ClaseForm
     template_name = 'clases_y_entrenamientos/clase/clase_form.html'
@@ -44,7 +45,7 @@ class ClaseUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class ClaseDeleteView(DeleteView):
+class ClaseDeleteView(PermissionRequiredMixin, DeleteView):
     model = Clase
     template_name = 'clases_y_entrenamientos/clase/clase_confirm_delete.html'
     success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
@@ -54,7 +55,7 @@ class ClaseDeleteView(DeleteView):
         return super().post(request, *args, **kwargs)
 
 
-class ClasePrintView(DetailView):
+class ClasePrintView(PermissionRequiredMixin, DetailView):
     model = Clase
     template_name = 'clases_y_entrenamientos/clase/clase_print.html'
     context_object_name = 'clase'
@@ -66,7 +67,7 @@ class ClasePrintView(DetailView):
         return context
 
 
-class ClaseReporteView(DetailView):
+class ClaseReporteView(PermissionRequiredMixin, DetailView):
     model = Clase
     template_name = 'clases_y_entrenamientos/clase/clase_reporte.html'
     context_object_name = 'clase'
@@ -93,14 +94,14 @@ def tomar_asistencia_clase(request, pk):
 # VISTAS DE ENTRENAMIENTOS
 
 
-class EntrenamientoListView(ListView):
+class EntrenamientoListView(PermissionRequiredMixin, ListView):
     model = Entrenamiento
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_list.html'
     context_object_name = 'entrenamiento_list'
     paginate_by = 10
 
 
-class EntrenamientoCreateView(CreateView):
+class EntrenamientoCreateView(PermissionRequiredMixin, CreateView):
     model = Entrenamiento
     form_class = EntrenamientoForm
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html'
@@ -121,7 +122,7 @@ class EntrenamientoUpdateView(UpdateView):
         return super().form_valid(form)
 
 
-class EntrenamientoDeleteView(DeleteView):
+class EntrenamientoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Entrenamiento
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_confirm_delete.html'
     success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
@@ -131,7 +132,7 @@ class EntrenamientoDeleteView(DeleteView):
         return super().post(request, *args, **kwargs)
 
 
-class EntrenamientoPrintView(DetailView):
+class EntrenamientoPrintView(PermissionRequiredMixin, DetailView):
     model = Entrenamiento
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_print.html'
     context_object_name = 'entrenamiento'
@@ -143,7 +144,7 @@ class EntrenamientoPrintView(DetailView):
         return context
 
 
-class EntrenamientoReporteView(DetailView):
+class EntrenamientoReporteView(PermissionRequiredMixin, DetailView):
     model = Entrenamiento
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_reporte.html'
     context_object_name = 'entrenamiento'
