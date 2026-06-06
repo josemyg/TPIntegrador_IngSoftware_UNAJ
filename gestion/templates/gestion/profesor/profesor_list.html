@@ -40,9 +40,9 @@
                     {% if profesor.estado == 'en_validacion' %}
                     <td class="align-middle text-center"><span class="badge bg-warning">{{ profesor.get_estado_display }}</span></td>
                     {% elif profesor.estado == 'activo' %}
-                    <td class="align-middle text-center"><span class="badge bg-success">{{ profesor.get_estado_display }}</span></td>
+                    <td class="align-middle text-center"><span class="badge bg-primary">{{ profesor.get_estado_display }}</span></td>
                     {% elif profesor.estado == 'inactivo' %}
-                    <td class="align-middle text-center"><span class="badge  bg-light">{{ profesor.get_estado_display }}</span></td>
+                    <td class="align-middle text-center"><span class="badge bg-light">{{ profesor.get_estado_display }}</span></td>
                     {% elif profesor.estado == 'baja' %}
                     <td class="align-middle text-center"><span class="badge bg-danger">{{ profesor.get_estado_display }}</span></td>
                     {% endif %}
