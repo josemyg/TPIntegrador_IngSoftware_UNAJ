@@ -11,7 +11,7 @@ class TipoCancha(models.Model):
         ('sintetico','Césped Sintético'),
     ]
 
-    nombre = models.CharField(max_length=100, verbose_name="Tipo de Cancha")
+    nombreTipo = models.CharField(max_length=100, verbose_name="Tipo de Cancha")
 
     capacidad = models.IntegerField(verbose_name="Capacidad (Jugadores)")
 
@@ -34,8 +34,14 @@ class TipoCancha(models.Model):
         verbose_name="Estado"
     )
 
+    max_horas = models.PositiveIntegerField(
+        default=2, 
+        verbose_name="Máximo de horas por reserva",
+        help_text="Cantidad máxima de horas seguidas que se puede alquilar este tipo de cancha."
+    )
+
     def __str__(self):
-        return f"{self.nombre} - {self.get_superficie_display()}"
+        return f"{self.nombreTipo} - {self.get_superficie_display()}"
     
     class Meta:
         verbose_name = "Tipo de Cancha"
@@ -49,7 +55,11 @@ class Cancha(models.Model):
         ('inactivo', 'Inactivo'),
     ]
 
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(
+        max_length=100, 
+        verbose_name="Nombre de la Cancha",
+        help_text="Ej: Cancha N° 1 Techada"
+    )
     
     # 🔗 Relación con TipoCancha (La flecha de tu diagrama)
     tipo = models.ForeignKey(TipoCancha, on_delete=models.PROTECT, related_name='canchas')

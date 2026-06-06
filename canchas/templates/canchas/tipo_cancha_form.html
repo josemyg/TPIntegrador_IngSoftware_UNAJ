@@ -18,10 +18,10 @@
 
             <div class="mb-4">
                 <label class="form-label small text-dark text-uppercase mb-1">Tipo de Cancha</label>
-                <input type="text" name="nombre" class="form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5" 
+                <input type="text" name="nombreTipo" class="form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5" 
                        placeholder="Completar campo..." 
-                       value="{{ form.nombre.value|default:'' }}" required>
-                {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors.0 }}</div>{% endif %}
+                       value="{{ form.nombreTipo.value|default:'' }}" required>
+                {% if form.nombreTipo.errors %}<div class="text-danger small mt-1">{{ form.nombreTipo.errors.0 }}</div>{% endif %}
             </div>
 
             <div class="mb-4">
@@ -58,6 +58,14 @@
                     <option value="inactivo" {% if form.estado.value == 'inactivo' %}selected{% endif %}>Inactivo</option>
                 </select>
                 {% if form.estado.errors %}<div class="text-danger small mt-1">{{ form.estado.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label small text-dark text-uppercase mb-1">Máximo de Horas por Reserva</label>
+                <input type="number" name="max_horas" class="form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5" 
+                       placeholder="Completar campo..." 
+                       value="{{ form.max_horas.value|default:'' }}" required>
+                {% if form.max_horas.errors %}<div class="text-danger small mt-1">{{ form.max_horas.errors.0 }}</div>{% endif %}
             </div>
 
             <hr class="my-4 text-black-50">
