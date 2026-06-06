@@ -1,17 +1,19 @@
+import io, base64, qrcode, unicodedata
+from xhtml2pdf import pisa
+
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView,  TemplateView
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import permission_required
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from .models import Pago, Recibo, TipoPago
-from reservas.models import Reserva
-from .forms import PagoForm, ReciboForm
-import unicodedata
-from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.http import HttpResponse
 from django.core.mail import EmailMessage
-import io, base64, qrcode
+
+from .models import Pago, Recibo, TipoPago
+from reservas.models import Reserva
+from .forms import PagoForm, ReciboForm
 
 def eliminar_acentos(texto):
     if not texto: return ""
@@ -31,7 +33,6 @@ def confirmar_pago(request, pk):
     
     # Redirigimos al usuario de vuelta al listado general de pagos
     return redirect('pago_list')
-
 
 def cambiar_estado_pago(request, pk):
     """Actualiza el estado de un Pago vía POST desde la lista."""
@@ -55,14 +56,16 @@ def cambiar_estado_pago(request, pk):
     # Volver a la página anterior o al listado si no hay referer
     return redirect(request.META.get('HTTP_REFERER') or reverse('pago_list'))
 
-class PagoUpdateView(UpdateView):
+class PagoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Pago
+    permission_required = 'pagos.change_pago'
     form_class = PagoForm
     template_name = 'pagos/pago_edit.html'
     success_url = reverse_lazy('pago_list')
 
 class PagoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Pago
+    permission_required = 'pagos.delete_pago'
     template_name = 'pagos/pago_confirm_delete.html'
     success_url = reverse_lazy('pago_list')
     
@@ -73,6 +76,7 @@ class PagoDeleteView(PermissionRequiredMixin, DeleteView):
 
 class PagoListView(PermissionRequiredMixin, ListView):
     model = Pago
+    permission_required = 'pagos.view_pago'
     template_name = 'pagos/pago_list.html'
     context_object_name = 'pagos'
 
@@ -209,12 +213,14 @@ def mostrar_qr_pantalla(request, pago_id):
 
 class ReciboListView(PermissionRequiredMixin, ListView):
     model = Recibo
+    permission_required = 'pagos.view_recibo'
     template_name = 'recibos/recibo_list.html'
     context_object_name = 'recibos'
     ordering = ['-id'] # Los más nuevos primero
 
-class ReciboUpdateView(UpdateView):
+class ReciboUpdateView(PermissionRequiredMixin, UpdateView):
     model = Recibo
+    permission_required = 'pagos.change_recibo'
     form_class = ReciboForm
     template_name = 'recibos/recibo_form.html'
     success_url = reverse_lazy('recibo_list')
@@ -235,6 +241,7 @@ class ReciboUpdateView(UpdateView):
 
 class ReciboDeleteView(PermissionRequiredMixin, DeleteView):
     model = Recibo
+    permission_required = 'pagos.delete_recibo'
     template_name = 'recibos/recibo_confirm_delete.html'
     success_url = reverse_lazy('recibo_list')
 
@@ -269,6 +276,7 @@ class PagoCreateView(TemplateView):
 
 class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
     model = Pago
+    permission_required = 'pagos.add_pago'
     form_class = PagoForm
     template_name = 'pagos/pago_form.html'
 

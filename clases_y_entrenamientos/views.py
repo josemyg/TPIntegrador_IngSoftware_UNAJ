@@ -6,18 +6,17 @@ from django.views.generic import DeleteView
 from django.views.generic import DetailView
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
-from .models import Clase
-from .forms import ClaseForm
-from .models import AsistenciaClase
-from .models import Entrenamiento
-from .forms import EntrenamientoForm
-from .models import AsistenciaEntrenamiento
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import permission_required
+
+from .models import AsistenciaClase, Entrenamiento, Clase, AsistenciaEntrenamiento
+from .forms import EntrenamientoForm, ClaseForm
 
 
 class ClaseListView(PermissionRequiredMixin, ListView):
     model = Clase
+    permission_required = 'clases_y_entrenamientos.view_clase'
     template_name = 'clases_y_entrenamientos/clase/clase_list.html'
     context_object_name = 'clase_list'
     paginate_by = 10
@@ -25,6 +24,7 @@ class ClaseListView(PermissionRequiredMixin, ListView):
 
 class ClaseCreateView(PermissionRequiredMixin, CreateView):
     model = Clase
+    permission_required = 'clases_y_entrenamientos.add_clase'
     form_class = ClaseForm
     template_name = 'clases_y_entrenamientos/clase/clase_form.html'
     success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
@@ -34,8 +34,9 @@ class ClaseCreateView(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class ClaseUpdateView(UpdateView):
+class ClaseUpdateView(PermissionRequiredMixin, UpdateView):
     model = Clase
+    permission_required = 'clases_y_entrenamientos.change_clase'
     form_class = ClaseForm
     template_name = 'clases_y_entrenamientos/clase/clase_form.html'
     success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
@@ -47,6 +48,7 @@ class ClaseUpdateView(UpdateView):
 
 class ClaseDeleteView(PermissionRequiredMixin, DeleteView):
     model = Clase
+    permission_required = 'clases_y_entrenamientos.delete_clase'
     template_name = 'clases_y_entrenamientos/clase/clase_confirm_delete.html'
     success_url = reverse_lazy('clases_y_entrenamientos:clase_list')
 
@@ -57,6 +59,7 @@ class ClaseDeleteView(PermissionRequiredMixin, DeleteView):
 
 class ClasePrintView(PermissionRequiredMixin, DetailView):
     model = Clase
+    permission_required = 'clases_y_entrenamientos.view_clase'
     template_name = 'clases_y_entrenamientos/clase/clase_print.html'
     context_object_name = 'clase'
 
@@ -69,6 +72,7 @@ class ClasePrintView(PermissionRequiredMixin, DetailView):
 
 class ClaseReporteView(PermissionRequiredMixin, DetailView):
     model = Clase
+    permission_required = 'clases_y_entrenamientos.view_clase'
     template_name = 'clases_y_entrenamientos/clase/clase_reporte.html'
     context_object_name = 'clase'
 
@@ -77,7 +81,7 @@ class ClaseReporteView(PermissionRequiredMixin, DetailView):
         context['reporte'] = self.object.generar_reporte_clase()
         return context
 
-
+@permission_required('clases_y_entrenamientos.change_clase')
 def tomar_asistencia_clase(request, pk):
     clase = get_object_or_404(Clase, pk=pk)
     if clase.estado in ['cancelada', 'finalizada']:
@@ -96,6 +100,7 @@ def tomar_asistencia_clase(request, pk):
 
 class EntrenamientoListView(PermissionRequiredMixin, ListView):
     model = Entrenamiento
+    permission_required = 'clases_y_entrenamientos.view_entrenamiento'
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_list.html'
     context_object_name = 'entrenamiento_list'
     paginate_by = 10
@@ -103,6 +108,7 @@ class EntrenamientoListView(PermissionRequiredMixin, ListView):
 
 class EntrenamientoCreateView(PermissionRequiredMixin, CreateView):
     model = Entrenamiento
+    permission_required = 'clases_y_entrenamientos.add_entrenamiento'
     form_class = EntrenamientoForm
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html'
     success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
@@ -112,8 +118,9 @@ class EntrenamientoCreateView(PermissionRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class EntrenamientoUpdateView(UpdateView):
+class EntrenamientoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Entrenamiento
+    permission_required = 'clases_y_entrenamientos.change_entrenamiento'
     form_class = EntrenamientoForm
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_form.html'
     success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
@@ -124,6 +131,7 @@ class EntrenamientoUpdateView(UpdateView):
 
 class EntrenamientoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Entrenamiento
+    permission_required = 'clases_y_entrenamientos.delete_entrenamiento'
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_confirm_delete.html'
     success_url = reverse_lazy('clases_y_entrenamientos:entrenamiento_list')
 
@@ -134,6 +142,7 @@ class EntrenamientoDeleteView(PermissionRequiredMixin, DeleteView):
 
 class EntrenamientoPrintView(PermissionRequiredMixin, DetailView):
     model = Entrenamiento
+    permission_required = 'clases_y_entrenamientos.view_entrenamiento'
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_print.html'
     context_object_name = 'entrenamiento'
 
@@ -146,6 +155,7 @@ class EntrenamientoPrintView(PermissionRequiredMixin, DetailView):
 
 class EntrenamientoReporteView(PermissionRequiredMixin, DetailView):
     model = Entrenamiento
+    permission_required = 'clases_y_entrenamientos.view_entrenamiento'
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_reporte.html'
     context_object_name = 'entrenamiento'
 
@@ -154,7 +164,7 @@ class EntrenamientoReporteView(PermissionRequiredMixin, DetailView):
         context['reporte'] = self.object.generar_reporte_entrenamiento()
         return context
 
-
+@permission_required('clases_y_entrenamientos.change_entrenamiento')
 def tomar_asistencia_entrenamiento(request, pk):
     entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
     if entrenamiento.estado in ['cancelado', 'finalizado']:

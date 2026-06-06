@@ -7,7 +7,7 @@ from datetime import datetime, timedelta,time
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 
-@permission_required("reservas.list_reserva")
+@permission_required("reservas.view_reserva")
 def gestion_reservas(request):
 
     if request.method == 'POST': # Si el método de la solicitud es POST, significa que se está enviando un formulario para crear una nueva reserva.
@@ -101,7 +101,7 @@ def crear_reserva(request):
     )
 
 # EDITAR RESERVA
-@permission_required("reservas.update_reserva")
+@permission_required("reservas.change_reserva")
 def editar_reserva(request, id):
 
     reserva = get_object_or_404(Reserva, id=id) # Obtiene la reserva con el ID proporcionado o devuelve un error 404 si no se encuentra. Esto asegura que solo se pueda editar una reserva existente y evita errores si se intenta acceder a una reserva que no existe.
@@ -186,7 +186,7 @@ def cancelar_reserva(request, id):
     return redirect('lista_reservas')
 
 # CONSULTAR DISPONIBILIDAD
-@permission_required("reservas.list_reserva")
+@permission_required("reservas.view_reserva")
 def consultar_disponibilidad(request):
 
     canchas = TipoCancha.objects.filter(estado='activo') # Obtiene todas las canchas que tienen un estado de 'activo' 

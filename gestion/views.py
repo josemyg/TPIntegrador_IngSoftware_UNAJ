@@ -4,6 +4,8 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView, D
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
+from django.contrib.auth.decorators import permission_required
+
 
 from .models import Cliente, Profesor
 from .forms import ProfesorForm, ClienteForm
@@ -11,7 +13,7 @@ from .forms import ProfesorForm, ClienteForm
 
 class ProfesorListView(PermissionRequiredMixin, ListView):
     model = Profesor
-    permission_required = 'profesor.list_profesor'
+    permission_required = 'profesor.view_profesor'
     template_name = "gestion/profesor/profesor_list.html"
     context_object_name = 'profesor_list'
     #queryset = Profesor.objects.all()
@@ -20,7 +22,7 @@ class ProfesorListView(PermissionRequiredMixin, ListView):
 
 class ProfesoresaValidarListView(PermissionRequiredMixin, ListView):
     model = Profesor
-    permission_required = 'profesor.list_profesor'
+    permission_required = 'profesor.view_profesor'
     template_name = 'gestion/profesor/profesor_list_validar.html'
     context_object_name = 'profesor_list'
     queryset = Profesor.objects.filter(estado='en_validacion')
@@ -35,7 +37,7 @@ class ProfesorCreateView(PermissionRequiredMixin, CreateView):
 
 class ProfesorUpdateView(PermissionRequiredMixin, UpdateView):
     model = Profesor
-    permission_required = 'profesor.update_profesor'
+    permission_required = 'profesor.change_profesor'
     form_class = ProfesorForm
     template_name = "gestion/profesor/profesor_form.html"
     success_url = reverse_lazy('profesor_list')
@@ -58,6 +60,7 @@ class ProfesorVerificarView(PermissionRequiredMixin, DetailView):
     context_object_name = 'profesor'
     success_url = reverse_lazy('profesor_list')
 
+@permission_required("gestion.change_profesor")
 def ConfirmarVerificacionProfesor(request, pk):
     profesor = get_object_or_404(Profesor, pk=pk)
     profesor.verificar_estado_profesor()
@@ -65,6 +68,7 @@ def ConfirmarVerificacionProfesor(request, pk):
 
 class ClienteListView(PermissionRequiredMixin, ListView):
     model = Cliente
+    permission_required = 'gestion.view_cliente'
     template_name = "gestion/cliente/cliente_list.html"
     context_object_name = 'cliente_list'
     paginate_by = 20
@@ -72,23 +76,27 @@ class ClienteListView(PermissionRequiredMixin, ListView):
 
 class ClienteCreateView(PermissionRequiredMixin, CreateView):
     model = Cliente
+    permission_required = 'gestion.add_cliente'
     form_class = ClienteForm
     template_name = 'gestion/cliente/cliente_form.html'
     success_url = reverse_lazy('cliente_list')
 
-class ClienteUpdateView(UpdateView):
+class ClienteUpdateView(PermissionRequiredMixin, UpdateView):
     model = Cliente
+    permission_required = 'gestion.change_cliente'
     form_class = ClienteForm
     template_name = "gestion/cliente/cliente_form.html"
     success_url = reverse_lazy('cliente_list')
 
 class ClienteDeleteView(PermissionRequiredMixin, DeleteView):
     model = Cliente
+    permission_required = 'gestion.delete_cliente'
     template_name = "gestion/cliente/cliente_delete_form.html"
     success_url = reverse_lazy('cliente_list')
 
 class ClientePrintView(PermissionRequiredMixin, DetailView):
     model = Cliente
+    permission_required = 'gestion.detail_cliente'
     template_name = "gestion/cliente/cliente_print.html"
     context_object_name = 'cliente'
 
