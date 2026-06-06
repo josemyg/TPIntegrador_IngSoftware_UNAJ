@@ -163,6 +163,13 @@
               <li><a class="dropdown-item" href="{% url 'recibo_list' %}">Listar Recibos</a></li>
             </ul>
           </li>
+
+          <li class="nav-item">
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %}
+                <button class="nav-link" type="submit">Logout</button>
+            </form> 
+          </li>
         </ul>
       </div>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#barranavegacion"

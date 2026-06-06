@@ -1,11 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.decorators import permission_required
-
+from django.contrib.auth import logout
 
 from .models import Cliente, Profesor
 from .forms import ProfesorForm, ClienteForm
@@ -102,3 +101,4 @@ class ClientePrintView(PermissionRequiredMixin, DetailView):
 
 def inicio(request):
     return render(request, 'principal.html')
+
