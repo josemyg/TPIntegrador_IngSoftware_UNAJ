@@ -15,8 +15,10 @@
   {% block head %}{% endblock %}
 </head>
 
-{% block body %}<body>{% endblock %}
-{% block navbar %}
+{% block body %}
+
+<body>{% endblock %}
+  {% block navbar %}
   <nav class="navbar navbar-expand-lg bg-primary" data-bs-theme="dark">
     <div class="container-fluid">
       <a class="navbar-brand" href="/">Gol Ahora</a>
@@ -32,7 +34,8 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'profesor_create' %}">Registrar Profesor/a</a></li>
               <li><a class="dropdown-item" href="{% url 'profesor_list' %}">Listar Profesores</a></li>
-              <li><a class="dropdown-item" href="{% url 'profesoresavalidar_list' %}">Listar Profesores a Validar</a></li>
+              <li><a class="dropdown-item" href="{% url 'profesoresavalidar_list' %}">Listar Profesores a Validar</a>
+              </li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -71,58 +74,15 @@
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Equipos
+              Competencias
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'equipo_create' %}">Registrar Equipo</a></li>
               <li><a class="dropdown-item" href="{% url 'equipo_list' %}">Listar Equipos</a></li>
-            </ul>
-          </li>
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Ligas
-            </a>
-            <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'liga_create' %}">Crear Liga</a></li>
               <li><a class="dropdown-item" href="{% url 'liga_list' %}">Listar Ligas</a></li>
-            </ul>
-          </li>
-
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Torneos
-            </a>
-            <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'torneo_create' %}">Crear Torneo</a></li>
               <li><a class="dropdown-item" href="{% url 'torneo_list' %}">Listar Torneos</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Descuentos
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a class="dropdown-item" href="{% url 'descuento_create' %}">
-                  Registrar Descuento
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{% url 'descuento_list' %}">
-                  Listar Descuentos
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{% url 'tipodescuento_create' %}">
-                  Registrar Tipo de descuento
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{% url 'tipodescuento_list' %}">
-                  Listar Tipos de descuento
-                </a>
-              </li>
             </ul>
           </li>
           <li class="nav-item dropdown">
@@ -153,22 +113,18 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'pago_create' %}">Registrar Pago</a></li>
               <li><a class="dropdown-item" href="{% url 'pago_list' %}">Listar Pagos</a></li>
-            </ul>
-          </li>
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Recibo
-            </a>
-            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'descuento_create' %}">Registrar Descuento</a></li>
+              <li><a class="dropdown-item" href="{% url 'descuento_list' %}">Listar Descuentos</a></li>
+              <li><a class="dropdown-item" href="{% url 'tipodescuento_create' %}">Registrar Tipo de descuento</a></li>
+              <li><a class="dropdown-item" href="{% url 'tipodescuento_list' %}">Listar Tipos de descuento</a></li>
               <li><a class="dropdown-item" href="{% url 'recibo_list' %}">Listar Recibos</a></li>
             </ul>
           </li>
-
           <li class="nav-item">
             <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %}
-                <button class="nav-link" type="submit">Logout</button>
-            </form> 
+              {% csrf_token %}
+              <button class="nav-link" type="submit">Logout</button>
+            </form>
           </li>
         </ul>
       </div>
@@ -178,13 +134,13 @@
       </button>
     </div>
   </nav>
-{% endblock %}
-  {% block container %}<div class="container my-5">{% endblock %}
-  
-
-  {% block content %}
   {% endblock %}
-  {% block container_end %}</div>{% endblock %}
+  {% block container %}<div class="container my-5">{% endblock %}
+
+
+    {% block content %}
+    {% endblock %}
+    {% block container_end %}</div>{% endblock %}
 </body>
 
 </html>
