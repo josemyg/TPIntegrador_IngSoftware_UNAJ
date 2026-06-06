@@ -10,7 +10,7 @@
   <link href="{% static 'gestion/css/bootstrap.min.css'%}" rel="stylesheet">
   <link href="{% static 'gestion/icons/favicon152x152.png' %}" rel="icon">
   <script src="{% static 'gestion/third/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'gestion/third/chart.js/chart.min.js' %}"></script>
+  <script src="{% static 'gestion/third/chart.js/package/dist/chart.umd.js' %}"></script>
   <link href="{% static 'gestion/css/style.css'%}" rel="stylesheet">
   {% block head %}{% endblock %}
 </head>
@@ -161,6 +161,14 @@
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'recibo_list' %}">Listar Recibos</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Reportes
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="{% url 'reporte_ingresos' %}">Reportes Financieros</a></li>
             </ul>
           </li>
         </ul>
