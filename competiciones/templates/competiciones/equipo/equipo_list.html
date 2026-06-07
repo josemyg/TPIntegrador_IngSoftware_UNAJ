@@ -22,7 +22,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for equipo in equipo_list %}
+                {% for equipo in equipos %}
                 <tr>
                     <td class="fw-bold">{{ equipo.nombre }}</td>
                     <td>{{ equipo.profesor|default:"Sin asignar" }}</td>

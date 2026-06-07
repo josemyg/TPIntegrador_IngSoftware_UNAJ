@@ -124,15 +124,18 @@ class EquipoCreateView(CreateView):
 	form_class = EquipoForm
 	template_name = 'competiciones/equipo/equipo_form.html'
 	success_url = reverse_lazy('equipo_list')
+
 class EquipoUpdateView(UpdateView):
 	model = Equipo
 	form_class = EquipoForm
 	template_name = 'competiciones/equipo/equipo_form.html'
 	success_url = reverse_lazy('equipo_list')
+
 class EquipoDeleteView(DeleteView):
 	model = Equipo
 	template_name = 'competiciones/equipo/equipo_confirm_delete.html'
 	success_url = reverse_lazy('equipo_list')
+
 class LigaListView(ListView):
     model = Liga
     template_name = 'competiciones/liga/liga_list.html'
@@ -386,7 +389,7 @@ def verificar_y_avanzar_fase(torneo):
     cantidad_vivos = len(equipos_vivos)
 
     if cantidad_vivos == 1:
-        # ¡Tenemos un campeon absoluto!
+        # ï¿½Tenemos un campeon absoluto!
         torneo.estado = 'Finalizado' 
         torneo.save()
         return

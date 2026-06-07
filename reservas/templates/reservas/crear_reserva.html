@@ -1,20 +1,10 @@
-{% extends 'reservas/form_reservas.html' %} 
+{% extends 'form_base.html' %}
+{% load static %}
 
-{% block title %}
-Crear
-{% endblock %}
+{% block name %}Reserva{% endblock %}
 
-{% block create %}
-Reserva
-{% endblock %}
-
-{% block name %} 
-Continuar al pago
-{% endblock %}
+{% block boton_save %}Continuar al pago{% endblock boton_save %}Continuar al pago
 
 {% block button_link %}
-    <a href="{% url 'lista_reservas' %}"
-       class="btn btn-dark">
-        Cancelar
-    </a>
+<a name="" id="" class="btn btn-dark m-2" href="{% url 'lista_reservas' %}">Cancelar</a>
 {% endblock %}
