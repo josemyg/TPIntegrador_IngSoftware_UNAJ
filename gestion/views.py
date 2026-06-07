@@ -55,6 +55,7 @@ class ProfesorPrintView(PermissionRequiredMixin, DetailView):
 
 class ProfesorVerificarView(PermissionRequiredMixin, DetailView):
     model = Profesor
+    permission_required = 'gestion.view_profesor'
     template_name = "gestion/profesor/profesor_verificador.html"
     context_object_name = 'profesor'
     success_url = reverse_lazy('profesor_list')
