@@ -68,7 +68,7 @@ Lista de Reservas
         <div class="col-md-3">
 
             <select name="estado"
-                    class="form-select">
+                    class="form-control">
 
                 <option value="">
                     Seleccionar estado
@@ -94,7 +94,7 @@ Lista de Reservas
         <div class="col-md-3">
 
             <select name="cancha"
-                    class="form-select">
+                    class="form-control">
 
                 <option value="">
                     Seleccionar cancha
@@ -204,6 +204,13 @@ Lista de Reservas
 
                     <tr>
 
+                        <!-- id -->
+                        <td>
+
+                            {{ reserva.id }} <!-- Muestra el ID de la reserva para referencia interna. -->
+
+                        </td>
+
                         <!-- CLIENTE -->
                         <td>
 
@@ -216,7 +223,8 @@ Lista de Reservas
                         <!-- CANCHA -->
                         <td>
 
-                            {{ reserva.tipo_cancha.nombre }} 
+                            {{ reserva.cancha.nombre }}
+
 
                         </td> 
 

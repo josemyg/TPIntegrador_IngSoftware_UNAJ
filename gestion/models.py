@@ -83,7 +83,7 @@ class Cliente(Usuario):
 def crear_Profesor(sender, instance, created, **kwargs):
     if created:
         nombre = instance.nombre+'_'+instance.apellido
-        user = User.objects.create_user(nombre,instance.email, 'f.123456')
+        user = User.objects.create_user(nombre,instance.email, 'f.123456') 
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")

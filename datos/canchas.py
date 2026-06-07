@@ -1,8 +1,9 @@
-import os
+import random
+
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from tu_app.models import TipoCancha, Cancha
-import random
+
+from canchas.models import Cancha, TipoCancha
 
 def crear_tipos_cancha():
     tipos = [

@@ -281,48 +281,64 @@ class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'pagos/pago_form.html'
 
     def dispatch(self, request, *args, **kwargs):
-
         self.reserva = get_object_or_404(
             Reserva,
             pk=self.kwargs['reserva_id']
         )
-
-        return super().dispatch(
-            request,
-            *args,
-            **kwargs
-        )
+        return super().dispatch(request, *args, **kwargs)
 
     def get_initial(self):
-
         initial = super().get_initial()
-
         initial['monto'] = self.reserva.precio_final
         initial['origen_pago'] = 'alquiler_cancha'
-
         return initial
 
     def form_valid(self, form):
-
-        pago, creado = Pago.objects.get_or_create(
-            reserva=self.reserva,
-            defaults={
-                'monto': self.reserva.precio_final,
-                'origen_pago': 'alquiler_cancha',
-                'estado': 'PAGADO',
-                 'tipo_pago': form.cleaned_data.get('tipo_pago'),
-                 'descuento': form.cleaned_data.get('descuento'),
-            })
-        
-        if not creado:
+        # 1. Validar duplicados de caja
+        pago_existente = Pago.objects.filter(reserva=self.reserva).exists()
+        if pago_existente:
+            messages.warning(self.request, f"La reserva de {self.reserva.cliente} ya registra movimientos de caja asociados.")
             return redirect('lista_reservas')
+
+        # 2. Rescatamos la instancia sin impactar la Base de Datos todavía
+        pago = form.save(commit=False)
+        pago.reserva = self.reserva
+        pago.origen_pago = 'alquiler_cancha'
+        pago.estado = 'PAGADO'
+
+        # Recuperamos lo que el usuario REALMENTE seleccionó en el HTML
+        pago.tipo_pago = form.cleaned_data.get('tipo_pago')
+        pago.descuento = form.cleaned_data.get('descuento')
+
+        # Calculamos el monto real aplicando el descuento si es que existe
+        monto_base = float(self.reserva.precio_final)
+
+        if pago.descuento and getattr(pago.descuento, 'cantidad', None):
+            try:
+                # Tu modelo guarda el porcentaje como Decimal en el campo 'cantidad'
+                porcentaje_num = float(pago.descuento.cantidad)
+                
+                # Calculamos los pesos a restar basándonos en el precio de la reserva
+                descuento_calculado = (monto_base * porcentaje_num) / 100.0
+                pago.monto = round(monto_base - descuento_calculado, 2)
+            except (ValueError, TypeError):
+                pago.monto = monto_base
+        else:
+            pago.monto = monto_base
+
+        # Guardamos el Pago definitivo con todas las relaciones mapeadas
+            pago.save()  
+
+            # 3. Actualizamos estado de la reserva del cliente
+            self.reserva.estado = 'CONFIRMADA'
+            self.reserva.save()
+
+            # 4. Generamos comprobante oficial
+            Recibo.objects.get_or_create(pago=pago)
+
+            messages.success(
+                self.request, 
+                f"¡Cobro Registrado! El pago por ${pago.monto} (Método: {pago.tipo_pago}) fue procesado con éxito y la reserva quedó CONFIRMADA."
+            )
         
-        Recibo.objects.get_or_create(
-            pago=pago)
-         
-
-        self.reserva.estado = 'CONFIRMADA'
-        self.reserva.save()
-
         return redirect('lista_reservas')
-    

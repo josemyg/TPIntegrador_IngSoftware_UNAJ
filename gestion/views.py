@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import logout
 
 from .models import Cliente, Profesor
-from .forms import ProfesorForm, ClienteForm
+from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm
 
 
 class ProfesorListView(PermissionRequiredMixin, ListView):
@@ -41,6 +41,13 @@ class ProfesorUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = "gestion/profesor/profesor_form.html"
     success_url = reverse_lazy('profesor_list')
 
+class ProfesorAVerificarUpdateView(PermissionRequiredMixin, UpdateView):
+    model = Profesor
+    permission_required = 'profesor.change_profesor'
+    form_class = ProfesorSinValidarForm
+    success_url = reverse_lazy('profesoresavalidar_list')
+    template_name = "gestion/profesor/profesor_sinvalidar_form.html"
+
 class ProfesorDeleteView(PermissionRequiredMixin, DeleteView):
     model = Profesor
     permission_required = 'profesor.delete_profesor'
@@ -49,13 +56,14 @@ class ProfesorDeleteView(PermissionRequiredMixin, DeleteView):
 
 class ProfesorPrintView(PermissionRequiredMixin, DetailView):
     model = Profesor
+    permission_required = 'profesor.view_profesor'
     template_name = "gestion/profesor/profesor_print.html"
     context_object_name = 'profesor'
     success_url = reverse_lazy('profesor_list')
 
 class ProfesorVerificarView(PermissionRequiredMixin, DetailView):
     model = Profesor
-    permission_required = 'gestion.view_profesor'
+    permission_required = 'profesor.view_profesor'
     template_name = "gestion/profesor/profesor_verificador.html"
     context_object_name = 'profesor'
     success_url = reverse_lazy('profesor_list')
