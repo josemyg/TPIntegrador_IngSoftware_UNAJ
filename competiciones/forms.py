@@ -52,7 +52,7 @@ class AsignarCanchaForm(forms.ModelForm):
         fields = ['cancha_asignada', 'fecha_y_hora_encuentro']
         widgets = {
             'fecha_y_hora_encuentro': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
-            'cancha_asignada': forms.Select(attrs={'class': 'form-select'})
+            'cancha_asignada': forms.Select(attrs={'class': 'form-control'})
         }
 
     def clean(self):
