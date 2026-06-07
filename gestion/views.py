@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import logout
 
 from .models import Cliente, Profesor
-from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm
+from .forms import ProfesorForm, ProfesorSinValidarForm, CreateProfesorForm, ClienteForm
 
 
 class ProfesorListView(PermissionRequiredMixin, ListView):
@@ -30,7 +30,7 @@ class ProfesoresaValidarListView(PermissionRequiredMixin, ListView):
 class ProfesorCreateView(PermissionRequiredMixin, CreateView):
     model = Profesor
     permission_required = 'profesor.add_profesor'
-    form_class = ProfesorForm
+    form_class = CreateProfesorForm
     template_name = 'gestion/profesor/profesor_form.html'
     success_url = reverse_lazy('profesor_list')
 
