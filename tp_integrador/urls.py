@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/login/', LoginView.as_view(template_name='gestion/middleware/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
     path('', include('gestion.urls')),
+    path('competiciones/', include('competiciones.urls')),
     path('reservas/', include('reservas.urls')),
     path('canchas/', include('canchas.urls')),
     path('descuentos/', include('descuentos.urls')),

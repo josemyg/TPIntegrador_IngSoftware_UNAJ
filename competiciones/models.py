@@ -53,17 +53,18 @@ class Torneo(Competicion):
         verbose_name_plural = "Torneos"
 
 
-# ==========================================
-# 4. EL MODELO DE PARTIDO 
-# ==========================================
+# =================================
+# 4.     EL MODELO DE PARTIDO     =      
+# =================================
+
 class Partido(models.Model):
-    competicion = models.ForeignKey(Competicion, on_delete=models.PROTECT, related_name='partidos')
+    competicion = models.ForeignKey(Competicion, on_delete=models.CASCADE, related_name='partidos')
     equipo_local = models.ForeignKey(Equipo, on_delete=models.PROTECT, related_name='partidos_local')
     equipo_visitante = models.ForeignKey(Equipo, on_delete=models.PROTECT, related_name='partidos_visitante')
     
     # Vinculado a la Cancha (Temporal) de arriba
-    cancha = models.ForeignKey(Cancha, on_delete=models.PROTECT, null=True, blank=True)
-    fecha_hora = models.DateTimeField(null=True, blank=True) 
+    cancha_asignada = models.ForeignKey(Cancha, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cancha del Encuentro")
+    fecha_y_hora_encuentro = models.DateTimeField(null=True, blank=True, verbose_name="Fecha y Hora Programada") 
     
     fase = models.CharField(max_length=50) # Ej: "Fecha 1", "Semifinal"
     goles_local = models.IntegerField(default=0)
@@ -71,7 +72,11 @@ class Partido(models.Model):
     penales_local = models.IntegerField(null=True, blank=True)
     penales_visitante = models.IntegerField(null=True, blank=True)
     jugado = models.BooleanField(default=False)
-
+    goles_local = models.IntegerField(null=True, blank=True, verbose_name="Goles del Local")
+    goles_visitante = models.IntegerField(null=True, blank=True, verbose_name="Goles del Visitante")
+    penales_local = models.IntegerField(null=True, blank=True, verbose_name="Penales Local")
+    penales_visitante = models.IntegerField(null=True, blank=True, verbose_name="Penales Visitante")
+    jugado = models.BooleanField(default=False, verbose_name="Partido Finalizado")
     class Meta:
         verbose_name = "Partido"
         verbose_name_plural = "Partidos"

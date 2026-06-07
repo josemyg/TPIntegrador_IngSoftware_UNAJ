@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Cargar Resultado{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow w-50 mx-auto">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0">Cargar Resultado: {{ partido.fase }}</h4>
+        </div>
+        <div class="card-body">
+            <div class="text-center mb-4">
+                <h5 class="fw-bold text-dark">{{ partido.equipo_local.nombre }}</h5>
+                <span class="badge bg-secondary">VS</span>
+                <h5 class="fw-bold text-dark mt-2">{{ partido.equipo_visitante.nombre }}</h5>
+            </div>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ url_anterior }}">
+
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Goles (Local)</label>
+                        {{ form.goles_local }}
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label fw-bold">Goles (Visitante)</label>
+                        {{ form.goles_visitante }}
+                    </div>
+                </div>
+
+                <hr>
+
+                <div class="alert alert-warning py-2 mb-3">
+                    <small><i class="bi bi-info-circle me-1"></i><strong>Solo en caso de empate:</strong> Ingrese el resultado de la tanda de penales.</small>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-6">
+                        <label class="form-label text-muted fw-bold">Penales (Local)</label>
+                        {{ form.penales_local }}
+                    </div>
+                    <div class="col-6">
+                        <label class="form-label text-muted fw-bold">Penales (Visitante)</label>
+                        {{ form.penales_visitante }}
+                    </div>
+                </div>
+
+                <div class="form-check d-none">
+                    {{ form.jugado }}
+                </div>
+
+                <div class="text-center mt-4">
+                    <button type="submit" class="btn btn-success px-4 fw-bold">Guardar Resultado</button>
+                    <a href="{{ url_anterior }}" class="btn btn-secondary px-4">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

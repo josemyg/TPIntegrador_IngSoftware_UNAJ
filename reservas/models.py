@@ -22,7 +22,8 @@ class Reserva(models.Model):
 
     cancha = models.ForeignKey(
         'canchas.Cancha',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
+        null=True, blank=True,
         verbose_name="Cancha"
     )
 
