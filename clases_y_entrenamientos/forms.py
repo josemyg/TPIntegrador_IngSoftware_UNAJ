@@ -1,6 +1,6 @@
 from django import forms
 from .models import Clase, Entrenamiento
-from gestion.models import Cliente
+from gestion.models import Cliente, Profesor
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 
@@ -58,6 +58,10 @@ class ClaseForm(forms.ModelForm):
 
         return cleaned
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['profesor'].queryset = Profesor.objects.filter(estado = 'activo')
+
 
 class EntrenamientoForm(forms.ModelForm):
     horario = forms.DateTimeField(
@@ -110,3 +114,7 @@ class EntrenamientoForm(forms.ModelForm):
                         f'No se puede cambiar el estado de "{estado_actual}" a "{estado_nuevo}".')
 
         return cleaned
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['entrenador'].queryset = Profesor.objects.filter(estado = 'activo')

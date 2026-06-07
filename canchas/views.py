@@ -17,7 +17,6 @@ class TipoCanchaCreateView(PermissionRequiredMixin, CreateView):
     permission_required = 'canchas.add_tipocancha'
     form_class = TipoCanchaForm
     template_name = 'canchas/tipo_cancha_form.html'
-   # 🎯 CAMBIO 1: Queremos que al guardar nos mande directo a CANCHA_LIST
     success_url = reverse_lazy('tipo_cancha_list')
 
 # RF-13: Modificar tipo de cancha

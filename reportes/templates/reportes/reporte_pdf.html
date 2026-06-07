@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<style>
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 12px;
+    color: #333;
+    margin: 30px;
+}
+
+.titulo-principal {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.titulo-secundario {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.periodo {
+    text-align: center;
+    font-size: 12px;
+    margin-bottom: 20px;
+    color: #666;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 15px 0;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 8px;
+}
+
+.resumen {
+    background: #f9f9f9;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.resumen p {
+    margin: 6px 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th {
+    background-color: #f2f2f2;
+    border: 1px solid #999;
+    padding: 6px;
+    text-align: left;
+}
+
+td {
+    border: 1px solid #ccc;
+    padding: 6px;
+}
+
+td.monto {
+    text-align: right;
+}
+
+.footer {
+    margin-top: 20px;
+    font-size: 10px;
+    text-align: center;
+    color: #777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="titulo-principal">
+    GOL AHORA
+</div>
+
+<div class="titulo-secundario">
+    Reporte de Ingresos
+</div>
+
+<div class="periodo">
+    Período: {{ fechaInicio|default:"Inicio" }} - {{ fechaFin|default:"Actual" }}
+</div>
+
+<hr>
+
+<div class="section-title">
+    Resumen general
+</div>
+
+<div class="resumen">
+
+    <p><strong>Total recaudado:</strong> ${{ total_recaudado }}</p>
+
+    <p><strong>Total de pagos:</strong> {{ total_pagos }}</p>
+
+    <p><strong>Promedio por pago:</strong> ${{ promedio|floatformat:2 }}</p>
+
+    <p><strong>Recaudado hoy:</strong> ${{ recaudado_hoy }}</p>
+
+</div>
+
+<hr>
+
+<div class="section-title">
+    Detalle de pagos
+</div>
+
+<table>
+
+    <thead>
+        <tr>
+            <th>Fecha</th>
+            <th>Origen</th>
+            <th>Tipo</th>
+            <th>Monto</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for pago in pagos %}
+
+        <tr>
+            <td>{{ pago.fecha|date:"d/m/Y" }}</td>
+            <td>{{ pago.get_origen_pago_display }}</td>
+            <td>{{ pago.tipo_pago }}</td>
+            <td class="monto">${{ pago.monto }}</td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="4" style="text-align:center;">
+                No hay pagos en este período
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+<hr>
+
+
+
+</body>
+</html>

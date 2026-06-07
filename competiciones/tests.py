@@ -5,8 +5,10 @@ from django.test import TestCase
 
 import random
 import string
+
 from django.contrib.auth.models import User
-from tu_app.models import Profesor
+
+from gestion.models import Profesor
 
 def crear_profesores_argentinos():
     # Lista de nombres comunes en Argentina

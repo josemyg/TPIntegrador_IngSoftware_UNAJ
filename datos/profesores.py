@@ -1,7 +1,7 @@
 import random
 import string
 from django.contrib.auth.models import User
-from tu_app.models import Profesor
+from gestion.models import Profesor
 
 def crear_profesores_argentinos():
     # Lista de nombres comunes en Argentina
@@ -95,7 +95,7 @@ def crear_profesores_argentinos():
         password = 'f.123456'  # Contraseña fija para todos los usuarios
         
         # Crear el usuario
-        user = User.objects.add_user(username, email, password)
+        user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
         
         # Crear el profesor

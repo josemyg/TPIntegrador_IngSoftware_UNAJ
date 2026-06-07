@@ -3,7 +3,10 @@ from datetime import datetime, timedelta, time
 from django import forms
 
 from .models import Reserva
-from canchas.models import TipoCancha
+from canchas.models import Cancha, TipoCancha
+
+
+  # VALIDAR DURACIÓN MÁXIMA
 
 
 
@@ -43,8 +46,8 @@ class ReservaForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         # Filtrar canchas para mostrar solo las activas en el formulario de reserva
-        self.fields['tipo_cancha'].queryset = TipoCancha.objects.filter(
-            estado='activo'
+        self.fields['cancha'].queryset = Cancha.objects.filter( 
+            estado='DISPONIBLE'
         )
 
         # Establecer fecha mínima y máxima para la reserva
@@ -62,7 +65,7 @@ class ReservaForm(forms.ModelForm):
 
         fields = [
             'cliente',
-            'tipo_cancha',
+            'cancha',
             'fecha',
             'hora_inicio',
             'hora_fin'
@@ -71,11 +74,11 @@ class ReservaForm(forms.ModelForm):
         widgets = {
 
             'cliente': forms.Select(
-                attrs={'class': 'form-select select2'}
+                attrs={'class': 'form-control'}
             ),
 
-            'tipo_cancha': forms.Select(
-                attrs={'class': 'form-select'}
+            'cancha': forms.Select(
+                attrs={'class': 'form-control'}
             ),
 
             'fecha': forms.DateInput(
@@ -87,12 +90,12 @@ class ReservaForm(forms.ModelForm):
 
             'hora_inicio': forms.Select(
                 choices=HORARIOS,
-                attrs={'class': 'form-select'}
+                attrs={'class': 'form-control'}
             ),
 
             'hora_fin': forms.Select(
                 choices=HORARIOS,
-                attrs={'class': 'form-select'}
+                attrs={'class': 'form-control'}
             ),
         }
 
@@ -104,11 +107,11 @@ class ReservaForm(forms.ModelForm):
         fecha = cleaned_data.get('fecha')
         hora_inicio = cleaned_data.get('hora_inicio')
         hora_fin = cleaned_data.get('hora_fin')
-        tipo_cancha = cleaned_data.get('tipo_cancha')
+        cancha = cleaned_data.get('cancha')
 
         # VALIDAR CANCHA ACTIVA
 
-        if tipo_cancha and tipo_cancha.estado != 'activo':
+        if cancha and cancha.estado != 'DISPONIBLE':
 
             raise forms.ValidationError(
                 'La cancha seleccionada no está disponible para reservas.'
@@ -150,48 +153,39 @@ class ReservaForm(forms.ModelForm):
                     'La hora de fin debe ser posterior a la hora de inicio.'
                 )
 
-        # VALIDAR DURACIÓN MÁXIMA
-
-        if hora_inicio and hora_fin and tipo_cancha:
-
-            # 1. Calculamos la duración de la reserva que intenta sacar el usuario
-            inicio = datetime.combine(datetime.today(), hora_inicio)
-            fin = datetime.combine(datetime.today(), hora_fin)
+       
+            if fecha and hora_inicio and hora_fin and cancha:
             
-            if fin <= inicio:
-                raise forms.ValidationError("La hora de fin debe ser posterior a la hora de inicio.")
-                
-            duracion = fin - inicio
-            # Buscamos el límite analizando el NOMBRE del tipo de cancha dinámicamente
-            nombre_cancha = tipo_cancha.nombre.lower() 
             
-            # Seteamos 1 hora por defecto por si no coincide con ninguna
-            limite_horas = 1 
+                dt_inicio = datetime.combine(fecha, hora_inicio)
+                dt_fin = datetime.combine(fecha, hora_fin)
+            
+           
+                diferencia = dt_fin - dt_inicio
+            
+            
+                horas_solicitadas = diferencia.total_seconds() / 3600
+            
+           
+                limite_cancha = cancha.tipo.max_horas 
 
-            # Reglas basada en lo que contenga el nombre:
-            if '5' in nombre_cancha:
-                limite_horas = 1  # Máximo 1 hora para Fútbol 5
-            elif '7' in nombre_cancha or '11' in nombre_cancha:
-                limite_horas = 2  # Máximo 2 horas para Fútbol 7 o 11
-
-            max_duracion = timedelta(hours=limite_horas)
-
-            # 3. Validamos
-            if duracion > max_duracion:
+            
+            if horas_solicitadas > limite_cancha:
                 raise forms.ValidationError(
-                    f'La duración máxima para las reservas de {tipo_cancha.nombre} es de {limite_horas} hora(s).'
+                    f"No podés reservar más de {limite_cancha} horas para este tipo de cancha (Solicitaste {horas_solicitadas:.1f} hs)."
                 )
+        
 
         # VALIDAR SUPERPOSICIÓN DE RESERVAS
       
 
-        if fecha and hora_inicio and hora_fin and tipo_cancha:
+        if fecha and hora_inicio and hora_fin and cancha:
 
             conflicto = Reserva.objects.filter(
                 fecha=fecha,
-                tipo_cancha=tipo_cancha
+                cancha=cancha
             ).exclude(
-                estado='CANCELADA'
+                estado__startswith='CANCELADA'
             )
 
             # Si estoy editando una reserva,

@@ -7,11 +7,6 @@ class EquipoForm(forms.ModelForm):
         model = Equipo
         template_name = 'competiciones/equipo/equipo_form.html'
         fields = '__all__'
-        labels = {
-            'nombre': 'Nombre del Equipo',
-            'profesor': 'Profesor Asignado',
-            'clientes': 'Integrantes (Maximo 15)'
-        }
         widgets = {
             'nombre': forms.TextInput(attrs={'class':'form-control'}),
             'profesor': forms.Select(attrs={'class': 'form-control'}),
@@ -23,6 +18,10 @@ class EquipoForm(forms.ModelForm):
             if len(clientes) > 5:
                 raise forms.ValidationError("No se pueden seleccionar mas de 5 clientes.")
             return clientes
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['profesor'].queryset = Profesor.objects.filter(estado = 'activo')
 
 class LigaForm(forms.ModelForm):
     class Meta:
@@ -42,7 +41,7 @@ class TorneoForm(forms.ModelForm):
         fields = ['nombre', 'estado', 'equipos', 'es_ida_y_vuelta']
         widgets = {
             'nombre': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: Copa Argentina'}),
-            'estado': forms.Select(attrs={'class': 'form-select'}),
+            'estado': forms.Select(attrs={'class': 'form-control'}),
             'equipos': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
             'es_ida_y_vuelta': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
