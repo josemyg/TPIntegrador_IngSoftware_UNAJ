@@ -204,6 +204,13 @@ Lista de Reservas
 
                     <tr>
 
+                        <!-- id -->
+                        <td>
+
+                            {{ reserva.id }} <!-- Muestra el ID de la reserva para referencia interna. -->
+
+                        </td>
+
                         <!-- CLIENTE -->
                         <td>
 
@@ -216,7 +223,8 @@ Lista de Reservas
                         <!-- CANCHA -->
                         <td>
 
-                            {{ reserva.tipo_cancha.nombre }} 
+                            {{ reserva.cancha.nombre }}
+
 
                         </td> 
 

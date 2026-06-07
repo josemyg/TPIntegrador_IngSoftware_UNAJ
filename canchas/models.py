@@ -41,7 +41,7 @@ class TipoCancha(models.Model):
     )
 
     def __str__(self):
-        return f"{self.nombreTipo} - {self.get_superficie_display()}"
+        return f"{self.nombreTipo} - {self.get_superficie_display()} - ${self.precio_hora}/hora"
     
     class Meta:
         verbose_name = "Tipo de Cancha"
@@ -67,11 +67,11 @@ class Cancha(models.Model):
     estado = models.CharField(
         max_length=20,
         choices=ESTADO_CHOICES,
-        default='DISPONIBLE'
+        default='Disponible'
     )
 
     def __str__(self):
-        return f"{self.nombre} ({self.tipo.nombre})"
+        return f"{self.nombre} / {self.tipo.nombreTipo} / {self.tipo.get_superficie_display()} / {self.tipo.capacidad } jugadores"
 
     def consultarDisponibilidad(self, fecha, hora_inicio):
         # lógica para consultar si la cancha está disponible en esa fecha y hora
