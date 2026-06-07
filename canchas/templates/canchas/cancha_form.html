@@ -1,44 +1,10 @@
-{% extends 'base.html' %}
+{% extends 'form_base.html' %}
 {% load static %}
 
-{% block content %}
+{% block name %}Cancha{% endblock %}
 
-    <div class="container my-5">
+{% block boton_save %}Guardar y continuar al pago.{% endblock %}
 
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-
-                <div class="card shadow w-75 mx-auto">
-                    <div class="card-header bg-primary text-white">
-                        <h3 class="mb-0">{% if object %}Editar{% else %}Nueva Cancha!{% endif %}{% block name %}{% endblock %}</h3>
-                    </div>
-                    <div class="card-body">
-                    {% for field in form %}
-                        <div class="row">
-                            <div class="col-sm-6 col-form-label">
-                                {{ field.label_tag }}
-                            </div>
-                            <div class="col-sm-12">{{ field }}</div>
-                            {% if field.errors %}
-                                <p></p>
-                                <div>
-                                    <button type="button" data-dismiss="alert">&times;</button>
-                                    {{ field.errors }}
-                                </div>
-                            {% endif %}
-                            <p></p>
-                        </div>
-                    {% endfor %}
-                    </div>
-
-                    <div class="row justify-content-center">
-                        <div class="col-8">
-                            <button type="submit" name="" id="" class="btn btn-primary">{% block boton_save %}Guardar{% endblock %}</button>
-                            {% block button_link %}{% endblock %}
-                        </div>
-                    </div>
-                </div>
-        </form>
-    </div>
-
+{% block button_link %}
+<a name="" id="" class="btn btn-dark m-2" href="{% url 'cancha_list' %}">Cancelar</a>
 {% endblock %}

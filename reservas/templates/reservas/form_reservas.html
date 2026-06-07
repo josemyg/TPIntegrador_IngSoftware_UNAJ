@@ -1,82 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'form_base.html' %}
 {% load static %}
 
-{% block content %}
+{% block name %}Reserva{% endblock %}
 
-<div class="container my-5">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">
-                {% block create %}{% endblock %}
-                {% block name %}{% endblock %}
-            </h3>
-        </div>
-
-        <div class="card-body">
-
-            <form method="post" enctype="multipart/form-data">
-
-                {% csrf_token %}
-
-                {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-                {% for field in form %}
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
-                            {{ field.label }}
-                        </label>
-
-                        {{ field }}
-
-                        {% if field.help_text %}
-                            <small class="text-muted">
-                                {{ field.help_text }}
-                            </small>
-                        {% endif %}
-
-                        {% if field.errors %}
-                            <div class="text-danger mt-1">
-                                {{ field.errors }}
-                            </div>
-                        {% endif %}
-
-                    </div>
-
-                {% endfor %}
-
-                <hr>
-
-                <div class="d-flex gap-2">
-
-                    <button type="submit" class="btn btn-success">
-                        {% block boton_save %}
-                            Guardar
-                        {% endblock %}
-                    </button>
-
-                    {% block button_link %}
-                    <a href="{% url 'lista_reservas' %}"
-                       class="btn btn-secondary">
-                        Cancelar
-                    </a>
-                    {% endblock %}
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-</div>
-
+{% block button_link %}
+<a name="" id="" class="btn btn-dark m-2" href="{% url 'reserva_list' %}">Cancelar</a>
 {% endblock %}

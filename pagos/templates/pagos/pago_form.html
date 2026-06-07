@@ -194,10 +194,10 @@
 
         // Estilizar los inputs nativos de Django para mantener la UI impecable
         const descuentoSelect = document.querySelector('select[name="descuento"]');
-        if (descuentoSelect) { descuentoSelect.classList.add('form-select', 'rounded-3'); }
+        if (descuentoSelect) { descuentoSelect.classList.add('form-control', 'rounded-3'); }
         
         const origenSelect = document.querySelector('select[name="origen_pago"]');
-        if (origenSelect) { origenSelect.classList.add('form-select'); }
+        if (origenSelect) { origenSelect.classList.add('form-control'); }
 
         cards.forEach(card => {
             card.addEventListener('click', function() {
@@ -282,7 +282,7 @@
     .fw-black {
         font-weight: 900;
     }
-    .form-select {
+    .form-control {
         display: block;
         width: 100%;
         padding: 0.375rem 2.25rem 0.375rem 0.75rem;

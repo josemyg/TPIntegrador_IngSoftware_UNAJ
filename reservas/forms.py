@@ -74,11 +74,11 @@ class ReservaForm(forms.ModelForm):
         widgets = {
 
             'cliente': forms.Select(
-                attrs={'class': 'form-select select2'}
+                attrs={'class': 'form-control'}
             ),
 
             'cancha': forms.Select(
-                attrs={'class': 'form-select'}
+                attrs={'class': 'form-control'}
             ),
 
             'fecha': forms.DateInput(
@@ -90,12 +90,12 @@ class ReservaForm(forms.ModelForm):
 
             'hora_inicio': forms.Select(
                 choices=HORARIOS,
-                attrs={'class': 'form-select'}
+                attrs={'class': 'form-control'}
             ),
 
             'hora_fin': forms.Select(
                 choices=HORARIOS,
-                attrs={'class': 'form-select'}
+                attrs={'class': 'form-control'}
             ),
         }
 

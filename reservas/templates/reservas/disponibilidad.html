@@ -15,7 +15,7 @@
                 
                 <div class="col-12 col-md-5">
                     <label class="form-label fw-semibold text-secondary">Cancha</label>
-                    <select name="cancha" class="form-select border-2 py-2">
+                    <select name="cancha" class="form-control border-2 py-2">
                         <option value="">Seleccione una cancha...</option>
                         {% for cancha in canchas %}
                             <option value="{{ cancha.id }}" {% if cancha.id|stringformat:"s" == cancha_id %}selected{% endif %}>
@@ -27,7 +27,7 @@
 
                 <div class="col-12 col-md-4">
                     <label class="form-label fw-semibold text-secondary">Fecha</label>
-                    <input type="date" name="fecha" value="{{ fecha }}" class="form-select border-2 py-2">
+                    <input type="date" name="fecha" value="{{ fecha }}" class="form-control border-2 py-2">
                 </div>
 
                 <div class="col-12 col-md-3">
