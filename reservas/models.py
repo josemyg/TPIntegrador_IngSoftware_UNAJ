@@ -3,7 +3,7 @@ from django.db import models
 from django.utils import timezone
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from canchas.models import TipoCancha
+from canchas.models import Cancha, TipoCancha
 from pagos.models import Pago, TipoPago
 
 class Reserva(models.Model):
@@ -20,10 +20,10 @@ class Reserva(models.Model):
         verbose_name="Cliente"
     ) # Campo de clave foránea que se relaciona con el modelo Usuario de la aplicación de gestión, con una restricción de eliminación en cascada para proteger los datos relacionados y un nombre legible en el panel de administración.
 
-    tipo_cancha = models.ForeignKey(
-        TipoCancha,
+    cancha = models.ForeignKey(
+        'canchas.Cancha',
         on_delete=models.PROTECT,
-        verbose_name="Tipo de Cancha"
+        verbose_name="Cancha"
     )
 
     fecha = models.DateField(verbose_name="Fecha de la reserva") # Campo de fecha para la reserva, con un nombre legible en el panel de administración.
@@ -54,7 +54,7 @@ class Reserva(models.Model):
         dt_fin = datetime.combine(fecha, self.hora_fin)
         diferencia = (dt_fin - dt_inicio).total_seconds() / 3600  # Horas en decimal
         # Calcula el precio final multiplicando la cantidad de horas reservadas por el precio por hora del tipo de cancha seleccionado.
-        self.precio_final = diferencia * float(self.tipo_cancha.precio_hora)
+        self.precio_final = diferencia * float(self.cancha.tipo.precio_hora)
 
     def save(self, *args, **kwargs):
 

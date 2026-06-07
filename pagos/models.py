@@ -83,9 +83,14 @@ class Recibo(models.Model):
 
 @receiver(post_save, sender=Pago)
 def crear_Recibo(sender, instance, created, **kwargs):
-    if created:
-        pago = instance
-        recibo = Recibo.objects.create(pago=pago, fecha=Now())
-        recibo.save()
-        instance.recibo = recibo
-        print("Recibo creado correctamente")
+    if instance.estado == 'PAGADO':
+        # 1. Creamos el recibo si no existe todavía usando la relación reversa
+        if not hasattr(instance, 'recibo'): # Verificamos si el pago ya tiene un recibo asociado para evitar crear duplicados
+            Recibo.objects.create(pago=instance)
+            print(f"Recibo creado automáticamente para el Pago #{instance.id}")
+
+        # 2. Si el pago tiene una reserva asociada, la confirmamos automáticamente
+        if instance.reserva and instance.reserva.estado != 'CONFIRMADA':
+            instance.reserva.estado = 'CONFIRMADA'
+            instance.reserva.save()
+            print(f"Reserva #{instance.reserva.id} confirmada automáticamente")

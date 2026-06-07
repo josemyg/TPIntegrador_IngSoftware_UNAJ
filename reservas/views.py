@@ -1,12 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Reserva
-from canchas.models import TipoCancha
+from canchas.models import Cancha, TipoCancha
 from .forms import ReservaForm
 from django.db.models import Q
 from datetime import datetime, timedelta,time
 from django.contrib import messages
+from django.contrib.auth.decorators import permission_required
 
-# LISTAR Y CREAR RESERVAS
+@permission_required("reservas.view_reserva")
 def gestion_reservas(request):
 
     if request.method == 'POST': # Si el método de la solicitud es POST, significa que se está enviando un formulario para crear una nueva reserva.
@@ -53,11 +54,11 @@ def gestion_reservas(request):
     # FILTRAR POR CANCHA
     if cancha:
         reservas = reservas.filter(
-            tipo_cancha__id=cancha
+            cancha__id=cancha
         )
 
     # OBTENER CANCHAS
-    canchas = TipoCancha.objects.all()
+    canchas = Cancha.objects.all()
 
     return render(
         request,
@@ -71,6 +72,7 @@ def gestion_reservas(request):
 
 #REGISTRAR RESERVA
 
+@permission_required("reservas.add_reserva")
 def crear_reserva(request):
 
     if request.method == 'POST':
@@ -99,6 +101,7 @@ def crear_reserva(request):
     )
 
 # EDITAR RESERVA
+@permission_required("reservas.change_reserva")
 def editar_reserva(request, id):
 
     reserva = get_object_or_404(Reserva, id=id) # Obtiene la reserva con el ID proporcionado o devuelve un error 404 si no se encuentra. Esto asegura que solo se pueda editar una reserva existente y evita errores si se intenta acceder a una reserva que no existe.
@@ -133,6 +136,7 @@ def editar_reserva(request, id):
 
 
 # CANCELAR RESERVA
+@permission_required("reservas.delete_reserva")
 def cancelar_reserva(request, id):
 
     reserva = get_object_or_404(
@@ -149,13 +153,13 @@ def cancelar_reserva(request, id):
         reserva.hora_inicio
     )
 
-    diferencia = fecha_reserva - ahora 
+    diferencia = fecha_reserva - ahora # Calcula la diferencia entre la fecha y hora de la reserva y la fecha y hora actual para determinar si la cancelación se realiza dentro del plazo permitido o fuera de él.
 
     # -----------------------------
     # CANCELACIÓN FUERA DEL PLAZO
     # -----------------------------
 
-    if diferencia < timedelta(hours=6):
+    if diferencia < timedelta(hours=6): # Si la diferencia es menor a 6 horas, se considera una cancelación fuera del plazo permitido y se aplica un cargo. En este caso, se actualiza el estado de la reserva a 'CANCELADA CON CARGO' y se muestra un mensaje de error al usuario indicando que se aplicó un cargo por la cancelación tardía.
 
         reserva.estado = 'CANCELADA CON CARGO'
 
@@ -182,9 +186,10 @@ def cancelar_reserva(request, id):
     return redirect('lista_reservas')
 
 # CONSULTAR DISPONIBILIDAD
+@permission_required("reservas.view_reserva")
 def consultar_disponibilidad(request):
 
-    canchas = TipoCancha.objects.filter(estado='activo') # Obtiene todas las canchas que tienen un estado de 'activo' 
+    canchas = Cancha.objects.filter(estado='DISPONIBLE') # Obtiene todas las canchas que tienen un estado de 'DISPONIBLE' 
 
     reservas = None # Inicializa reservas como None para el caso que no haya fecha y cancha en la solicitud GET.
     horarios_libres = []
@@ -195,9 +200,9 @@ def consultar_disponibilidad(request):
 
         reservas = Reserva.objects.filter(
             fecha=fecha,
-            tipo_cancha_id=cancha_id
+            cancha_id=cancha_id
         ).exclude(
-            estado='CANCELADA' # se filtran las reservas para esa fecha y cancha específica, excluyendo aquellas que estén canceladas.
+            estado__startswith='CANCELADA' # Excluye las reservas que tienen un estado que comienza con 'CANCELADA', lo que significa que solo se considerarán las reservas activas para determinar la disponibilidad de la cancha en la fecha seleccionada.
         ).order_by('hora_inicio') # se ordenan las reservas por la hora de inicio para mostrar la disponibilidad de manera cronológica.
         
         hora_actual = datetime.combine(

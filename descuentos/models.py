@@ -57,6 +57,8 @@ class Descuento(models.Model):
         self.estado = "baja"
         self.save()
 
+    def __str__(self):
+        return self.tipo.nombreDescuento + " - " + str(self.cantidad) + " % "
 
         
         

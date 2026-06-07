@@ -4,10 +4,10 @@ from .models import TipoCancha, Cancha
 class TipoCanchaForm(forms.ModelForm):
     class Meta:
         model = TipoCancha
-        fields = ['nombre', 'superficie', 'capacidad', 'precio_hora', 'estado']
+        fields = ['nombreTipo', 'superficie', 'capacidad', 'precio_hora', 'estado', 'max_horas']
         
         widgets = {
-            'nombre': forms.TextInput(attrs={
+            'nombreTipo': forms.TextInput(attrs={
                 'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
                 'placeholder': 'Completar campo...'
             }),
@@ -24,6 +24,10 @@ class TipoCanchaForm(forms.ModelForm):
             }),
             'estado': forms.Select(attrs={
                 'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+            }),
+            'max_horas': forms.NumberInput(attrs={
+                'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'placeholder': 'Completar campo...'
             }),
         }
 

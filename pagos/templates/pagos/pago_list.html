@@ -60,7 +60,8 @@
                         <th class="ps-4">ID Pago</th>
                         <th>Concepto / Servicio</th>
                         <th>Método de Pago</th>
-                        <th class="text-center">Descuento</th>
+                        <th class="text-center">Id Reserva</th> 
+                        <th class="text-center">Descuento</th> 
                         <th class="text-center">Fecha</th>
                         <th class="text-end">Monto</th>
                         <th class="text-center">Estado</th>
@@ -72,31 +73,70 @@
                     <tr>
                         <td class="fw-bold ps-4 text-primary">#{{ pago.id }}</td>
                         <td><span class="badge bg-light text-dark border px-2 py-1.5">{{ pago.get_origen_pago_display }}</span></td>
-                        <td><i class="bi bi-credit-card-2-back me-1 text-muted"></i> {{ pago.tipo_pago.nombre }}</td>
-                        <td class="text-center">
-                            {% if pago.descuento %}
-                                <span class="text-success fw-semibold"><i class="bi bi-tag-fill me-1"></i>{{ pago.descuento }}</span>
+                        
+                        <td>
+                            <i class="bi bi-credit-card-2-back me-1 text-muted"></i> 
+                            {% if pago.tipo_pago.nombre %}
+                                {{ pago.tipo_pago.nombre }}
+                            {% elif pago.tipo_pago %}
+                                {{ pago.tipo_pago }}
                             {% else %}
-                                <span class="text-muted">Ninguno</span>
+                                <span class="text-muted small">No especificado</span>
                             {% endif %}
                         </td>
+                        
+                        <td class="text-center">
+                            {% if pago.reserva %}
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                                    <i class="bi bi-calendar-check me-1"></i>#{{ pago.reserva.id }}
+                                </span>
+                            {% elif pago.reserva_id %}
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                                    <i class="bi bi-calendar-check me-1"></i>#{{ pago.reserva_id }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted small">—</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="text-center">
+                            {% if pago.descuento.tipo.nombreDescuento %}
+                                <span class="text-success fw-semibold">
+                                    <i class="bi bi-tag-fill me-1"></i>{{ pago.descuento.tipo.nombreDescuento }}
+                                </span>
+                            {% elif pago.descuento.cantidad %}
+                                <span class="text-success fw-semibold">
+                                    <i class="bi bi-percentage me-1"></i>{{ pago.descuento.cantidad }}%
+                                </span>
+                            {% elif pago.descuento %}
+                                <span class="text-success fw-semibold">
+                                    <i class="bi bi-tag-fill me-1"></i>{{ pago.descuento }}
+                                </span>
+                            {% else %}
+                                <span class="text-muted small">Ninguno</span>
+                            {% endif %}
+                        </td>
+
                         <td class="text-center text-secondary">{{ pago.fecha|date:"d/m/Y" }}</td>
                         <td class="fw-bold text-end text-dark">${{ pago.monto }}</td>
+                        
                         <td class="text-center">
                             <form method="post" action="{% url 'cambiar_estado_pago' pago.id %}" class="d-inline-block">
                                 {% csrf_token %}
-                                <select name="estado" class="form-select form-select-sm border-secondary-subtle" onchange="this.form.submit()">
+                                <select name="estado" class="form-select form-select-sm border-secondary-subtle fw-semibold" onchange="this.form.submit()">
                                     {% for estado_pair in pago.ESTADOS_PAGO %}
                                         <option value="{{ estado_pair.0 }}" {% if pago.estado == estado_pair.0 %}selected{% endif %}>{{ estado_pair.1 }}</option>
                                     {% endfor %}
                                 </select>
                             </form>
                         </td>
+                        
                         <td class="text-center pe-4">
                             <div class="btn-group gap-1">
                                 {% if pago.recibo %}
                                     <a href="{% url 'mostrar_qr_pantalla' pago.id %}" class="btn btn-sm btn-outline-dark rounded-2" title="Ver QR">
-                                       <i class="bi bi-qr-code"></i> </a>
+                                        <i class="bi bi-qr-code"></i>
+                                    </a>
                                     <a href="{% url 'recibo_descargar' pago.recibo.id %}" class="btn btn-sm btn-outline-primary rounded-2" title="Descargar">
                                         <i class="bi bi-download"></i>
                                     </a>
@@ -115,7 +155,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="8" class="text-center text-muted py-5">
+                        <td colspan="9" class="text-center text-muted py-5">
                             <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
                             No se encontraron registros de cobros efectuados.
                         </td>
@@ -125,4 +165,5 @@
             </table>
         </div>
     </div>
+</div>
 {% endblock %}

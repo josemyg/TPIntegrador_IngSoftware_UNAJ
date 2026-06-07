@@ -1,16 +1,19 @@
+import io, base64, qrcode, unicodedata
+from xhtml2pdf import pisa
+
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView,  TemplateView
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.decorators import permission_required
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from .models import Pago, Recibo, TipoPago
-from reservas.models import Reserva
-from .forms import PagoForm, ReciboForm
-import unicodedata
-from xhtml2pdf import pisa
 from django.template.loader import get_template
 from django.http import HttpResponse
 from django.core.mail import EmailMessage
-import io, base64, qrcode
+
+from .models import Pago, Recibo, TipoPago
+from reservas.models import Reserva
+from .forms import PagoForm, ReciboForm
 
 def eliminar_acentos(texto):
     if not texto: return ""
@@ -30,7 +33,6 @@ def confirmar_pago(request, pk):
     
     # Redirigimos al usuario de vuelta al listado general de pagos
     return redirect('pago_list')
-
 
 def cambiar_estado_pago(request, pk):
     """Actualiza el estado de un Pago vía POST desde la lista."""
@@ -54,14 +56,16 @@ def cambiar_estado_pago(request, pk):
     # Volver a la página anterior o al listado si no hay referer
     return redirect(request.META.get('HTTP_REFERER') or reverse('pago_list'))
 
-class PagoUpdateView(UpdateView):
+class PagoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Pago
+    permission_required = 'pagos.change_pago'
     form_class = PagoForm
     template_name = 'pagos/pago_edit.html'
     success_url = reverse_lazy('pago_list')
 
-class PagoDeleteView(DeleteView):
+class PagoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Pago
+    permission_required = 'pagos.delete_pago'
     template_name = 'pagos/pago_confirm_delete.html'
     success_url = reverse_lazy('pago_list')
     
@@ -70,8 +74,9 @@ class PagoDeleteView(DeleteView):
         # Dejar que el comportamiento por defecto (CASCADE) elimine el recibo asociado al borrar el pago
         return super().delete(request, *args, **kwargs)
 
-class PagoListView(ListView):
+class PagoListView(PermissionRequiredMixin, ListView):
     model = Pago
+    permission_required = 'pagos.view_pago'
     template_name = 'pagos/pago_list.html'
     context_object_name = 'pagos'
 
@@ -206,14 +211,16 @@ def mostrar_qr_pantalla(request, pago_id):
         'qr_code': qr_data_url
     })
 
-class ReciboListView(ListView):
+class ReciboListView(PermissionRequiredMixin, ListView):
     model = Recibo
+    permission_required = 'pagos.view_recibo'
     template_name = 'recibos/recibo_list.html'
     context_object_name = 'recibos'
     ordering = ['-id'] # Los más nuevos primero
 
-class ReciboUpdateView(UpdateView):
+class ReciboUpdateView(PermissionRequiredMixin, UpdateView):
     model = Recibo
+    permission_required = 'pagos.change_recibo'
     form_class = ReciboForm
     template_name = 'recibos/recibo_form.html'
     success_url = reverse_lazy('recibo_list')
@@ -232,8 +239,9 @@ class ReciboUpdateView(UpdateView):
             
         return response
 
-class ReciboDeleteView(DeleteView):
+class ReciboDeleteView(PermissionRequiredMixin, DeleteView):
     model = Recibo
+    permission_required = 'pagos.delete_recibo'
     template_name = 'recibos/recibo_confirm_delete.html'
     success_url = reverse_lazy('recibo_list')
 
@@ -266,54 +274,71 @@ class PagoCreateView(TemplateView):
 
 #pago reserva
 
-class PagoReservaCreateView(CreateView):
+class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
     model = Pago
+    permission_required = 'pagos.add_pago'
     form_class = PagoForm
     template_name = 'pagos/pago_form.html'
 
     def dispatch(self, request, *args, **kwargs):
-
         self.reserva = get_object_or_404(
             Reserva,
             pk=self.kwargs['reserva_id']
         )
-
-        return super().dispatch(
-            request,
-            *args,
-            **kwargs
-        )
+        return super().dispatch(request, *args, **kwargs)
 
     def get_initial(self):
-
         initial = super().get_initial()
-
         initial['monto'] = self.reserva.precio_final
         initial['origen_pago'] = 'alquiler_cancha'
-
         return initial
 
     def form_valid(self, form):
-
-        pago, creado = Pago.objects.get_or_create(
-            reserva=self.reserva,
-            defaults={
-                'monto': self.reserva.precio_final,
-                'origen_pago': 'alquiler_cancha',
-                'estado': 'PAGADO',
-                 'tipo_pago': form.cleaned_data.get('tipo_pago'),
-                 'descuento': form.cleaned_data.get('descuento'),
-            })
-        
-        if not creado:
+        # 1. Validar duplicados de caja
+        pago_existente = Pago.objects.filter(reserva=self.reserva).exists()
+        if pago_existente:
+            messages.warning(self.request, f"La reserva de {self.reserva.cliente} ya registra movimientos de caja asociados.")
             return redirect('lista_reservas')
+
+        # 2. Rescatamos la instancia sin impactar la Base de Datos todavía
+        pago = form.save(commit=False)
+        pago.reserva = self.reserva
+        pago.origen_pago = 'alquiler_cancha'
+        pago.estado = 'PAGADO'
+
+        # Recuperamos lo que el usuario REALMENTE seleccionó en el HTML
+        pago.tipo_pago = form.cleaned_data.get('tipo_pago')
+        pago.descuento = form.cleaned_data.get('descuento')
+
+        # Calculamos el monto real aplicando el descuento si es que existe
+        monto_base = float(self.reserva.precio_final)
+
+        if pago.descuento and getattr(pago.descuento, 'cantidad', None):
+            try:
+                # Tu modelo guarda el porcentaje como Decimal en el campo 'cantidad'
+                porcentaje_num = float(pago.descuento.cantidad)
+                
+                # Calculamos los pesos a restar basándonos en el precio de la reserva
+                descuento_calculado = (monto_base * porcentaje_num) / 100.0
+                pago.monto = round(monto_base - descuento_calculado, 2)
+            except (ValueError, TypeError):
+                pago.monto = monto_base
+        else:
+            pago.monto = monto_base
+
+        # Guardamos el Pago definitivo con todas las relaciones mapeadas
+            pago.save()  
+
+            # 3. Actualizamos estado de la reserva del cliente
+            self.reserva.estado = 'CONFIRMADA'
+            self.reserva.save()
+
+            # 4. Generamos comprobante oficial
+            Recibo.objects.get_or_create(pago=pago)
+
+            messages.success(
+                self.request, 
+                f"¡Cobro Registrado! El pago por ${pago.monto} (Método: {pago.tipo_pago}) fue procesado con éxito y la reserva quedó CONFIRMADA."
+            )
         
-        Recibo.objects.get_or_create(
-            pago=pago)
-         
-
-        self.reserva.estado = 'CONFIRMADA'
-        self.reserva.save()
-
         return redirect('lista_reservas')
-    
