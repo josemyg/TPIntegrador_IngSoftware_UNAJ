@@ -71,7 +71,7 @@ class Cancha(models.Model):
     )
 
     def __str__(self):
-        return f"{self.nombre} ({self.tipo.nombre})"
+        return f"{self.nombre} ({self.tipo.nombreTipo})"
 
     def consultarDisponibilidad(self, fecha, hora_inicio):
         # lógica para consultar si la cancha está disponible en esa fecha y hora

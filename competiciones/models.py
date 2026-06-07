@@ -62,8 +62,8 @@ class Partido(models.Model):
     equipo_visitante = models.ForeignKey(Equipo, on_delete=models.PROTECT, related_name='partidos_visitante')
     
     # Vinculado a la Cancha (Temporal) de arriba
-    cancha = models.ForeignKey(Cancha, on_delete=models.PROTECT, null=True, blank=True)
-    fecha_hora = models.DateTimeField(null=True, blank=True) 
+    cancha_asignada = models.ForeignKey(Cancha, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Cancha del Encuentro")
+    fecha_y_hora_encuentro = models.DateTimeField(null=True, blank=True, verbose_name="Fecha y Hora Programada") 
     
     fase = models.CharField(max_length=50) # Ej: "Fecha 1", "Semifinal"
     goles_local = models.IntegerField(default=0)

@@ -2,7 +2,8 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,DetailView
 from .models import Equipo, Liga, Torneo, Partido
-from .forms import EquipoForm, LigaForm, TorneoForm
+from django.contrib import messages
+from .forms import EquipoForm, LigaForm, TorneoForm, AsignarCanchaForm
 from django.shortcuts import render, redirect, get_object_or_404
 import random
 
@@ -210,4 +211,30 @@ def generar_fixture_torneo(request, torneo_id):
     torneo_seleccionado.save()
     
     return redirect('torneo_detail', pk=torneo_id)
-# Create your views here.
+
+#==========================================
+#    ASIGNACION DE CANCHA A PARTIDO       =
+#==========================================
+
+def asignar_cancha_partido(request, partido_id):
+    partido = get_object_or_404(Partido, id=partido_id)
+
+    if request.method == 'POST':
+        form = AsignarCanchaForm(request.POST, instance=partido)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Cancha y horario asignados correctamente.")
+            # Redirigimos a la url
+            url_anterior = request.POST.get('next', '/')
+            return redirect(url_anterior)
+    else:
+        form = AsignarCanchaForm(instance=partido)
+
+    # Le pasamos de donde vino el usuario para poder volver a esa pantalla
+    url_anterior = request.META.get('HTTP_REFERER', '/')
+
+    return render(request, 'competiciones/partido/asignar_cancha.html', {
+        'form': form,
+        'partido': partido,
+        'url_anterior': url_anterior
+    })

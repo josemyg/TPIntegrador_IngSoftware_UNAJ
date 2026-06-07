@@ -55,7 +55,15 @@
                             <span class="mx-3 text-muted">vs</span>
                             <span class="fw-bold">{{ partido_fixture.equipo_visitante.nombre }}</span>
 
-                            <button class="btn btn-sm btn-outline-primary ms-auto" disabled>Asignar Cancha</button>
+                            {% if partido_fixture.cancha_asignada %}
+                            <div class="text-end ms-auto">
+                                <span class="badge bg-success mb-1">{{ partido_fixture.cancha_asignada.nombre }}</span><br>
+                                <small class="text-muted fw-bold">{{ partido_fixture.fecha_y_hora_encuentro|date:"d/m/Y H:i" }}</small><br>
+                                <a href="{% url 'asignar_cancha' partido_fixture.id %}" class="btn btn-sm btn-outline-secondary mt-1" style="font-size: 0.7rem;">Cambiar / Reasignar</a>
+                            </div>
+                            {% else %}
+                            <a href="{% url 'asignar_cancha' partido_fixture.id %}" class="btn btn-sm btn-primary ms-auto fw-bold shadow-sm">Asignar Cancha</a>
+                            {% endif %}
                         </li>
                         {% endfor %}
                     </ul>
