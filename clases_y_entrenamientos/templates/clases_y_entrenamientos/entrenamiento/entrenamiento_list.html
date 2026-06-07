@@ -47,13 +47,13 @@
             </td>
             <td>
               {% if ent.estado == 'programado' %}
-                <span class="badge bg-success">{{ ent.get_estado_display }}</span>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-7">{{ ent.get_estado_display }}</span>
               {% elif ent.estado == 'en_curso' %}
-                <span class="badge bg-primary">{{ ent.get_estado_display }}</span>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 fs-7">{{ ent.get_estado_display }}</span>
               {% elif ent.estado == 'finalizado' %}
-                <span class="badge bg-secondary">{{ ent.get_estado_display }}</span>
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-7">{{ ent.get_estado_display }}</span>
               {% elif ent.estado == 'cancelado' %}
-                <span class="badge bg-danger">{{ ent.get_estado_display }}</span>
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 fs-7">{{ ent.get_estado_display }}</span>
               {% endif %}
             </td>
             <td>

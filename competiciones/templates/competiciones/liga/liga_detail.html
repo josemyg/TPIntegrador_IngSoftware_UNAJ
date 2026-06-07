@@ -7,7 +7,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
         <div>
             <h1 class="text-primary">{{ liga.nombre }}</h1>
-            <span class="badge bg-info fs-6">Estado: {{ liga.get_estado_display }}</span>
+            <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1">Estado: {{ liga.get_estado_display }}</span>
         </div>
         <div>
             <a href="{% url 'liga_list' %}" class="btn btn-secondary">Volver al listado</a>
@@ -24,7 +24,7 @@
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
                     <span>Tabla de Posiciones</span>
-                    <span class="badge bg-light text-dark">{{ liga.equipos.count }} Equipos</span>
+                    <span class="badge bg-light text-dark border border-info-subtle px-2 py-1">{{ liga.equipos.count }} Equipos</span>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover table-striped text-center align-middle mb-0">
@@ -80,7 +80,7 @@
                         {% for partido_fixture in partidos %}
                         <li class="list-group-item d-flex justify-content-between align-items-center py-3 px-4">
                             <div class="d-flex flex-column w-50">
-                                <span class="badge bg-secondary align-self-start mb-1">{{ partido_fixture.fase }}</span>
+                                <span class="badge bg-secondary text-white border border-secondary-subtle px-2 py-1">{{ partido_fixture.fase }}</span>
                                 <div class="text-truncate">
                                     <span class="fw-bold text-dark">{{ partido_fixture.equipo_local.nombre }}</span><br>
                                     <span class="fw-bold text-dark">{{ partido_fixture.equipo_visitante.nombre }}</span>
@@ -96,7 +96,7 @@
                             <div class="text-end">
                                 {% if partido_fixture.cancha_asignada %}
                                 <a href="{% url 'cargar_resultado' partido_fixture.id %}" class="btn btn-sm btn-success fw-bold shadow-sm d-block mb-1">
-                                    Resultado
+                                    Cargar Resultado
                                 </a>
                                 <small class="text-muted" style="font-size: 0.65rem;">{{ partido_fixture.fecha_y_hora_encuentro|date:"d/m H:i" }}</small>
                                 {% else %}

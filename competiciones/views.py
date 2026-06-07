@@ -121,6 +121,7 @@ class EquipoListView(PermissionRequiredMixin, ListView):
     permission_required = 'competiciones.view_equipo'
     template_name = 'competiciones/equipo/equipo_list.html'
     context_object_name = 'equipo_list'
+
 class EquipoCreateView(PermissionRequiredMixin, CreateView):
     model = Equipo
     permission_required = 'competiciones.add_equipo'
@@ -134,11 +135,13 @@ class EquipoUpdateView(UpdateView):
     form_class = EquipoForm
     template_name = 'competiciones/equipo/equipo_form.html'
     success_url = reverse_lazy('equipo_list')
+
 class EquipoDeleteView(DeleteView):
     model = Equipo
     permission_required = 'competiciones.delete_equipo'
     template_name = 'competiciones/equipo/equipo_confirm_delete.html'
     success_url = reverse_lazy('equipo_list')
+
 class LigaListView(ListView):
     model = Liga
     permission_required = 'competiciones.view_liga'
@@ -404,7 +407,7 @@ def verificar_y_avanzar_fase(torneo):
     cantidad_vivos = len(equipos_vivos)
 
     if cantidad_vivos == 1:
-        # ¡Tenemos un campeon absoluto!
+        # ï¿½Tenemos un campeon absoluto!
         torneo.estado = 'Finalizado' 
         torneo.save()
         return

@@ -3,15 +3,14 @@
 {% block title %}Detalle del Torneo{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
         <div>
             <h1 class="text-primary">{{ torneo_actual.nombre }}</h1>
-            <span class="badge bg-info fs-6">Estado: {{ torneo_actual.get_estado_display }}</span>
+            <span class="badge bg-info-subtle text-info border border-info-subtle fs-6 px-2 py-1">Estado: {{ torneo_actual.get_estado_display }}</span>
             {% if torneo_actual.es_ida_y_vuelta %}
-            <span class="badge bg-secondary fs-6 ms-2">Formato: Ida y Vuelta</span>
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-6 ms-2">Formato: Ida y Vuelta</span>
             {% else %}
-            <span class="badge bg-secondary fs-6 ms-2">Formato: Partido Unico</span>
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-6 ms-2">Formato: Partido Unico</span>
             {% endif %}
         </div>
         <div>
@@ -61,14 +60,14 @@
 
                             {% if partido_fixture.jugado %}
                             <div class="text-end ms-auto">
-                                <span class="badge bg-dark fs-6 px-3 py-2">{{ partido_fixture.goles_local }} - {{ partido_fixture.goles_visitante }}</span><br>
+                                <span class="badge bg-dark-subtle text-dark border border-dark-subtle fs-6 px-3 py-2">{{ partido_fixture.goles_local }} - {{ partido_fixture.goles_visitante }}</span><br>
                                 <small class="text-success fw-bold d-block mt-1"><i class="bi bi-check-circle-fill"></i> Finalizado</small>
                                 <a href="{% url 'cargar_resultado' partido_fixture.id %}" class="btn btn-sm btn-outline-secondary mt-1" style="font-size: 0.75rem;">Editar Resultado</a>
                             </div>
                             {% else %}
                             <div class="text-end ms-auto">
                                 {% if partido_fixture.cancha_asignada %}
-                                <span class="badge bg-success mb-1">{{ partido_fixture.cancha_asignada.nombre }}</span><br>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle mb-1">{{ partido_fixture.cancha_asignada.nombre }}</span><br>
                                 <small class="text-muted d-block fw-bold mb-1">{{ partido_fixture.fecha_y_hora_encuentro|date:"d/m/Y H:i" }}</small>
                                 <div class="btn-group gap-1">
                                     <a href="{% url 'cargar_resultado' partido_fixture.id %}" class="btn btn-sm btn-success fw-bold shadow-sm">

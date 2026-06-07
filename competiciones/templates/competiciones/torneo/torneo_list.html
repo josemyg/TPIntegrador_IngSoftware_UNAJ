@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load static %}
+
 
 {% block title %}Torneos{% endblock %}
 
@@ -22,7 +24,15 @@
             {% for torneo_registrado in torneo_list %}
             <tr>
                 <td class="fw-bold">{{ torneo_registrado.nombre }}</td>
-                <td>{{ torneo_registrado.get_estado_display }}</td>
+                <td>
+                    {% if torneo_registrado.estado == 'Inscripcion' %}
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-7">{{ torneo_registrado.get_estado_display }}</span>
+                    {% elif torneo_registrado.estado == 'En_Curso' %}
+                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 fs-7">{{ torneo_registrado.get_estado_display }}</span>
+                    {% elif torneo_registrado.estado == 'Finalizada' %}
+                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-7">{{ torneo_registrado.get_estado_display }}</span>
+                    {% endif %}
+                </td>
                 <td>{{ torneo_registrado.equipos.count }}</td>
                 <td>
                     <a href="{% url 'torneo_detail' torneo_registrado.id %}" class="btn btn-sm btn-info text-white">Ver Detalle / Cruces</a>

@@ -50,13 +50,13 @@ Lista de Clases
           </td>
           <td class="d-none d-md-table-cell">
             {% if clase.estado == 'programada' %}
-            <span class="badge bg-success">{{ clase.get_estado_display }}</span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-7">{{ clase.get_estado_display }}</span>
             {% elif clase.estado == 'en_curso' %}
-            <span class="badge bg-primary">{{ clase.get_estado_display }}</span>
+            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 fs-7">{{ clase.get_estado_display }}</span>
             {% elif clase.estado == 'finalizada' %}
-            <span class="badge bg-secondary">{{ clase.get_estado_display }}</span>
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-7">{{ clase.get_estado_display }}</span>
             {% elif clase.estado == 'cancelada' %}
-            <span class="badge bg-danger">{{ clase.get_estado_display }}</span>
+            <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 fs-7">{{ clase.get_estado_display }}</span>
             {% endif %}
           </td>
           <td>
