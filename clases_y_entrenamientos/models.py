@@ -4,7 +4,7 @@ from django.dispatch import receiver
 from gestion.models import Cliente, Profesor
 from django.utils import timezone
 from django.utils.timezone import localtime
-
+from canchas.models import Cancha
 
 class Clase(models.Model):
     id = models.AutoField("ID Clase", primary_key=True)
@@ -31,6 +31,14 @@ class Clase(models.Model):
         related_name='clases',
         blank=True
     )
+    cancha = models.ForeignKey(
+        Cancha,
+        on_delete=models.PROTECT,
+        related_name='clases',
+        blank=True,
+        null=True,
+        verbose_name='Cancha'
+)
 
     class Meta:
         verbose_name = "Clase"
@@ -42,6 +50,11 @@ class Clase(models.Model):
             return self.nombre + ' ' + localtime(self.horario).strftime('%d/%m/%Y %H:%M')
         else:
             return 'Clase sin nombre'
+        
+    def save(self, *args, **kwargs):
+        if self.cancha:
+            self.cupo_maximo = self.cancha.tipo.capacidad
+        super().save(*args, **kwargs)
 
     @classmethod
     def crear_clase(cls, nombre, horario, cupo_maximo, profesor, alumnos=None):
@@ -138,7 +151,7 @@ class Clase(models.Model):
         }
 
     def generar_reporte_asistencia(self):
-        asistencias = self.asistencias_clase.all().select_related('alumno')
+        asistencias = self.asistencias_clase.all().select_related('alumno').order_by('alumno__apellido')
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()
         return {
@@ -209,6 +222,15 @@ class Entrenamiento(models.Model):
         blank=True,
     )
 
+    cancha = models.ForeignKey(
+        Cancha,
+        on_delete=models.PROTECT,
+        related_name='entrenamientos',
+        blank=True,
+        null=True,
+        verbose_name='Cancha'
+)
+
     class Meta:
         verbose_name = "Entrenamiento"
         verbose_name_plural = "Entrenamientos"
@@ -219,6 +241,11 @@ class Entrenamiento(models.Model):
             return self.nombre + ' ' + localtime(self.horario).strftime('%d/%m/%Y %H:%M')
         else:
             return 'Entrenamiento sin nombre'
+    
+    def save(self, *args, **kwargs):
+        if self.cancha:
+            self.cupo_maximo = self.cancha.tipo.capacidad
+        super().save(*args, **kwargs)
 
     @classmethod
     def crear_entrenamiento(cls, nombre, horario, cupo_maximo, entrenador, alumnos=None):
@@ -279,7 +306,7 @@ class Entrenamiento(models.Model):
         }
 
     def generar_reporte_entrenamiento(self):
-        asistencias = self.asistencias_entrenamiento.all().select_related('alumno')
+        asistencias = self.asistencias_entrenamiento.all().select_related('alumno').order_by('alumno__apellido')
         total_inscriptos = self.alumnos.count()
         total_registros = asistencias.count()
         presentes = asistencias.filter(asistencia=True).count()

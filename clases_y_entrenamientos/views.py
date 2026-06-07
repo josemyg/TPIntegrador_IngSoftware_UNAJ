@@ -84,15 +84,17 @@ class ClaseReporteView(PermissionRequiredMixin, DetailView):
 @permission_required('clases_y_entrenamientos.change_clase')
 def tomar_asistencia_clase(request, pk):
     clase = get_object_or_404(Clase, pk=pk)
-    if clase.estado in ['cancelada', 'finalizada']:
-        messages.error(request, f'No se puede tomar asistencia: la clase "{clase.nombre}" está {clase.get_estado_display()}.')
-        return redirect('clases_y_entrenamientos:clase_list')
+    
     if request.method == 'POST':
         for alumno in clase.alumnos.all():
             asistio = request.POST.get(f'alumno_{alumno.id}') == 'on'
             AsistenciaClase.generar_asistencia(clase, alumno, asistio)
         return redirect('clases_y_entrenamientos:clase_print', pk=clase.pk)
+    
     return render(request, 'clases_y_entrenamientos/clase/tomar_asistencia_clase.html', {'clase': clase})
+
+   
+    
 
 
 # VISTAS DE ENTRENAMIENTOS
@@ -167,9 +169,7 @@ class EntrenamientoReporteView(PermissionRequiredMixin, DetailView):
 @permission_required('clases_y_entrenamientos.change_entrenamiento')
 def tomar_asistencia_entrenamiento(request, pk):
     entrenamiento = get_object_or_404(Entrenamiento, pk=pk)
-    if entrenamiento.estado in ['cancelado', 'finalizado']:
-        messages.error(request, f'No se puede tomar asistencia: el entrenamiento "{entrenamiento.nombre}" está {entrenamiento.get_estado_display()}.')
-        return redirect('clases_y_entrenamientos:entrenamiento_list')
+    
     if request.method == 'POST':
         for alumno in entrenamiento.alumnos.all():
             asistio = request.POST.get(f'alumno_{alumno.id}') == 'on'
