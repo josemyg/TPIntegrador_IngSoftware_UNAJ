@@ -47,7 +47,7 @@
   --bs-info-rgb: 153, 84, 187;
   --bs-warning-rgb: 255, 117, 24;
   --bs-danger-rgb: 255, 0, 57;
-  --bs-light-rgb: 248, 249, 250;
+  --bs-light-rgb: 215,216,216;
   --bs-dark-rgb: 55, 58, 60;
   --bs-primary-text-emphasis: #10335b;
   --bs-secondary-text-emphasis: #161718;
@@ -79,7 +79,7 @@
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
-  --bs-body-font-size: 1rem;
+  --bs-body-font-size: 1.05rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
   --bs-body-color: #373a3c;
@@ -307,6 +307,15 @@
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
 
+#username.form-control,
+#password.form-control {
+    background-color: #f8faf7;
+    border: 0px solid var(--bs-border-color);
+    border-radius:3px;
+    padding: 0.75rem;
+    color: var(--text-pale);
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
 
 .form-control:focus {
     border-color: var(--primary);
@@ -321,11 +330,11 @@
 }
 
 /* Estilos para los checkboxes y radiobuttons */
-.form-check {
+/* .form-check {
     padding: 0.5rem 0;
     border: 1px solid var(--bs-border-color);
     border-radius: 1px;
-}
+} */
 
 .form-check input {
     margin-left: 0;
@@ -378,4 +387,14 @@
 .form-check-input:checked{
     background-color: #285238;
     border-color: #285238;
+}
+
+.login-bg-image{
+  background-image: url('/static/gestion/images/gol_ahora_4.jpg');
+  background-size: cover;
+}
+.login-bg-color{
+  background-color: rgba(0, 0, 0, 0.2);
+  display: 100%;
+  z-index: 2;
 }

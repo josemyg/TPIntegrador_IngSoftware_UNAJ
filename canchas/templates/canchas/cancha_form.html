@@ -8,8 +8,7 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
-
-                <div class="card shadow w-50 mx-auto">
+                <div class="card shadow w-75 mx-auto">
                     <div class="card-header bg-primary text-white">
                         <h3 class="mb-0">{% if object %}Editar{% else %}Nueva Cancha!{% endif %}{% block name %}{% endblock %}</h3>
                     </div>
