@@ -1,5 +1,6 @@
 from django import forms
 from .models import Equipo, Liga, Torneo, Partido
+from gestion.models import Profesor, Cliente
 from canchas.models import Cancha
 
 class EquipoForm(forms.ModelForm):

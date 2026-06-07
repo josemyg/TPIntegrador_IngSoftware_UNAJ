@@ -55,7 +55,7 @@ class Profesor(Usuario):
     titulo_habilitante = models.CharField(("Título Habilitante"), max_length=100)
     institucion_habilitante = models.CharField(("Institución Habilitante"), max_length=100)
     certificado = models.FileField(("Certificado"), upload_to='archivo/certificados', max_length=100)
-    estado = models.CharField(("Estado"), choices=estados, default='en_validación', max_length=50)
+    estado = models.CharField(("Estado"), choices=estados, default='en_validacion', max_length=50)
 
     class Meta:
         verbose_name = ("Profesor/a")
@@ -91,6 +91,7 @@ def crear_Profesor(sender, instance, created, **kwargs):
 @receiver(post_save, sender=Cliente)
 def crear_Cliente(sender, instance, created, **kwargs):
     if created:
+        instance.save()
         nombre = instance.nombre+'_'+instance.apellido
         print(nombre)
         user = User.objects.create_user(nombre, instance.email, 'f.123456')

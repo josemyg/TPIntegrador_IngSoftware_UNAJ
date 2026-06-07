@@ -404,7 +404,7 @@ def verificar_y_avanzar_fase(torneo):
     cantidad_vivos = len(equipos_vivos)
 
     if cantidad_vivos == 1:
-        # ¡Tenemos un campeon absoluto!
+        # ï¿½Tenemos un campeon absoluto!
         torneo.estado = 'Finalizado' 
         torneo.save()
         return

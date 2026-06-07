@@ -103,7 +103,7 @@ def crear_profesores_argentinos():
         password = 'f.123456'  # Contraseña fija para todos los usuarios
         
         # Crear el usuario
-        user = User.objects.add_user(username, email, password)
+        user = User.objects.create_user(username, email, password)
         user.save()
         
         # Crear el profesor
