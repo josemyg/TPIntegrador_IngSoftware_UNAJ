@@ -44,4 +44,6 @@ urlpatterns = [
     # Ruta para asignar canchas a los partidos
     path('partidos/<int:partido_id>/asignar-cancha/', views.asignar_cancha_partido, name='asignar_cancha'),
 
+    path('partidos/<int:partido_id>/cargar-resultado/', views.cargar_resultado_partido, name='cargar_resultado'),
+
 ]

@@ -71,3 +71,15 @@ class AsignarCanchaForm(forms.ModelForm):
                 raise forms.ValidationError("Error: La cancha seleccionada ya esta reservada para otro partido en ese mismo horario.")
 
         return datos_limpios
+
+class CargarResultadoForm(forms.ModelForm):
+    class Meta:
+        model = Partido
+        fields = ['goles_local', 'goles_visitante', 'penales_local', 'penales_visitante', 'jugado']
+        widgets = {
+            'goles_local': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'goles_visitante': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'penales_local': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'penales_visitante': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'jugado': forms.CheckboxInput(attrs={'class': 'form-check-input'})
+        }
