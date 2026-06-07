@@ -20,12 +20,21 @@ def crearEquiposYPartidos():
         'Gimnasia y Esgrima', 'Ferro Carril Oeste', 'Platense', 'Barracas Central',
         'Argentino Juniors', 'Chaco For Ever', 'Cerro Porteño', 'Libertad',
         'Olimpia', 'Nacional', 'Inter de Porto Alegre', 'Gremio', 'Flamengo',
-        'Flamengo', 'Vasco da Gama', 'Santos', 'Corinthians', 'Palmeiras',
+        'Vasco da Gama', 'Santos', 'Corinthians', 'Palmeiras',
         'Sao Paulo', 'Atletico Mineiro', 'Belo Horizonte', 'Cruzeiro',
         'Botafogo', 'Atletico Paranaense', 'Coritiba', 'Paranaense',
         'Curitiba', 'Brasilia', 'Guarani', 'Portuguesa', 'Ponte Preta',
-        'Vasco da Gama', 'Tijuana', 'Monterrey', 'Chivas', 'Pumas', 'Toluca'
+        'Tijuana', 'Monterrey', 'Chivas', 'Pumas', 'Toluca'
     ]
+
+    # Eliminar duplicados manteniendo el orden
+    unique_nombres = []
+    seen = set()
+    for name in nombres_equipos:
+        if name not in seen:
+            unique_nombres.append(name)
+            seen.add(name)
+    nombres_equipos = list(set(nombres_equipos))
 
     @transaction.atomic
     def crearEquipos():
