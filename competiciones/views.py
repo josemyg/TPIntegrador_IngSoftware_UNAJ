@@ -69,53 +69,65 @@ def obtener_tabla_posiciones(liga):
     return tabla
 
 @permission_required('competiciones.change_liga')
-def generar_fixture_liga(request, liga_id):
-    from .models import Liga # Aseguramos el import por si acaso
-    liga = get_object_or_404(Liga, id=liga_id)
-    equipos = list(liga.equipos.all().order_by('id'))
+@permission_required("competiciones.change_liga")
+def generar_fixture_liga(request, pk):
+    liga_actual = get_object_or_404(Liga, pk=pk)
     
-    if len(equipos) < 2:
-        messages.error(request, "Se necesitan al menos 2 equipos para armar la liga.")
-        return redirect('liga_detail', pk=liga.id)
+    if liga_actual.partidos.exists():
+        return redirect('liga_detail', pk=pk)
         
-    # Algoritmo Round-Robin: Si hay equipos impares, agregamos un "Fantasma"
-    if len(equipos) % 2 != 0:
-        equipos.append(None)
+    lista_equipos = list(liga_actual.equipos.all())
+    
+    if len(lista_equipos) < 2:
+        return redirect('liga_detail', pk=pk) 
         
-    total_equipos = len(equipos)
-    mitad = total_equipos // 2
+    random.shuffle(lista_equipos)
     
-    # Limpiamos fixtures anteriores para no duplicar
-    Partido.objects.filter(competicion=liga).delete()
+    if len(lista_equipos) % 2 != 0:
+        lista_equipos.append(None) 
+        
+    total_fechas = len(lista_equipos) - 1
+    mitad_equipos = len(lista_equipos) // 2
     
-    # Generamos todas las fechas
-    for fecha in range(1, total_equipos):
-        for i in range(mitad):
-            local = equipos[i]
-            visitante = equipos[total_equipos - 1 - i]
+    # 1. Generamos la Primera Rueda
+    for numero_fecha in range(total_fechas):
+        for indice_equipo in range(mitad_equipos):
+            equipo_local = lista_equipos[indice_equipo]
+            equipo_visitante = lista_equipos[len(lista_equipos) - 1 - indice_equipo]
             
-            # Si ninguno es el Fantasma, entonces hay partido
-            if local is not None and visitante is not None:
-                # Alternamos la localia en las fechas pares para justicia deportiva
-                if fecha % 2 == 0 and i == 0:
-                    local, visitante = visitante, local
+            if equipo_local is not None and equipo_visitante is not None:
+                if numero_fecha % 2 == 1 and indice_equipo != 0:
+                    equipo_local, equipo_visitante = equipo_visitante, equipo_local
                     
                 Partido.objects.create(
-                    competicion=liga,
-                    equipo_local=local,
-                    equipo_visitante=visitante,
-                    fase=f"Fecha {fecha}"
+                    competicion=liga_actual,
+                    equipo_local=equipo_local,
+                    equipo_visitante=equipo_visitante,
+                    fase=f"Fecha {numero_fecha + 1}"
                 )
+        ultimo_equipo = lista_equipos.pop()
+        lista_equipos.insert(1, ultimo_equipo)
         
-        # Rotamos la lista dejando al primer equipo fijo (Pivote)
-        equipos.insert(1, equipos.pop())
+    # 2. NUEVO: Generamos la Segunda Rueda (Vuelta) si esta tildado
+    if getattr(liga_actual, 'es_ida_y_vuelta', False):
+        partidos_primera = Partido.objects.filter(competicion=liga_actual).order_by('id')
         
-    liga.estado = 'En Curso'
-    liga.save()
+        for p in partidos_primera:
+            num_fecha_original = int(p.fase.split(' ')[1]) # Extrae el numero de la fecha
+            nueva_fecha = num_fecha_original + total_fechas
+            
+            Partido.objects.create(
+                competicion=liga_actual,
+                equipo_local=p.equipo_visitante, # Invertimos localia
+                equipo_visitante=p.equipo_local, # Invertimos localia
+                fase=f"Fecha {nueva_fecha}"
+            )
+            
+    liga_actual.estado = 'En_Curso'
+    liga_actual.save()
     
-    messages.success(request, "Fixture de Liga generado con exito.")
-    return redirect('liga_detail', pk=liga.id)
-    
+    return redirect('liga_detail', pk=pk)
+
 class EquipoListView(PermissionRequiredMixin, ListView):
     model = Equipo
     permission_required = 'competiciones.view_equipo'
@@ -279,63 +291,7 @@ class TorneoDetailView(DetailView):
         contexto['partidos'] = self.object.partidos.all().order_by('id')
         return contexto
 
-@permission_required('competiciones.change_torneo')
-def generar_fixture_torneo(request, torneo_id):
-    torneo = get_object_or_404(Torneo, id=torneo_id)
-    
-    # 1. Obtenemos todos los equipos ordenados por fecha de inscripcion (por ID)
-    equipos = list(torneo.equipos.all().order_by('id'))
-    cantidad_equipos = len(equipos)
 
-    if cantidad_equipos < 2:
-        messages.error(request, "Se necesitan al menos 2 equipos para iniciar el torneo.")
-        return redirect('torneo_detail', pk=torneo.id)
-
-    # 2. Calculamos la potencia de 2 mas cercana hacia arriba (Ej: si son 5, la potencia es 8)
-    potencia_ideal = 2 ** math.ceil(math.log2(cantidad_equipos))
-    
-    # 3. Calculamos cuantos equipos pasan directo y cuantos juegan la fase previa
-    cantidad_libres = potencia_ideal - cantidad_equipos
-    
-    # Los primeros en anotarse reciben el beneficio de esperar en la siguiente fase
-    equipos_libres = equipos[:cantidad_libres]
-    equipos_previa = equipos[cantidad_libres:]
-
-    # 4. Determinamos el nombre de la fase
-    nombres_fases = {
-        2: 'Final', 
-        4: 'Semifinal', 
-        8: 'Cuartos de Final', 
-        16: 'Octavos de Final', 
-        32: 'Dieciseisavos de Final'
-    }
-    nombre_fase = nombres_fases.get(potencia_ideal, f'Ronda de {potencia_ideal}')
-
-    # Borramos partidos anteriores por si se apreto el boton por error antes
-    # CORRECCION: Usamos "competicion=torneo" en lugar de "torneo=torneo"
-    Partido.objects.filter(competicion=torneo).delete()
-
-    # 5. Creamos los partidos SOLO para los equipos que deben jugar la fase previa
-    # Si la cantidad era par exacta (ej 4), cantidad_libres es 0 y todos entran aqui
-    for i in range(0, len(equipos_previa), 2):
-        # CORRECCION: Usamos "competicion=torneo" al crear
-        Partido.objects.create(
-            competicion=torneo,
-            equipo_local=equipos_previa[i],
-            equipo_visitante=equipos_previa[i+1],
-            fase=nombre_fase
-        )
-
-    # Actualizamos el estado del torneo
-    torneo.estado = 'En Curso'
-    torneo.save()
-
-    mensaje = f"Fixture generado con exito. "
-    if cantidad_libres > 0:
-        mensaje += f"{cantidad_libres} equipos pasaron directo a la siguiente ronda por orden de inscripcion."
-    
-    messages.success(request, mensaje)
-    return redirect('torneo_detail', pk=torneo.id)
 
 #==========================================
 #    ASIGNACION DE CANCHA A PARTIDO       =
@@ -364,26 +320,53 @@ def asignar_cancha_partido(request, partido_id):
         'partido': partido,
         'url_anterior': url_anterior
     })
-
-def obtener_ganador(partido):
-    if partido.goles_local > partido.goles_visitante:
-        return partido.equipo_local
-    elif partido.goles_visitante > partido.goles_local:
-        return partido.equipo_visitante
+def evaluar_equipo_avanza(equipo, torneo):
+    # Busca los partidos jugados por este equipo en el torneo actual
+    partidos = Partido.objects.filter(
+        competicion=torneo,
+        jugado=True
+    ).filter(Q(equipo_local=equipo) | Q(equipo_visitante=equipo)).order_by('-id')
+    
+    if not partidos.exists():
+        return True # Es un equipo libre ("Bye") que todavia no jugo, sigue vivo
+        
+    ultimo_partido = partidos.first()
+    
+    # Limpiamos los textos para agrupar los partidos de la misma llave (Ej: "Semifinal")
+    fase_base = ultimo_partido.fase.replace(" (Ida)", "").replace(" (Vuelta)", "")
+    partidos_llave = partidos.filter(fase__startswith=fase_base)
+    
+    goles_favor = 0
+    goles_contra = 0
+    penales_favor = 0
+    penales_contra = 0
+    
+    # Sumamos el global de la llave
+    for p in partidos_llave:
+        if p.equipo_local == equipo:
+            goles_favor += p.goles_local
+            goles_contra += p.goles_visitante
+            penales_favor += (p.penales_local or 0)
+            penales_contra += (p.penales_visitante or 0)
+        else:
+            goles_favor += p.goles_visitante
+            goles_contra += p.goles_local
+            penales_favor += (p.penales_visitante or 0)
+            penales_contra += (p.penales_local or 0)
+            
+    # Evaluamos quien pasa
+    if goles_favor > goles_contra:
+        return True
+    elif goles_contra > goles_favor:
+        return False
     else:
-        # Si hay empate en goles, definen los penales
-        penales_l = partido.penales_local or 0
-        penales_v = partido.penales_visitante or 0
-        if penales_l > penales_v:
-            return partido.equipo_local
-        elif penales_v > penales_l:
-            return partido.equipo_visitante
-        return None
+        # Si el global termina en empate, definen los penales de la vuelta
+        return penales_favor > penales_contra
+
 
 def verificar_y_avanzar_fase(torneo):
     partidos_torneo = Partido.objects.filter(competicion=torneo)
 
-    # Si hay algun partido no jugado, la fase actual aun no termina
     if partidos_torneo.filter(jugado=False).exists():
         return
 
@@ -391,53 +374,86 @@ def verificar_y_avanzar_fase(torneo):
     todos_los_equipos = torneo.equipos.all().order_by('id')
 
     for equipo in todos_los_equipos:
-        # Buscamos el ultimo partido que jugo este equipo en el torneo
-        ultimo_partido = partidos_torneo.filter(
-            Q(equipo_local=equipo) | Q(equipo_visitante=equipo)
-        ).order_by('-id').first()
-
-        if not ultimo_partido:
-            # Es un equipo libre que estaba esperando turno, sigue vivo
+        # Usamos el nuevo evaluador global
+        if evaluar_equipo_avanza(equipo, torneo):
             equipos_vivos.append(equipo)
-        else:
-            # Si ya jugo, sigue vivo SOLO si gano ese ultimo partido
-            if obtener_ganador(ultimo_partido) == equipo:
-                equipos_vivos.append(equipo)
 
     cantidad_vivos = len(equipos_vivos)
 
     if cantidad_vivos == 1:
-        # �Tenemos un campeon absoluto!
         torneo.estado = 'Finalizado' 
         torneo.save()
         return
 
     if cantidad_vivos > 1:
         nombres_fases = {
-            2: 'Final',
-            4: 'Semifinal',
-            8: 'Cuartos de Final',
-            16: 'Octavos de Final',
-            32: 'Dieciseisavos de Final'
+            2: 'Final', 4: 'Semifinal', 8: 'Cuartos de Final', 16: 'Octavos de Final', 32: 'Dieciseisavos de Final'
         }
         nombre_siguiente_fase = nombres_fases.get(cantidad_vivos, f'Ronda de {cantidad_vivos}')
+        es_ida_vuelta = getattr(torneo, 'es_ida_y_vuelta', False)
 
-        # Verificamos que esta fase no exista ya por seguridad
-        if not partidos_torneo.filter(fase=nombre_siguiente_fase).exists():
+        if not partidos_torneo.filter(fase__startswith=nombre_siguiente_fase).exists():
             for i in range(0, cantidad_vivos, 2):
-                Partido.objects.create(
-                    competicion=torneo,
-                    equipo_local=equipos_vivos[i],
-                    equipo_visitante=equipos_vivos[i+1],
-                    fase=nombre_siguiente_fase
-                )
+                local = equipos_vivos[i]
+                visitante = equipos_vivos[i+1]
+                
+                if es_ida_vuelta:
+                    Partido.objects.create(competicion=torneo, equipo_local=local, equipo_visitante=visitante, fase=f"{nombre_siguiente_fase} (Ida)")
+                    Partido.objects.create(competicion=torneo, equipo_local=visitante, equipo_visitante=local, fase=f"{nombre_siguiente_fase} (Vuelta)")
+                else:
+                    Partido.objects.create(competicion=torneo, equipo_local=local, equipo_visitante=visitante, fase=nombre_siguiente_fase)
+
+
+@permission_required('competiciones.change_torneo')
+def generar_fixture_torneo(request, torneo_id):
+    torneo = get_object_or_404(Torneo, id=torneo_id)
+    equipos = list(torneo.equipos.all().order_by('id'))
+    cantidad_equipos = len(equipos)
+
+    if cantidad_equipos < 2:
+        messages.error(request, "Se necesitan al menos 2 equipos para iniciar el torneo.")
+        return redirect('torneo_detail', pk=torneo.id)
+
+    import math
+    potencia_ideal = 2 ** math.ceil(math.log2(cantidad_equipos))
+    cantidad_libres = potencia_ideal - cantidad_equipos
+    
+    equipos_libres = equipos[:cantidad_libres]
+    equipos_previa = equipos[cantidad_libres:]
+
+    nombres_fases = {
+        2: 'Final', 4: 'Semifinal', 8: 'Cuartos de Final', 16: 'Octavos de Final', 32: 'Dieciseisavos de Final'
+    }
+    nombre_fase = nombres_fases.get(potencia_ideal, f'Ronda de {potencia_ideal}')
+
+    Partido.objects.filter(competicion=torneo).delete()
+    es_ida_vuelta = getattr(torneo, 'es_ida_y_vuelta', False)
+
+    for i in range(0, len(equipos_previa), 2):
+        local = equipos_previa[i]
+        visitante = equipos_previa[i+1]
+        
+        if es_ida_vuelta:
+            Partido.objects.create(competicion=torneo, equipo_local=local, equipo_visitante=visitante, fase=f"{nombre_fase} (Ida)")
+            Partido.objects.create(competicion=torneo, equipo_local=visitante, equipo_visitante=local, fase=f"{nombre_fase} (Vuelta)")
+        else:
+            Partido.objects.create(competicion=torneo, equipo_local=local, equipo_visitante=visitante, fase=nombre_fase)
+
+    torneo.estado = 'En Curso'
+    torneo.save()
+
+    mensaje = f"Fixture generado con exito. "
+    if cantidad_libres > 0:
+        mensaje += f"{cantidad_libres} equipos pasaron directo a la siguiente ronda por orden de inscripcion."
+    
+    messages.success(request, mensaje)
+    return redirect('torneo_detail', pk=torneo.id)
+
 
 @permission_required('competiciones.change_partido')
 def cargar_resultado_partido(request, partido_id):
     partido = get_object_or_404(Partido, id=partido_id)
     url_anterior = request.POST.get('next', request.META.get('HTTP_REFERER', '/'))
-
-    # Forma 100% infalible de saber si es un torneo buscando su ID en la tabla Torneos
     es_torneo = Torneo.objects.filter(id=partido.competicion_id).exists()
 
     if request.method == 'POST':
@@ -445,18 +461,45 @@ def cargar_resultado_partido(request, partido_id):
         if form.is_valid():
             partido_guardado = form.save(commit=False)
 
-            # Validaciones estrictas de penales SOLO si comprobamos que es Torneo
-            if es_torneo and partido_guardado.goles_local == partido_guardado.goles_visitante:
-                penales_l = form.cleaned_data.get('penales_local')
-                penales_v = form.cleaned_data.get('penales_visitante')
+            if es_torneo:
+                torneo_real = Torneo.objects.get(id=partido_guardado.competicion_id)
+                es_ida_vuelta = getattr(torneo_real, 'es_ida_y_vuelta', False)
+                es_ida = "(Ida)" in partido.fase
+                es_vuelta = "(Vuelta)" in partido.fase
                 
-                if penales_l is None or penales_v is None:
-                    messages.error(request, "El partido termino empatado. Debes ingresar el resultado de los penales.")
-                    return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
+                requiere_penales = False
                 
-                if penales_l == penales_v:
-                    messages.error(request, "Los penales no pueden terminar empatados en un torneo eliminatorio.")
-                    return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
+                # Inteligencia del arbitro: ¿Cuando pedir penales?
+                if es_ida_vuelta:
+                    if es_vuelta:
+                        # Si es la vuelta, calculamos como va el marcador global
+                        fase_ida = partido.fase.replace("(Vuelta)", "(Ida)")
+                        partido_ida = Partido.objects.filter(
+                            competicion=torneo_real,
+                            fase=fase_ida,
+                            equipo_local=partido.equipo_visitante,
+                            equipo_visitante=partido.equipo_local
+                        ).first()
+                        
+                        if partido_ida:
+                            global_local_actual = partido_guardado.goles_local + partido_ida.goles_visitante
+                            global_visitante_actual = partido_guardado.goles_visitante + partido_ida.goles_local
+                            if global_local_actual == global_visitante_actual:
+                                requiere_penales = True
+                else:
+                    if partido_guardado.goles_local == partido_guardado.goles_visitante:
+                        requiere_penales = True
+                        
+                if requiere_penales:
+                    penales_l = form.cleaned_data.get('penales_local')
+                    penales_v = form.cleaned_data.get('penales_visitante')
+                    
+                    if penales_l is None or penales_v is None:
+                        messages.error(request, "El resultado global termino empatado. Debes ingresar los penales.")
+                        return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
+                    if penales_l == penales_v:
+                        messages.error(request, "Los penales no pueden terminar empatados.")
+                        return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
 
             if partido_guardado.goles_local is not None and partido_guardado.goles_visitante is not None:
                 partido_guardado.jugado = True
@@ -464,17 +507,11 @@ def cargar_resultado_partido(request, partido_id):
             partido_guardado.save()
             messages.success(request, "Resultado guardado correctamente.")
 
-            # Si es torneo, le pasamos el objeto Torneo real al motor de avance
             if es_torneo:
-                torneo_real = Torneo.objects.get(id=partido_guardado.competicion_id)
                 verificar_y_avanzar_fase(torneo_real)
 
             return redirect(url_anterior)
     else:
         form = CargarResultadoForm(instance=partido)
 
-    return render(request, 'competiciones/partido/cargar_resultado.html', {
-        'form': form,
-        'partido': partido,
-        'url_anterior': url_anterior
-    })
+    return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})

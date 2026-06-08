@@ -40,6 +40,7 @@ class Competicion(models.Model):
 class Liga(Competicion):
     puntos_victoria = models.IntegerField(default=3)
     puntos_empate = models.IntegerField(default=1)
+    es_ida_y_vuelta = models.BooleanField(default=False, verbose_name="Partidos de ida y vuelta")
 
     class Meta:
         verbose_name = "Liga"
