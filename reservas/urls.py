@@ -31,5 +31,10 @@ urlpatterns = [
         views.consultar_disponibilidad,
         name='consultar_disponibilidad'
     ),
+    path(
+        'reservas/rapida/', 
+         views.generar_reserva_rapida, 
+         name='generar_reserva_rapida'
+         ),
 
 ]

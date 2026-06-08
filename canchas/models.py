@@ -2,8 +2,8 @@ from django.db import models
 
 class TipoCancha(models.Model):
     ESTADO_CHOICES = [
-        ('activo', 'Activo / Disponible'),
-        ('mantenimiento', 'En Mantenimiento'),
+        ('activo', 'Activo'),
+        ('baja', 'Baja'),
         ('inactivo', 'Inactivo'),
     ]
     SUPERFICIE_CHOICES = [
@@ -33,7 +33,6 @@ class TipoCancha(models.Model):
         default='activo', 
         verbose_name="Estado"
     )
-
     max_horas = models.PositiveIntegerField(
         default=2, 
         verbose_name="Máximo de horas por reserva",
@@ -61,7 +60,7 @@ class Cancha(models.Model):
         help_text="Ej: Cancha N° 1 Techada"
     )
     
-    # 🔗 Relación con TipoCancha (La flecha de tu diagrama)
+   
     tipo = models.ForeignKey(TipoCancha, on_delete=models.PROTECT, related_name='canchas')
     
     estado = models.CharField(

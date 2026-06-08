@@ -1,53 +1,55 @@
 import random
-
 from django.core.management.base import BaseCommand
-from django.db import transaction
+from canchas.models import TipoCancha, Cancha
 
-from canchas.models import Cancha, TipoCancha
-
-def crear_tipos_cancha():
-    tipos = [
-        {
-            'nombre': f'Tipo %02d' % i,
-            'capacidad': random.randint(10, 50),
-            'superficie': 'cesped_natural' if i % 2 == 0 else 'sintetico',
-            'precio_hora': round(random.uniform(10, 100), 2),
-            'estado': 'activo'
-        }
-        for i in range(1, 16)
+def create_stadiums():
+    # Lista de nombres de estadios argentinos y conocidos del mundo
+    stadium_names = [
+        "Estadio River Plate", "Estadio Boca Juniors", "Estadio Maracaná",
+        "Cancha N° 1 Techada", "Cancha N° 2 Techada", "Cancha N° 3 Techada",
+        "Cancha N° 4 Techada", "Cancha N° 5 Techada", "Cancha N° 6 Techada",
+        "Cancha N° 7 Techada", "Cancha N° 8 Techada", "Cancha N° 9 Techada",
+        "Cancha N° 10 Techada", "Cancha N° 11 Techada", "Cancha N° 12 Techada",
+        "Cancha N° 13 Techada", "Cancha N° 14 Techada", "Cancha N° 15 Techada",
+        "Cancha N° 16 Techada", "Cancha N° 17 Techada", "Cancha N° 18 Techada",
+        "Cancha N° 19 Techada", "Cancha N° 20 Techada", "Cancha N° 21 Techada",
+        "Cancha N° 22 Techada", "Cancha N° 23 Techada", "Cancha N° 24 Techada",
+        "Cancha N° 25 Techada", "Cancha N° 26 Techada", "Cancha N° 27 Techada",
+        "Cancha N° 28 Techada", "Cancha N° 29 Techada", "Cancha N° 30 Techada",
+        "Cancha N° 31 Techada", "Cancha N° 32 Techada", "Cancha N° 33 Techada",
+        "Cancha N° 34 Techada", "Cancha N° 35 Techada", "Cancha N° 36 Techada",
+        "Cancha N° 37 Techada", "Cancha N° 38 Techada", "Cancha N° 39 Techada",
+        "Cancha N° 40 Techada", "Cancha N° 41 Techada", "Cancha N° 42 Techada",
+        "Cancha N° 43 Techada", "Cancha N° 44 Techada", "Cancha N° 45 Techada",
+        "Cancha N° 46 Techada", "Cancha N° 47 Techada", "Cancha N° 48 Techada",
+        "Cancha N° 49 Techada", "Cancha N° 50 Techada", "Cancha N° 51 Techada",
+        "Cancha N° 52 Techada", "Cancha N° 53 Techada", "Cancha N° 54 Techada",
+        "Cancha N° 55 Techada", "Cancha N° 56 Techada", "Cancha N° 57 Techada",
+        "Cancha N° 58 Techada", "Cancha N° 59 Techada", "Cancha N° 60 Techada",
     ]
-    
-    with transaction.atomic():
-        for tipo in tipos:
-            TipoCancha.objects.create(**tipo)
-    
-    print(f"Se crearon {len(tipos)} tipos de cancha exitosamente.")
 
-def crear_canchas():
-    # Primero creamos 15 tipos de cancha
-    crear_tipos_cancha()
-    
-    # Creamos 40 canchas
-    canchas = []
-    for i in range(1, 41):
-        tipo = random.choice(TipoCancha.objects.all())
-        canchas.append(
-            Cancha(
-                nombre=f'Cancha %02d' % i,
-                tipo=tipo,
-                estado=random.choice(['activo', 'mantenimiento', 'inactivo'])
-            )
+    # Crear 20 tipos de cancha
+    for _ in range(20):
+        tipo = TipoCancha(
+            nombreTipo=f"Tipo {_ + 1}",
+            capacidad=random.randint(10, 50),
+            superficie=random.choice(['cesped_natural', 'sintetico']),
+            precio_hora=random.uniform(50, 200),
+            estado='activo',
+            max_horas=random.choice([2, 3])
         )
-    
-    with transaction.atomic():
-        Cancha.objects.bulk_create(canchas)
-    
-    print(f"Se crearon {len(canchas)} canchas exitosamente.")
+        tipo.save()
 
-class Command(BaseCommand):
-    help = 'Crea 15 tipos de cancha y 40 canchas'
-    
-    def handle(self, *args, **options):
-        crear_canchas()
+    # Crear 60 canchas
+    for i in range(60):
+        cancha = Cancha(
+            nombre=stadium_names[i],
+            tipo=TipoCancha.objects.order_by('?').first(),  # Selecciona un tipo al azar
+            estado='activo'
+        )
+        cancha.save()
 
-crear_canchas()
+    print("Se han creado 20 tipos de cancha y 60 canchas exitosamente.")
+
+if __name__ == "__main__":
+    create_stadiums()

@@ -4,6 +4,17 @@
 {% block title %}Gol Ahora — Control de Pagos{% endblock %}
 
 {% block content %}
+
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ message }}
+                <button type="submit" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
 <div class="container my-4">
     
     <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
@@ -16,9 +27,7 @@
             </h2>
             <p class="text-secondary small mb-0">Registro contable y estado de la caja de turnos e inscripciones.</p>
         </div>
-        <a href="{% url 'pago_create' %}" class="btn btn-primary rounded-3 px-4 py-2 fw-semibold shadow-sm">
-            <i class="bi bi-plus-circle me-1"></i> Registrar Cobro
-        </a>
+        <a href="{% url 'pago_create' %}" class="btn btn-primary px-4 py-2">Registrar Cobro</a>
     </div>
 
     <ul class="nav nav-tabs mb-4">
@@ -36,13 +45,12 @@
         </li>
     </ul>
 
-    <div class="card border border-light-subtle shadow-sm p-3 mb-4 bg-white rounded-3">
+    <div class="card border border-light-subtle shadow-sm p-3 mb-4 bg-white">
         <form method="get" class="d-flex gap-2">
             {% if tipo_actual %}
                 <input type="hidden" name="tipo" value="{{ tipo_actual }}">
             {% endif %}
             <div class="input-group">
-                <span class="input-group-text bg-light border-end-0 text-secondary"><i class="bi bi-search"></i></span>
                 <input type="text" name="b" value="{{ request.GET.b }}" class="form-control bg-light border-start-0" placeholder="Buscar por método de pago o concepto de caja...">
             </div>
             <button type="submit" class="btn btn-secondary px-4 fw-semibold">Buscar</button>
@@ -52,7 +60,7 @@
         </form>
     </div>
 
-    <div class="card border border-light-subtle shadow-sm rounded-3 overflow-hidden bg-white mb-5">
+    <div class="card border border-light-subtle shadow-sm overflow-hidden bg-white mb-5">
         <div class="table-responsive">
             <table class="table table-striped table-hover align-middle mb-0">
                 <thead class="table-light text-secondary small fw-bold text-uppercase">
@@ -75,7 +83,7 @@
                         <td><span class="badge bg-light text-dark border px-2 py-1.5">{{ pago.get_origen_pago_display }}</span></td>
                         
                         <td>
-                            <i class="bi bi-credit-card-2-back me-1 text-muted"></i> 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card-icon lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                             {% if pago.tipo_pago.nombre %}
                                 {{ pago.tipo_pago.nombre }}
                             {% elif pago.tipo_pago %}
@@ -87,12 +95,10 @@
                         
                         <td class="text-center">
                             {% if pago.reserva %}
-                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
-                                    <i class="bi bi-calendar-check me-1"></i>#{{ pago.reserva.id }}
-                                </span>
+                                {{ pago.reserva.id }}
                             {% elif pago.reserva_id %}
                                 <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
-                                    <i class="bi bi-calendar-check me-1"></i>#{{ pago.reserva_id }}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-check-icon lucide-calendar-check"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>{{ pago.reserva_id }}
                                 </span>
                             {% else %}
                                 <span class="text-muted small">—</span>
@@ -102,15 +108,7 @@
                         <td class="text-center">
                             {% if pago.descuento.tipo.nombreDescuento %}
                                 <span class="text-success fw-semibold">
-                                    <i class="bi bi-tag-fill me-1"></i>{{ pago.descuento.tipo.nombreDescuento }}
-                                </span>
-                            {% elif pago.descuento.cantidad %}
-                                <span class="text-success fw-semibold">
-                                    <i class="bi bi-percentage me-1"></i>{{ pago.descuento.cantidad }}%
-                                </span>
-                            {% elif pago.descuento %}
-                                <span class="text-success fw-semibold">
-                                    <i class="bi bi-tag-fill me-1"></i>{{ pago.descuento }}
+                                    <i class="bi bi-tag-fill me-1"></i>{{ pago.descuento.tipo.nombreDescuento }}/{{ pago.descuento.cantidad }}%
                                 </span>
                             {% else %}
                                 <span class="text-muted small">Ninguno</span>
@@ -133,30 +131,24 @@
                         
                         <td class="text-center pe-4">
                             <div class="btn-group gap-1">
-                                {% if pago.recibo %}
-                                    <a href="{% url 'mostrar_qr_pantalla' pago.id %}" class="btn btn-sm btn-outline-dark rounded-2" title="Ver QR">
-                                        <i class="bi bi-qr-code"></i>
-                                    </a>
-                                    <a href="{% url 'recibo_descargar' pago.recibo.id %}" class="btn btn-sm btn-outline-primary rounded-2" title="Descargar">
-                                        <i class="bi bi-download"></i>
-                                    </a>
-                                    <a href="{% url 'recibo_enviar' pago.recibo.id %}" class="btn btn-sm btn-outline-success rounded-2" title="Enviar Email">
-                                        <i class="bi bi-envelope"></i>
-                                    </a>
+                                {% if pago.estado == 'PENDIENTE' and pago.reserva %}
+                                    <a href="{% url 'pago_create_reserva' pago.reserva.id %}" title="Procesar e iniciar cobro de la reserva"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-dollar-sign-icon lucide-circle-dollar-sign"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></a>
                                 {% endif %}
-                                <a href="{% url 'pago_update' pago.id %}" class="btn btn-sm btn-outline-secondary rounded-2" title="Editar">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <a href="{% url 'pago_delete' pago.id %}" class="btn btn-sm btn-outline-danger rounded-2" title="Eliminar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
+
+                                {% if pago.recibo %}
+                                    <a href="{% url 'mostrar_qr_pantalla' pago.id %}" title="Ver QR"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-scan-qr-code-icon lucide-scan-qr-code"><path d="M17 12v4a1 1 0 0 1-1 1h-4"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M17 8V7"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M7 17h.01"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="5" height="5" rx="1"/></svg></a>
+                                    <a href="{% url 'recibo_descargar' pago.recibo.id %}" title="Descargar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-down-icon lucide-file-down"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg></a>
+                                    <a href="{% url 'recibo_enviar' pago.recibo.id %}" title="Enviar Email"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-send-icon lucide-send"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg></a>
+                                {% endif %}
+                                <a href="{% url 'pago_update' pago.id %}" title="Editar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-pen-line-icon lucide-file-pen-line"><path d="M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z"/><path d="M14.487 7.858A1 1 0 0 1 14 7V2"/><path d="M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516"/><path d="M8 18h1"/></svg></a>
+                                <a href="{% url 'pago_delete' pago.id %}" title="Eliminar"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#970707" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash2-icon lucide-trash-2"><p<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#970707"ath d="M10 11v6"/><path d="M14 11v6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></a>
                             </div>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
                         <td colspan="9" class="text-center text-muted py-5">
-                            <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
+                            
                             No se encontraron registros de cobros efectuados.
                         </td>
                     </tr>

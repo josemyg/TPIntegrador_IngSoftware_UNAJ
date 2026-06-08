@@ -48,6 +48,8 @@ INSTALLED_APPS = [
     'clases_y_entrenamientos',
     'reportes',
     'insercion',
+    'registro',
+    'vistas',
 ]
 
 MIDDLEWARE = [
@@ -121,6 +123,14 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEFAULT_FROM_EMAIL = ''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = ''
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -135,7 +145,7 @@ STATIC_ROOT = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = reverse_lazy('inicio')
+LOGIN_REDIRECT_URL = reverse_lazy('vistas:dashboard_bienvenida')
 LOGOUT_REDIRECT_URL = 'login'
 
 #X_FRAME_OPTIONS = 'SAMEORIGIN'

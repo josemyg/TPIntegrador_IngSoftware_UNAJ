@@ -1,0 +1,45 @@
+{% extends 'vistas/base_cliente.html' %}
+{% load static %}
+
+{% block title %}Mis Reservas - Gol Ahora{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Mis Reservas</h2>
+    <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn btn-primary mb-3">Nueva Reserva</a>
+    <div class="card shadow">
+        <div class="card-body">
+            {% if reservas %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr><th>Cancha</th><th>Fecha</th><th>Horario</th><th>Precio</th><th>Estado</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for reserva in reservas %}
+                            <tr>
+                                <td>{{ reserva.cancha.nombre }}</td>
+                                <td>{{ reserva.fecha|date:'d/m/Y' }}</td>
+                                <td>{{ reserva.hora_inicio|time:'H:i' }} - {{ reserva.hora_fin|time:'H:i' }}</td>
+                                <td>${{ reserva.precio_final }}</td>
+                                <td>
+                                    {% if reserva.estado == 'CONFIRMADA' %}
+                                        <span class="badge bg-success">Confirmada</span>
+                                    {% elif reserva.estado == 'PENDIENTE' %}
+                                        <span class="badge bg-warning">Pendiente</span>
+                                    {% elif reserva.estado == 'CANCELADA' %}
+                                        <span class="badge bg-danger">Cancelada</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">No tenés reservas realizadas.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -10,8 +10,10 @@ from django.contrib import messages
 from django.template.loader import get_template
 from django.http import HttpResponse
 from django.core.mail import EmailMessage
+from django.db.models import Q  
 
 from .models import Pago, Recibo, TipoPago
+from descuentos.models import Descuento
 from reservas.models import Reserva
 from .forms import PagoForm, ReciboForm
 
@@ -69,10 +71,24 @@ class PagoDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'pagos/pago_confirm_delete.html'
     success_url = reverse_lazy('pago_list')
     
-    def delete(self, request, *args, **kwargs):
+    def form_valid(self, form):
         self.object = self.get_object()
-        # Dejar que el comportamiento por defecto (CASCADE) elimine el recibo asociado al borrar el pago
-        return super().delete(request, *args, **kwargs)
+        
+        if hasattr(self.object, 'recibo'):
+            messages.error(
+                self.request, 
+                f"No se puede eliminar el Pago #{self.object.id} porque tiene el Recibo #{self.object.recibo.id} asociado. "
+                f"Por cuestiones de auditoría, primero tenés que eliminar el recibo desde el Historial de Recibos."
+            )
+            return redirect('pago_list')
+            
+        success_url = self.get_success_url()
+        self.object.delete()
+        
+        messages.success(self.request, f"El Pago #{self.object.id} fue eliminado correctamente.")
+        return redirect(success_url)
+
+
 
 class PagoListView(PermissionRequiredMixin, ListView):
     model = Pago
@@ -81,22 +97,24 @@ class PagoListView(PermissionRequiredMixin, ListView):
     context_object_name = 'pagos'
 
     def get_queryset(self):
-        queryset = Pago.objects.all().select_related('tipo_pago', 'descuento')
+        # Usamos select_related para traer los datos del descuento de un solo viaje
+        queryset = Pago.objects.all().select_related('tipo_pago', 'descuento', 'reserva')
         
-        # 1. FILTRO POR ORIGEN (Cumple RF-60 a RF-63 de forma segmentada)
+        # 1. FILTRO POR ORIGEN
         tipo_servicio = self.request.GET.get('tipo', '')
         if tipo_servicio:
             queryset = queryset.filter(origen_pago=tipo_servicio)
 
-        # 2. BUSCADOR
+        # 2. BUSCADOR OPTIMIZADO (No rompe el QuerySet)
         query = self.request.GET.get('b', '').strip()
         if query:
-            query_limpia = eliminar_acentos(query)
-            queryset = [
-                pago for pago in queryset
-                if query_limpia.lower() in eliminar_acentos(pago.tipo_pago.nombre).lower() or
-                   query_limpia.lower() in eliminar_acentos(pago.get_origen_pago_display()).lower()
-            ]
+            # Django maneja búsquedas insensibles a mayúsculas/minúsculas con iand iunaccent si tenés la extensión.
+            # Filtramos directo por el nombre del método de pago o el origen en la base de datos.
+            queryset = queryset.filter(
+                Q(tipo_pago__nombre__icontains=query) | 
+                Q(origen_pago__icontains=query)
+            )
+            
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -112,7 +130,7 @@ def enviar_recibo_email(request, recibo_id):
     recibo = get_object_or_404(Recibo, id=recibo_id)
     pago = recibo.pago
     
-    # 🟢 SI EL USUARIO LE DIÓ A "CONFIRMAR ENVÍO" (POST)
+    
     if request.method == 'POST':
         # Capturamos el mail que se escribió a mano en la web
         email_destino = request.POST.get('email_cliente')
@@ -175,7 +193,6 @@ def descargar_recibo_pdf(request, recibo_id):
     if not pdf.err:
         response = HttpResponse(result.getvalue(), content_type='application/pdf')
         
-        # 🟢 LA CLAVE DE TODO: 'attachment' fuerza la descarga con un nombre de archivo prolijo
         nombre_archivo = f"comprobante_recibo_{recibo.id}.pdf"
         response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
         
@@ -227,17 +244,6 @@ class ReciboUpdateView(PermissionRequiredMixin, UpdateView):
     def form_valid(self, form):
         # Primero dejamos que Django guarde la nueva fecha del Recibo
         response = super().form_valid(form)
-        
-        # Capturamos el número que el operador tipeó en el campo artificial
-        nuevo_monto = form.cleaned_data.get('monto_pago')
-        
-        # Buscamos el pago que está atado a este recibo y le actualizamos el valor
-        pago_asociado = self.object.pago
-        if pago_asociado and nuevo_monto is not None:
-            pago_asociado.monto = nuevo_monto
-            pago_asociado.save()
-            
-        return response
 
 class ReciboDeleteView(PermissionRequiredMixin, DeleteView):
     model = Recibo
@@ -245,8 +251,9 @@ class ReciboDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'recibos/recibo_confirm_delete.html'
     success_url = reverse_lazy('recibo_list')
 
-class PagoCreateView(TemplateView):
+class PagoCreateView(PermissionRequiredMixin, TemplateView):
     template_name = 'pagos/pago_menu.html' # Tu HTML con los 4 botones grandes
+    permission_required = 'pagos.add_pago'
 
     def get(self, request, *args, **kwargs):
         # Leemos si el operador hizo clic en algún botón del selector (?origen=xxx)
@@ -270,9 +277,82 @@ class PagoCreateView(TemplateView):
         Recibo.objects.create(pago=self.object, fecha=Now())
         return response """
     
-    
 
 #pago reserva
+
+# class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
+#     model = Pago
+#     permission_required = 'pagos.add_pago'
+#     form_class = PagoForm
+#     template_name = 'pagos/pago_form.html'
+
+#     def dispatch(self, request, *args, **kwargs):
+#         self.reserva = get_object_or_404(
+#             Reserva,
+#             pk=self.kwargs['reserva_id']
+#         )
+#         return super().dispatch(request, *args, **kwargs)
+
+#     def get_initial(self):
+#         initial = super().get_initial()
+#         initial['monto'] = self.reserva.precio_final
+#         initial['origen_pago'] = 'alquiler_cancha'
+#         return initial
+
+#     def form_valid(self, form):
+#         # 1. Validar duplicados de caja
+#         pago_existente = Pago.objects.filter(reserva=self.reserva).exists()
+#         if pago_existente:
+#             messages.warning(self.request, f"La reserva de {self.reserva.cliente} ya registra movimientos de caja asociados.")
+#             return redirect('lista_reservas')
+
+#         # 2. Rescatamos la instancia sin impactar la Base de Datos todavía
+#         pago = form.save(commit=False)
+#         pago.reserva = self.reserva
+#         pago.origen_pago = 'alquiler_cancha'
+#         pago.estado = 'PAGADO'
+
+#         # Recuperamos lo que el usuario REALMENTE seleccionó en el HTML
+#         pago.tipo_pago = form.cleaned_data.get('tipo_pago')
+#         pago.descuento = form.cleaned_data.get('descuento')
+
+#         # Calculamos el monto real aplicando el descuento si es que existe
+#         monto_base = float(self.reserva.precio_final)
+
+#         if pago.descuento and getattr(pago.descuento, 'cantidad', None):
+#             try:
+#                 # Tu modelo guarda el porcentaje como Decimal en el campo 'cantidad'
+#                 porcentaje_num = float(pago.descuento.cantidad)
+                
+#                 # Calculamos los pesos a restar basándonos en el precio de la reserva
+#                 descuento_calculado = (monto_base * porcentaje_num) / 100.0
+#                 monto_final_calculado = round(monto_base - descuento_calculado, 2)
+#             except (ValueError, TypeError):
+#                 monto_final_calculado = monto_base
+#         else:
+#             monto_final_calculado = monto_base
+
+
+#         pago.monto = monto_final_calculado
+#         form.cleaned_data['monto'] = monto_final_calculado
+
+
+#         # Guardamos el Pago definitivo con todas las relaciones mapeadas
+#         pago.save()  
+
+#         # 3. Actualizamos estado de la reserva del cliente
+#         self.reserva.estado = 'CONFIRMADA'
+#         self.reserva.save()
+
+#         # 4. Generamos comprobante oficial
+#         Recibo.objects.get_or_create(pago=pago)
+
+#         messages.success(
+#             self.request, 
+#             f"¡Cobro Registrado! El pago por ${pago.monto} (Método: {pago.tipo_pago}) fue procesado con éxito y la reserva quedó CONFIRMADA."
+#         )
+        
+#         return redirect('pago_list')
 
 class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
     model = Pago
@@ -281,9 +361,12 @@ class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
     template_name = 'pagos/pago_form.html'
 
     def dispatch(self, request, *args, **kwargs):
+
+        reserva_id = self.kwargs.get('reserva_id') or self.kwargs.get('pk')
+        
         self.reserva = get_object_or_404(
             Reserva,
-            pk=self.kwargs['reserva_id']
+            pk= reserva_id
         )
         return super().dispatch(request, *args, **kwargs)
 
@@ -292,53 +375,42 @@ class PagoReservaCreateView(PermissionRequiredMixin, CreateView):
         initial['monto'] = self.reserva.precio_final
         initial['origen_pago'] = 'alquiler_cancha'
         return initial
-
+    
     def form_valid(self, form):
-        # 1. Validar duplicados de caja
-        pago_existente = Pago.objects.filter(reserva=self.reserva).exists()
-        if pago_existente:
-            messages.warning(self.request, f"La reserva de {self.reserva.cliente} ya registra movimientos de caja asociados.")
-            return redirect('lista_reservas')
+        # 1. Buscamos si ya existe un pago pendiente para esta reserva.
+        pago_pendiente = Pago.objects.filter(reserva=self.reserva, estado='PENDIENTE').first()
 
-        # 2. Rescatamos la instancia sin impactar la Base de Datos todavía
-        pago = form.save(commit=False)
-        pago.reserva = self.reserva
-        pago.origen_pago = 'alquiler_cancha'
-        pago.estado = 'PAGADO'
-
-        # Recuperamos lo que el usuario REALMENTE seleccionó en el HTML
-        pago.tipo_pago = form.cleaned_data.get('tipo_pago')
-        pago.descuento = form.cleaned_data.get('descuento')
-
-        # Calculamos el monto real aplicando el descuento si es que existe
+        tipo_pago = form.cleaned_data.get('tipo_pago')
+        descuento = form.cleaned_data.get('descuento')
         monto_base = float(self.reserva.precio_final)
 
-        if pago.descuento and getattr(pago.descuento, 'cantidad', None):
-            try:
-                # Tu modelo guarda el porcentaje como Decimal en el campo 'cantidad'
-                porcentaje_num = float(pago.descuento.cantidad)
-                
-                # Calculamos los pesos a restar basándonos en el precio de la reserva
-                descuento_calculado = (monto_base * porcentaje_num) / 100.0
-                pago.monto = round(monto_base - descuento_calculado, 2)
-            except (ValueError, TypeError):
-                pago.monto = monto_base
+        if pago_pendiente:
+            pago = pago_pendiente
+            pago.tipo_pago = tipo_pago
+            pago.descuento = descuento
+            pago.estado = 'PAGADO' # Asumimos que si el pago ya existía como PENDIENTE, ahora se confirma con el nuevo formulario
+            pago.origen_pago = 'alquiler_cancha'
+            pago.monto = pago.calcular_monto_con_descuento(monto_base)
+
         else:
-            pago.monto = monto_base
+            pago = form.save(commit=False)
+            pago.reserva = self.reserva
+            pago.origen_pago = 'alquiler_cancha'
+            pago.estado = 'PAGADO'
+            pago.tipo_pago = tipo_pago
+            pago.descuento = descuento
+            pago.monto = pago.calcular_monto_con_descuento(monto_base)
 
-        # Guardamos el Pago definitivo con todas las relaciones mapeadas
-            pago.save()  
+        pago.save()
 
-            # 3. Actualizamos estado de la reserva del cliente
-            self.reserva.estado = 'CONFIRMADA'
-            self.reserva.save()
+        self.reserva.estado = 'CONFIRMADA'
+        self.reserva.save()
 
-            # 4. Generamos comprobante oficial
-            Recibo.objects.get_or_create(pago=pago)
+        Recibo.objects.get_or_create(pago=pago)
 
-            messages.success(
-                self.request, 
-                f"¡Cobro Registrado! El pago por ${pago.monto} (Método: {pago.tipo_pago}) fue procesado con éxito y la reserva quedó CONFIRMADA."
-            )
+        messages.success(
+            self.request,
+             f"¡Cobro Registrado! El pago por ${pago.monto} (Método: {pago.tipo_pago}) fue procesado con éxito y la reserva quedó CONFIRMADA."
+           )
         
         return redirect('lista_reservas')

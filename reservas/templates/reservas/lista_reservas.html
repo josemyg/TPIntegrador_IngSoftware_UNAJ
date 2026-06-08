@@ -1,4 +1,3 @@
-
 {% extends 'base.html' %} <!-- uso base.html de gestion -->
 <!-- {% load static %} --> <!-- habilito el sistema de archivos estáticos -->
 
@@ -21,8 +20,7 @@ Lista de Reservas
 
     <div class="mb-3">
     <a href="{% url 'crear_reserva' %}"
-       class="btn btn-success">
-        <i class="bi bi-plus-circle"></i>
+       class="btn btn-primary">
         Nueva Reserva
     </a>
 
@@ -37,7 +35,7 @@ Lista de Reservas
 <div class="card shadow-lg p-4 mb-4"> <!-- crea tarjeta visual con sombra, padding = 4, margin bottom = 4 -->
 
     <h4 class="mb-4"> 
-        <i class="bi bi-search"></i> <!-- ícono de búsqueda de Bootstrap Icons. -->
+         <!-- ícono de búsqueda de Bootstrap Icons. -->
         Buscar Reservas
     </h4>
 
@@ -117,18 +115,12 @@ Lista de Reservas
 
             <button type="submit"
                     class="btn btn-primary"> 
-
-                <i class="bi bi-search"></i>
                 Buscar
-
             </button>
 
             <a href="{% url 'lista_reservas' %}"
                class="btn btn-secondary">
-
-                <i class="bi bi-arrow-clockwise"></i>
                 Limpiar
-
             </a>
 
         </div> <!-- El botón de búsqueda envía el formulario para aplicar los filtros. El enlace de limpiar redirige a la misma página sin parámetros para mostrar todas las reservas. -->
@@ -138,61 +130,50 @@ Lista de Reservas
 </div>
 
     <!-- TABLA -->
-    <div class="card shadow-lg p-4">
-
-        <div class="d-flex justify-content-between align-items-center mb-3">
-
-        </div>
 
         <div class="table-responsive"> <!-- Hace que la tabla sea horizontalmente desplazable en pantallas pequeñas. -->
 
             <div id="tabla-reservas"> <!-- id para identificar la tabla en JavaScript. -->
 
-                <table class="table table-hover align-middle"> 
+                <table class="table table-striped"> 
 
-                    <thead class="table-dark"> <!-- Encabezado de la tabla con fondo oscuro. -->
+                    <thead class="table-primary"> <!-- Encabezado de la tabla con fondo oscuro. -->
 
                         <tr>
+                            <th>
+                                Id
+                            </th>
+                            <th>
+                            Cliente
+                            </th>
 
                             <th>
-                            <i class="bi bi-person-fill"></i>
-                            Cliente
-                        </th>
+                                Cancha
+                            </th>
 
-                        <th>
-                            <i class="bi bi-dribbble"></i>
-                            Cancha
-                        </th>
+                            <th>
+                                Fecha
+                            </th>
 
-                        <th>
-                            <i class="bi bi-calendar-event"></i>
-                            Fecha
-                        </th>
+                            <th>
+                                Inicio
+                            </th>
 
-                        <th>
-                            <i class="bi bi-clock-fill"></i>
-                            Inicio
-                        </th>
+                            <th>
+                                Fin
+                            </th>
 
-                        <th>
-                            <i class="bi bi-clock-history"></i>
-                            Fin
-                        </th>
+                            <th>
+                                Precio
+                            </th>
 
-                        <th>
-                            <i class="bi bi-cash-stack"></i>
-                            Precio
-                        </th>
+                            <th>
+                                Estado
+                            </th>
 
-                        <th>
-                            <i class="bi bi-check-circle-fill"></i>
-                            Estado
-                        </th>
-
-                        <th>
-                            <i class="bi bi-gear-fill"></i>
-                            Acciones
-                        </th>
+                            <th>
+                                Acciones
+                            </th>
 
                     </tr>
 
@@ -261,20 +242,20 @@ Lista de Reservas
 
                             {% if reserva.estado == "CONFIRMADA" %}
 
-                                <span class="badge bg-success">
-                                    {{ reserva.estado }}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-7">
+                                    {{ reserva.get_estado_display }}
                                 </span>
 
                             {% elif reserva.estado == "PENDIENTE" %}
 
-                                <span class="badge bg-warning text-dark">
-                                    {{ reserva.estado }}
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 fs-7">
+                                    {{ reserva.get_estado_display }}
                                 </span>
 
                             {% else %}
 
-                                <span class="badge bg-danger">
-                                    {{ reserva.estado }}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 fs-7">
+                                    {{ reserva.get_estado_display }}
                                 </span>
 
                             {% endif %}
@@ -283,32 +264,12 @@ Lista de Reservas
 
                         <!-- ACCIONES -->
                         <td>
-
-                            <div class="acciones">
-
                                 <!-- EDITAR -->
-                                <a href="{% url 'editar_reserva' reserva.id %}"
-                                   class="btn btn-warning btn-sm">
-
-                                    <i class="bi bi-pencil-fill"></i>
-
-                                </a>
-
+                                <a href="{% url 'editar_reserva' reserva.id %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-pen-line-icon lucide-file-pen-line"><path d="M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z"/><path d="M14.487 7.858A1 1 0 0 1 14 7V2"/><path d="M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516"/><path d="M8 18h1"/></svg></a>
                                 <!-- CANCELAR -->
                                 {% if reserva.estado != "CANCELADA" %}
-
-                                    <a href="{% url 'cancelar_reserva' reserva.id %}"
-                                       class="btn btn-danger btn-sm"
-                                       onclick="return confirm('¿Cancelar reserva?')">
-
-                                        <i class="bi bi-x-circle-fill"></i>
-
-                                    </a>
-
+                                    <a href="{% url 'cancelar_reserva' reserva.id %}" onclick="return confirm('¿Cancelar reserva?')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#970707" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ban-icon lucide-ban"><circle cx="12" cy="12" r="10"/><path d="M4.929 4.929 19.07 19.071"/></svg></a>
                                 {% endif %}
-
-                            </div>
-
                         </td>
 
                     </tr>
@@ -366,7 +327,7 @@ document
     const params = new URLSearchParams(formData); // convierte los datos del formulario en una cadena de consulta URL, lo que permite enviar los filtros como parámetros en la petición AJAX.
 
   
-    fetch(`?${params.toString()}`) 
+    fetch(?${params.toString()}) 
 
         .then(response => response.text())
 
@@ -392,4 +353,4 @@ document
 
 </script>
 
-{% endblock %} 
+{% endblock %}

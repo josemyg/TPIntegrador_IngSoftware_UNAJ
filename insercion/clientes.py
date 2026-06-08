@@ -1,19 +1,35 @@
 import random
+import unicodedata
 from django.core.management.base import BaseCommand
 from gestion.models import Cliente
 from datetime import datetime
 
-# Listas de nombres y apellidos comunes sin acentos
 nombres = [
     "Juan", "Pedro", "Maria", "Ana", "Carlos", "Lucas", 
     "Paula", "Sofía", "Diego", "Fernanda", "Jorge", "Rosa",
-    "Eduardo", "Luis", "Gabriela", "Ricardo", "Mariana", "Pablo"
+    "Eduardo", "Luis", "Gabriela", "Ricardo", "Mariana", "Pablo",
+    "Luciana", "Federico", "Valentina", "Martín", "Camila",
+    "Alejandro", "Santiago", "Isabella", "Manuela", "Julián",
+    "Agustina", "Inés", "Marta", "Belen", "Rocio",
+    "Carolina", "Delfina", "Natalia", "Estefania", "Tamara",
+    "Adrian", "Guadalupe", "Emanuel", "Margarita", "Elisa",
+    "Joaquin", "Rocio", "Ricardo", "Cristian", "Veronica",
+    "Silvana", "Oscar", "Gisela", "Lautaro", "Valeria",
+    "Alicia", "Lucas", "Julieta", "Raúl", "Constanza"
 ]
 
 apellidos = [
     "Gonzalez", "Rodriguez", "Martinez", "Perez", "Lopez", "Gomez", 
     "Ramirez", "Sanchez", "Vargas", "Torres", "Mendez", "Hernandez",
-    "Diaz", "Fernandez", "Gutierrez", "Moreno", "Castillo", "Jimenez"
+    "Diaz", "Fernandez", "Gutierrez", "Moreno", "Castillo", "Jimenez",
+    "Pereira", "Silva", "Rocha", "Costa", "Cortes",
+    "Villar", "Mendez", "Alvarez", "Dominguez", "Ortiz",
+    "Mata", "Zamora", "Caceres", "Acosta", "Valdes",
+    "Torres", "Gutierrez", "Rios", "Moreno", "Lopez",
+    "Fernandez", "Rodriguez", "Gonzalez", "Perez", "Martinez",
+    "Gómez", "Dominguez", "Sánchez", "Ojeda", "Aguirre",
+    "Figueroa", "Benitez", "Garrido", "Hernández", "López",
+    "Molina", "Quintana", "Cruz", "Flores", "Gimenez"
 ]
 
 # Listas de direcciones, localidades y provincias
@@ -37,6 +53,10 @@ cp = [
     "1700", "1800", "1900", "2000", "2100", "2200", "2300"
 ]
 
+def remove_accents(s):
+    """Remove accents from a string."""
+    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
 def generate_random_dni():
     """Genera un DNI aleatorio de 8 dígitos."""
     return str(random.randint(10000000, 99999999))
@@ -51,6 +71,11 @@ def crear_clientes():
         # Generar datos aleatorios
         nombre = random.choice(nombres)
         apellido = random.choice(apellidos)
+        
+        # Quitar acentos de nombre y apellido
+        nombre_sin_acentos = remove_accents(nombre)
+        apellido_sin_acentos = remove_accents(apellido)
+        
         direccion = random.choice(calles)
         localidad = random.choice(localidades)
         provincia = random.choice(provincias)
@@ -58,7 +83,7 @@ def crear_clientes():
         cpa = random.choice(cp)
         nacionalidad = "Argentina"
         telefono = f"{random.randint(11, 99)}-{random.randint(1000, 9999)}-{random.randint(1000, 9999)}"
-        email = generate_random_email(nombre, apellido)
+        email = generate_random_email(nombre_sin_acentos, apellido_sin_acentos)
         dni = generate_random_dni()
         
         # Crear y guardar un nuevo Cliente
@@ -80,7 +105,7 @@ def crear_clientes():
         )
         client.save()
 
-if __name__ == "__crear_clientes__":
-    crear_clientes()
+#if __name__ == "__crear_clientes__":
+#    crear_clientes()
 
-crear_clientes()
+#crear_clientes()

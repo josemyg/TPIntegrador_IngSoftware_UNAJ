@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block header %}
+
+  <title>Gol Ahora - Inicio de Sesion</title>
+
+{% endblock header %}
+
+{% block navbar %}{% endblock %}
+
+{% block content %}
+
+
+
+{% block body %}<body class="login-bg-image d-flex align-items-center">{% endblock %}
+{% block container %}<div class="vw-100 vh-100 login-bg-color d-flex">{% endblock %}
+
+        <div class="w-100 h-100 d-flex align-items-center justify-content-center p-2">
+            <div class="col-md-8 col-lg-4 col-12 text-white">
+                    <h1>Registro Exitoso </h1>
+                    <h2>Tu usuario es <strong>{{ cliente }}</strong></h2>
+                    <h2>Tu contraseña es <strong>{{ contraseña }}</strong></h2>
+
+                <div class="text-center mt-3">
+                    <a href="{% url 'login' %}" class="btn btn-light w-100">Iniciar Sesion</a>
+
+                </div>
+            </div>
+        </div>
+
+{% endblock content %}

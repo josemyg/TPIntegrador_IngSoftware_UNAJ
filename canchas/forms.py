@@ -63,3 +63,7 @@ class CanchaForm(forms.ModelForm):
                 'class': 'form-control',
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tipo'].queryset = TipoCancha.objects.filter(estado = 'activo')

@@ -1,6 +1,5 @@
 import random
 import string
-from django.contrib.auth.models import User
 from gestion.models import Profesor
 
 def crear_profesores_argentinos():
@@ -93,11 +92,7 @@ def crear_profesores_argentinos():
         # Crear un usuario de Django con un username único
         username = f"{nombre.lower()}.{apellido.lower()}{random.choice(sufijos)}"
         password = 'f.123456'  # Contraseña fija para todos los usuarios
-        
-        # Crear el usuario
-        user = User.objects.create_user(username=username, email=email, password=password)
-        user.save()
-        
+     
         # Crear el profesor
         profesor = Profesor(
             nombre=nombre,
@@ -111,7 +106,6 @@ def crear_profesores_argentinos():
             telefono=telefono,
             email=email,
             dni=dni,
-            user_django=user,
             
             # Campos específicos del Profesor
             titulo_habilitante=random.choice(titulos),
@@ -123,4 +117,4 @@ def crear_profesores_argentinos():
         print(f"Profesor {nombre} {apellido} creado correctamente.")
 
 # Llama a la función
-crear_profesores_argentinos()
+#crear_profesores_argentinos()

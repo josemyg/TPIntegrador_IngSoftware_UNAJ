@@ -16,9 +16,11 @@ class Reserva(models.Model):
 
     cliente = models.ForeignKey(
         'gestion.Usuario',
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         verbose_name="Cliente"
-    ) # Campo de clave foránea que se relaciona con el modelo Usuario de la aplicación de gestión, con una restricción de eliminación en cascada para proteger los datos relacionados y un nombre legible en el panel de administración.
+    )       # Campo de clave foránea que se relaciona con el modelo Usuario de la aplicación de gestión, con una restricción de eliminación en cascada para proteger los datos relacionados y un nombre legible en el panel de administración.
 
     cancha = models.ForeignKey(
         'canchas.Cancha',

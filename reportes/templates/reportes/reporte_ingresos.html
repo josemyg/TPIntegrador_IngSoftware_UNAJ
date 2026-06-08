@@ -216,11 +216,7 @@
 
     <div class="mt-3 text-end">
 
-        <button class="btn btn-success no-print" onclick="window.print()">
-            Imprimir reporte
-        </button>
-
-    <a class="btn btn-danger no-print"
+    <a class="btn btn-primary no-print"
         href="{% url 'exportar_pdf' %}?fechaInicio={{ fechaInicio }}&fechaFin={{ fechaFin }}">
         Exportar PDF
     </a>

@@ -11,15 +11,15 @@
     <div class="row justify-content-center g-4">
         
         <div class="col-12 col-md-5 col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 bg-light p-4 sticky-md-top" style="top: 2rem;">
+            <div class="card border-0 shadow-sm  bg-light p-4 sticky-md-top" style="top: 2rem;">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h4 class="fw-bold text-dark m-0">Resumen</h4>
                     <span class="badge bg-dark text-uppercase font-monospace px-2 py-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Modo Operador</span>
                 </div>
                 
                 <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
-                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3">
-                        <i class="bi bi-calculator fs-3"></i>
+                    <div class="p-3 bg-success bg-opacity-10 text-success me-3">
+                        <i class="bi bi-calculator fs-4"></i>
                     </div>
                     <div>
                         <span class="text-uppercase text-muted fw-bold tracking-wider small" style="font-size: 0.75rem;">Consola de Gestión</span>
@@ -36,12 +36,11 @@
 
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fs-5 fw-bold text-dark">Monto a Facturar</span>
-                    <span class="fs-3 fw-black text-primary">$ {{ form.monto.value|default:"0.00" }}</span>
+                    <span class="fs-3 fw-black text-primary" id="montoVisual" data-base="{{ form.monto.value|default:'0.00' }}">$ {{ form.monto.value|default:"0.00" }}</span>
                 </div>
                 
-                <div class="p-3 bg-white bg-opacity-50 rounded-3 border border-dashed mt-3">
+                <div class="p-3 bg-white bg-opacity-50 border border-dashed mt-3">
                     <p class="text-muted small mb-0">
-                        <i class="bi bi-info-circle me-1 text-primary"></i> 
                         El monto final impactará directamente en los balances diarios del sistema y cerrará la cuenta corriente del turno seleccionado.
                     </p>
                 </div>
@@ -49,7 +48,7 @@
         </div>
 
         <div class="col-12 col-md-7 col-lg-6">
-            <div class="card border-0 shadow-sm p-4 bg-white rounded-4">
+            <div class="card border-0 shadow-sm p-4 bg-white ">
                 
                 <div class="mb-4">
                     <h2 class="fw-bold text-dark mb-1">Registrar Operación</h2>
@@ -60,8 +59,8 @@
                     {% csrf_token %}
                     
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
-                            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ form.non_field_errors.0 }}
+                        <div class="alert alert-danger py-2 px-3 small mb-3 ">
+                             {{ form.non_field_errors.0 }}
                         </div>
                     {% endif %}
                     
@@ -75,46 +74,52 @@
                     <label class="form-label fw-bold text-dark mb-2">Canal de Cobro</label>
                     <div class="row g-2 mb-4">
                         <div class="col-4">
-                            <div class="card p-3 text-center border-2 cursor-pointer payment-method-card active" data-value="Transferencia" id="methodTransfer">
-                                <i class="bi bi-bank fs-3 text-primary mb-2"></i>
-                                <span class="fw-bold d-block text-dark small">Transferencia</span>
+                            <div class="card p-3 text-center border-2 cursor-pointer payment-method-card active border-primary bg-primary bg-opacity-10" data-value="Transferencia" id="methodTransfer">
+                                <div class="mb-2 text-primary icon-container">
+                                    <i class="bi bi-bank fs-4"></i>
+                                </div>
+                                <span class="fw-bold d-block text-primary small">Transferencia</span>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Tarjeta" id="methodCard">
-                                <i class="bi bi-credit-card fs-3 text-secondary mb-2"></i>
+                                <div class="mb-2 text-secondary icon-container">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                                </div>
                                 <span class="fw-bold d-block text-dark small">Tarjeta Débito</span>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Efectivo" id="methodCash">
-                                <i class="bi bi-cash-stack fs-3 text-secondary mb-2"></i>
+                                <div class="mb-2 text-secondary icon-container">
+                                    <i class="bi bi-cash-coin fs-4"></i>
+                                </div>
                                 <span class="fw-bold d-block text-dark small">Efectivo Caja</span>
                             </div>
                         </div>
                     </div>
                     
                     {% if form.tipo_pago.errors %}
-                        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
-                            <i class="bi bi-exclamation-circle me-1"></i> Debe seleccionar una forma de pago válida.
+                        <div class="alert alert-danger py-2 px-3 small mb-3 ">
+                             Debe seleccionar una forma de pago válida.
                         </div>
                     {% endif %}
 
-                    <div class="mb-4 p-3 bg-light rounded-4 border">
+                    <div class="mb-4 p-3 bg-light  border">
                         <label class="form-label fw-bold small text-dark mb-1">
-                            <i class="bi bi-percentage text-danger me-1"></i> Descuento Aplicable (Bonificación)
+                             Descuento Aplicable (Bonificación)
                         </label>
                         {{ form.descuento }} 
                         {% if form.descuento.errors %}
-                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.descuento.errors.0 }}</div>
+                            <div class="text-danger small mt-1">{{ form.descuento.errors.0 }}</div>
                         {% endif %}
                         <div class="form-text text-muted" style="font-size: 0.75rem;">
                             Seleccione si corresponde una promoción del cliente o un ajuste por convenio.
                         </div>
                     </div>
 
-                    <div id="transferDetails" class="bg-light border rounded-4 p-4 mb-4">
-                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-check-fill me-2 text-primary"></i>Verificación de Transferencia</h6>
+                    <div id="transferDetails" class="bg-light border  p-4 mb-4">
+                        <h6 class="fw-bold text-dark mb-3">Verificación de Transferencia</h6>
                         <div class="mb-3">
                             <label class="form-label small text-secondary mb-1">Cargar Archivo/Comprobante de respaldo *</label>
                             {{ form.comprobante_archivo }}
@@ -125,8 +130,8 @@
                         <span class="text-muted d-block" style="font-size: 0.75rem;">Obligatorio para auditorías internas del predio.</span>
                     </div>
 
-                    <div id="cardDetails" class="bg-light border rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-terminal-fill me-2 text-primary"></i>Datos del Terminal de Captura (Posnet)</h6>
+                    <div id="cardDetails" class="bg-light border  p-4 mb-4 d-none">
+                        <h6 class="fw-bold text-dark mb-3">Datos del Terminal de Captura (Posnet)</h6>
                         <div class="row g-2">
                             <div class="col-8">
                                 <label class="form-label small text-secondary mb-1">Últimos 4 dígitos del plástico *</label>
@@ -145,28 +150,28 @@
                         </div>
                     </div>
 
-                    <div id="cashDetails" class="bg-success bg-opacity-10 border border-success-subtle rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-success-emphasis mb-2"><i class="bi bi-cash me-2"></i>Ingreso de Efectivo Directo</h6>
+                    <div id="cashDetails" class="bg-success bg-opacity-10 border border-success-subtle  p-4 mb-4 d-none">
+                        <h6 class="fw-bold text-success-emphasis mb-2">Ingreso de Efectivo Directo</h6>
                         <p class="small text-dark mb-0">
                             Asegúrese de contar el efectivo físico antes de confirmar el cobro para evitar diferencias en el arqueo final de caja al cierre de turno.
                         </p>
                     </div>
 
-                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small rounded-3 mb-3 d-none">
-                        <i class="bi bi-exclamation-triangle-fill me-1"></i> <span id="jsAlertText"></span>
+                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small mb-3 d-none ">
+                         <span id="jsAlertText"></span>
                     </div>
 
                     <hr class="my-4 text-muted opacity-25">
 
                     <div class="row g-3">
                         <div class="col-12 col-sm-4 order-2 order-sm-1">
-                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 rounded-3 fs-6 fw-semibold py-2.5 border border-secondary-subtle">
+                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 fs-6 fw-semibold py-2.5 border border-secondary-subtle ">
                                 Volver a Lista
                             </a>
                         </div>
                         <div class="col-12 col-sm-8 order-1 order-sm-2">
-                            <button type="submit" class="btn btn-success btn-lg w-100 rounded-3 fs-6 fw-semibold shadow-sm py-2.5">
-                                <i class="bi bi-check-circle-fill me-2"></i> Confirmar y Registrar Pago
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold shadow-sm py-2.5 ">
+                                 Confirmar y Registrar Pago
                             </button>
                         </div>
                     </div>
@@ -178,120 +183,128 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const paymentForm = document.getElementById('paymentForm');
-        const djangoSelect = document.querySelector('select[name="tipo_pago"]');
-        const cards = document.querySelectorAll('.payment-method-card');
-        
-        const transferDetails = document.getElementById('transferDetails');
-        const cardDetails = document.getElementById('cardDetails');
-        const cashDetails = document.getElementById('cashDetails');
-        
-        const jsAlertBlock = document.getElementById('jsAlertBlock');
-        const jsAlertText = document.getElementById('jsAlertText');
+document.addEventListener("DOMContentLoaded", function() {
+    const paymentForm = document.getElementById('paymentForm');
+    const djangoSelect = document.querySelector('select[name="tipo_pago"]');
+    const cards = document.querySelectorAll('.payment-method-card');
+    
+    const transferDetails = document.getElementById('transferDetails');
+    const cardDetails = document.getElementById('cardDetails');
+    const cashDetails = document.getElementById('cashDetails');
+    
+    const jsAlertBlock = document.getElementById('jsAlertBlock');
+    const jsAlertText = document.getElementById('jsAlertText');
 
-        let canalSeleccionado = "Transferencia"; // Estado local por defecto
+    let canalSeleccionado = "Transferencia"; 
 
-        // Estilizar los inputs nativos de Django para mantener la UI impecable
-        const descuentoSelect = document.querySelector('select[name="descuento"]');
-        if (descuentoSelect) { descuentoSelect.classList.add('form-control', 'rounded-3'); }
-        
-        const origenSelect = document.querySelector('select[name="origen_pago"]');
-        if (origenSelect) { origenSelect.classList.add('form-control'); }
+    // Estilizar campos nativos de Django
+    const descuentoSelect = document.querySelector('select[name="descuento"]');
+    if (descuentoSelect) { descuentoSelect.classList.add('form-control', ''); }
+    
+    const origenSelect = document.querySelector('select[name="origen_pago"]');
+    if (origenSelect) { origenSelect.classList.add('form-control'); }
 
-        cards.forEach(card => {
-            card.addEventListener('click', function() {
-                cards.forEach(c => {
-                    c.classList.remove('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
-                    c.querySelector('span.fw-bold').classList.remove('text-primary');
-                    c.querySelector('i').classList.replace('text-primary', 'text-secondary');
-                });
+    // Sincronizar clases en inputs de detalles cargados por Django
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) { fileInput.classList.add('form-control', ''); }
 
-                this.classList.add('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
-                this.querySelector('span.fw-bold').classList.add('text-primary');
-                this.querySelector('i').classList.replace('text-secondary', 'text-primary');
+    const t4Input = document.querySelector('input[name*="tarjeta_ultimos_4"]');
+    if (t4Input) { t4Input.classList.add('form-control', ''); t4Input.setAttribute('maxlength', '4'); }
 
-                canalSeleccionado = this.getAttribute('data-value');
+    const cuponInput = document.querySelector('input[name*="tarjeta_cupon"]');
+    if (cuponInput) { cuponInput.classList.add('form-control', ''); }
+
+    // LÓGICA DINÁMICA DE DESCUENTOS EN VIVO
+    const montoVisual = document.getElementById('montoVisual');
+    const precioBase = parseFloat(montoVisual.getAttribute('data-base').replace(',', '.')) || 0;
+
+    if (descuentoSelect) {
+        descuentoSelect.addEventListener('change', function() {
+            const optionText = this.options[this.selectedIndex].text;
+            const match = optionText.match(/(\d+(?:\.\d+)?)/);
+            let porcentaje = 0;
+
+            if (match && this.value !== "") {
+                porcentaje = parseFloat(match[1]);
+            }
+
+            const descuentoCalculado = (precioBase * porcentaje) / 100;
+            const montoFinal = precioBase - descuentoCalculado;
+
+            montoVisual.innerText = `$ ${montoFinal.toFixed(2)}`;
+        });
+    }
+
+    // GESTIÓN DE CANALES DE COBRO (BOTONES)
+    cards.forEach(card => {
+        card.addEventListener('click', function() {
+            cards.forEach(c => {
+                c.classList.remove('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
                 
-                // Sincronizar con el select oculto de Django
-                if (djangoSelect) {
-                    for (let i = 0; i < djangoSelect.options.length; i++) {
-                        if (djangoSelect.options[i].text.toLowerCase().includes(canalSeleccionado.toLowerCase())) {
-                            djangoSelect.selectedIndex = i;
-                            break;
-                        }
+                const span = c.querySelector('span.fw-bold');
+                if (span) { span.classList.remove('text-primary'); span.classList.add('text-dark'); }
+                
+                const iconContainer = c.querySelector('.icon-container');
+                if (iconContainer) { iconContainer.classList.remove('text-primary'); iconContainer.classList.add('text-secondary'); }
+            });
+
+            this.classList.add('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
+            
+            const activeSpan = this.querySelector('span.fw-bold');
+            if (activeSpan) { activeSpan.classList.remove('text-dark'); activeSpan.classList.add('text-primary'); }
+            
+            const activeIconContainer = this.querySelector('.icon-container');
+            if (activeIconContainer) { activeIconContainer.classList.remove('text-secondary'); activeIconContainer.classList.add('text-primary'); }
+
+            canalSeleccionado = this.getAttribute('data-value');
+            
+            if (djangoSelect) {
+                for (let i = 0; i < djangoSelect.options.length; i++) {
+                    if (djangoSelect.options[i].text.toLowerCase().includes(canalSeleccionado.toLowerCase())) {
+                        djangoSelect.selectedIndex = i;
+                        break;
                     }
                 }
+            }
 
-                // Ocultar todos los bloques de detalle
-                transferDetails.classList.add('d-none');
-                cardDetails.classList.add('d-none');
-                cashDetails.classList.add('d-none');
+            transferDetails.classList.add('d-none');
+            cardDetails.classList.add('d-none');
+            cashDetails.classList.add('d-none');
 
-                // Mostrar el bloque correspondiente
-                if (canalSeleccionado === 'Transferencia') {
-                    transferDetails.classList.remove('d-none');
-                } else if (canalSeleccionado === 'Tarjeta') {
-                    cardDetails.classList.remove('d-none');
-                } else if (canalSeleccionado === 'Efectivo') {
-                    cashDetails.classList.remove('d-none');
-                }
-            });
-        });
-
-        // VALIDACIÓN BLOQUEANTE ANTES DEL ENVÍO (FRONTEND)
-        paymentForm.addEventListener('submit', function(event) {
-            jsAlertBlock.classList.add('d-none'); // Resetear alerta
-            
             if (canalSeleccionado === 'Transferencia') {
-                const fileInput = document.getElementById('comprobanteFile');
-                if (!fileInput || !fileInput.value) {
-                    event.preventDefault();
-                    jsAlertText.innerText = "¡Atención! Debe adjuntar obligatoriamente el archivo del comprobante bancario antes de continuar.";
-                    jsAlertBlock.classList.remove('d-none');
-                    return false;
-                }
-            } 
-            else if (canalSeleccionado === 'Tarjeta') {
-                const t4 = document.getElementById('tarjeta4').value.trim();
-                const cupon = document.getElementById('tarjetaCupon').value.trim();
-                
-                if (t4.length < 4 || !cupon) {
-                    event.preventDefault();
-                    jsAlertText.innerText = "¡Atención! Para cobros con Tarjeta debe ingresar los 4 últimos dígitos del plástico y el número de cupón de Posnet.";
-                    jsAlertBlock.classList.remove('d-none');
-                    return false;
-                }
+                transferDetails.classList.remove('d-none');
+            } else if (canalSeleccionado === 'Tarjeta') {
+                cardDetails.classList.remove('d-none');
+            } else if (canalSeleccionado === 'Efectivo') {
+                cashDetails.classList.remove('d-none');
             }
         });
     });
-</script>
 
-<style>
-    .cursor-pointer {
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
-    }
-    .payment-method-card:hover {
-        transform: translateY(-2px);
-        border-color: #0d6efd !important;
-    }
-    .payment-method-card.active {
-        border-color: #0d6efd !important;
-    }
-    .fw-black {
-        font-weight: 900;
-    }
-    .form-control {
-        display: block;
-        width: 100%;
-        padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #212529;
-        background-color: #fff;
-        border: 1px solid #ced4da;
-    }
-</style>
+    // VALIDACIÓN ANTES DEL ENVÍO
+    paymentForm.addEventListener('submit', function(event) {
+        jsAlertBlock.classList.add('d-none');
+        
+        if (canalSeleccionado === 'Transferencia') {
+            if (!fileInput || !fileInput.value) {
+                event.preventDefault();
+                jsAlertText.innerText = "¡Atención! Debe adjuntar obligatoriamente el archivo del comprobante bancario antes de continuar.";
+                jsAlertBlock.classList.remove('d-none');
+                return false;
+            }
+        } 
+        else if (canalSeleccionado === 'Tarjeta') {
+            const t4 = t4Input ? t4Input.value.trim() : "";
+            const cupon = cuponInput ? cuponInput.value.trim() : "";
+            
+            if (t4.length < 4 || !cupon) {
+                event.preventDefault();
+                jsAlertText.innerText = "¡Atención! Para cobros con Tarjeta debe ingresar los últimos 4 dígitos y el número de cupón.";
+                jsAlertBlock.classList.remove('d-none');
+                return false;
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

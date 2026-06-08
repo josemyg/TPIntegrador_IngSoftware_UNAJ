@@ -6,7 +6,7 @@
     <div class="card shadow mb-4">
         <div class="card-header bg-dark text-white py-3">
             <h3 class="mb-0 fs-4 fw-bold">
-                <i class="bi bi-calendar-check me-2"></i>Disponibilidad de Canchas
+                Disponibilidad de Canchas
             </h3>
         </div>
 
@@ -20,6 +20,7 @@
                         {% for cancha in canchas %}
                             <option value="{{ cancha.id }}" {% if cancha.id|stringformat:"s" == cancha_id %}selected{% endif %}>
                                 {{ cancha.nombre }}
+                                {% if cancha.tipo %} - {{ cancha.tipo.nombreTipo }} - {{ cancha.tipo.capacidad }} jugadores {% endif %}
                             </option>
                         {% endfor %}
                     </select>
@@ -32,7 +33,7 @@
 
                 <div class="col-12 col-md-3">
                     <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold py-2">
-                        <i class="bi bi-search me-1"></i> Buscar Disponibilidad
+                         Buscar Disponibilidad
                     </button>
                 </div>
             </form>
@@ -43,9 +44,9 @@
                 <div class="row g-4">
                     
                     <div class="col-12 col-md-6">
-                        <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="p-3 bg-light border h-100">
                             <h4 class="fs-5 fw-bold text-danger mb-3">
-                                <i class="bi bi-calendar-x-fill me-1"></i> Horarios Ocupados
+                                 Horarios Ocupados
                             </h4>
                             
                             {% if reservas %}
@@ -53,10 +54,10 @@
                                     {% for reserva in reservas %}
                                         <li class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
                                             <span>
-                                                <i class="bi bi-clock text-secondary me-2"></i>
+                                                
                                                 <strong>{{ reserva.hora_inicio|time:"H:i" }}</strong> - <strong>{{ reserva.hora_fin|time:"H:i" }}</strong>
                                             </span>
-                                            <span class="badge {% if reserva.estado == 'CONFIRMADA' %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill small text-uppercase">
+                                            <span class="badge {% if reserva.estado == 'CONFIRMADA' %}bg-success{% else %}bg-warning text-dark{% endif %} small text-uppercase">
                                                 {{ reserva.estado }}
                                             </span>
                                         </li>
@@ -64,29 +65,35 @@
                                 </ul>
                             {% else %}
                                 <p class="text-muted small mb-0 p-2">
-                                    <i class="bi bi-info-circle me-1"></i> No existen reservas para esta cancha en la fecha seleccionada.
+                                     No existen reservas para esta cancha en la fecha seleccionada.
                                 </p>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="col-12 col-md-6">
-                        <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="p-3 bg-light border h-100">
                             <h4 class="fs-5 fw-bold text-success mb-3">
-                                <i class="bi bi-calendar-check-fill me-1"></i> Horarios Libres
+                                 Horarios Libres
                             </h4>
                             
                             {% if horarios_libres %}
                                 <div class="d-flex flex-wrap gap-2">
                                     {% for horario in horarios_libres %}
-                                        <span class="badge bg-white text-dark border border-success border-2 p-2.5 fs-6 font-monospace rounded-3 shadow-sm">
-                                            <i class="bi bi-unlock text-success me-1"></i>{{ horario }}
-                                        </span>
+                                        <button type="button" 
+                                                class="badge bg-white text-dark border border-success border-2 p-2.5 fs-6 font-monospace shadow-sm text-decoration-none btn-hover-click"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalCliente"
+                                                data-hora="{{ horario.hora_inicio }}"
+                                                data-texto="{{ horario.texto }}"
+                                                onclick="configurarModal(this)">
+                                            <i class="bi bi-unlock text-success me-1"></i>{{ horario.texto }}
+                                        </button>
                                     {% endfor %}
                                 </div>
                             {% else %}
                                 <p class="text-muted small mb-0 p-2">
-                                    <i class="bi bi-exclamation-triangle me-1"></i> No hay horarios disponibles para el resto del día.
+                                     No hay horarios disponibles para el resto del día.
                                 </p>
                             {% endif %}
                         </div>
@@ -95,11 +102,75 @@
                 </div>
             {% else %}
                 <div class="text-center py-4 text-secondary">
-                    <i class="bi bi-arrow-up-circle fs-2 d-block mb-2 text-primary opacity-50"></i>
+                    
                     Por favor, selecciona una cancha y una fecha para consultar el estado de los turnos.
                 </div>
             {% endif %}
 
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="modalClienteLabel">
+                    <i class="bi bi-person-plus me-2"></i>Asignar Cliente al Turno
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form method="get" action="{% url 'generar_reserva_rapida' %}">
+                <div class="modal-body">
+                    <input type="hidden" name="cancha" value="{{ cancha_id }}">
+                    <input type="hidden" name="fecha" value="{{ fecha }}">
+                    <input type="hidden" name="hora" id="modal_hora_input">
+
+                    <div class="alert alert-info py-2 small shadow-sm">
+                        <i class="bi bi-info-circle-fill me-1"></i><strong>Turno Seleccionado:</strong> <span id="modal_info_turno"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Cliente</label>
+                        <select name="cliente" class="form-control" required>
+                            <option value="">-- Seleccione el cliente --</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">
+                                    {{ cliente.nombre}} {{ cliente.apellido }}
+                                    {% if cliente.email %}({{ cliente.email }}){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success fw-semibold">
+                        Continuar al Pago <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-hover-click:hover {
+        background-color: #d1e7dd !important;
+        cursor: pointer;
+        transform: scale(1.03);
+        transition: all 0.15s ease-in-out;
+    }
+</style>
+
+<script>
+function configurarModal(boton) {
+    const hora = boton.getAttribute('data-hora');
+    const texto = boton.getAttribute('data-texto');
+    
+    document.getElementById('modal_hora_input').value = hora;
+    document.getElementById('modal_info_turno').innerText = texto + " hs";
+}
+</script>
 {% endblock %}

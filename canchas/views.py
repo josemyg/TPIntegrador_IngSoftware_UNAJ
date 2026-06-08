@@ -28,13 +28,13 @@ class TipoCanchaUpdateView(PermissionRequiredMixin, UpdateView):
     success_url = reverse_lazy('tipo_cancha_list')
 
 # RF-15: Eliminar tipo de cancha
-class TipoCanchaDeleteView(DeleteView):
+class TipoCanchaDeleteView(PermissionRequiredMixin, DeleteView):
     model = TipoCancha
     permission_required = 'canchas.delete_tipocancha'
     template_name = 'canchas/tipo_cancha_confirm_delete.html'
     success_url = reverse_lazy('tipo_cancha_list')
 
-class TipoCanchaListView(ListView):
+class TipoCanchaListView(PermissionRequiredMixin, ListView):
     model = TipoCancha
     permission_required = 'canchas.view_tipocancha'
     template_name = 'canchas/tipo_cancha_list.html'
@@ -77,7 +77,7 @@ def alternar_estado_cancha(request, pk):
 
 #CANCHAS
 # 1. VISTA PARA LISTAR LAS CANCHAS
-class CanchaListView(ListView):
+class CanchaListView(PermissionRequiredMixin, ListView):
     model = Cancha
     permission_required = 'canchas.view_cancha'
     template_name = 'canchas/cancha_list.html'
@@ -100,7 +100,7 @@ class CanchaUpdateView(PermissionRequiredMixin, UpdateView):
     template_name = 'canchas/cancha_form.html'
     success_url = reverse_lazy('cancha_list')
 
-class CanchaDeleteView(DeleteView):
+class CanchaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Cancha
     permission_required = 'canchas.delete_cancha'
     template_name = 'canchas/cancha_confirm_delete.html'

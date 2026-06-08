@@ -5,7 +5,7 @@ db.sqlite3
 venv/
 env/
 
-# Caché y compilados de Python
+# Cachï¿½ y compilados de Python
 __pycache__/
 *.pyc
 
@@ -17,3 +17,6 @@ archivo/
 # Migraciones locales (opcional, pero util para evitar conflictos)
 */migrations/00*.py
 !*/migrations/__init__.py
+.env.dev
+tp_integrador/settings.py
+tp_integrador/urls.py

@@ -1,9 +1,25 @@
+import unicodedata
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group, Permission
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.urls import reverse
+from django.core import mail
+from django.core.mail import EmailMessage
+
+import random
+
+#connection = mail.get_connection()
+
+
+def remove_accents(s):
+    """Remove accents from a string."""
+    return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+
+def crear_password(length=10):
+    caracteres =  "abcdefghijklmnopqrstuvwxyz" + "023456789" + ".+/*"
+    return ''.join(random.choice(caracteres) for i in range(length))
 
 class Usuario(models.Model):
 
@@ -32,16 +48,7 @@ class Usuario(models.Model):
         verbose_name_plural = ("Usuarios")
 
     def __str__(self):
-        return self.nombre + ' ' + self.apellido
-
-    def get_absolute_url(self):
-        return reverse("Usuario_detail", kwargs={"pk": self.pk})
-
-    def registrarUsuario(self):
-        return self.nombre
-
-    def modificarUsuario(self):
-        return self.nombre
+        return (self.nombre + " " + self.apellido)
 
 class Profesor(Usuario):
 
@@ -82,19 +89,39 @@ class Cliente(Usuario):
 @receiver(post_save, sender=Profesor)
 def crear_Profesor(sender, instance, created, **kwargs):
     if created:
-        nombre = instance.nombre+'_'+instance.apellido
-        user = User.objects.create_user(nombre,instance.email, 'f.123456') 
+        nombre = instance.nombre.lower()+'_'+instance.apellido.lower()
+        if User.objects.filter(username=nombre).exists():
+            nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
+        user = User.objects.create_user(nombre, instance.email, 'f.123456')
+        grupo, _ = Group.objects.get_or_create(name="Profesores")
+        user.groups.add(grupo)
         user.save()
         instance.user_django = user
+        instance.save()
         print("Se ha creado el perfil de usuario correctamente")
 
 @receiver(post_save, sender=Cliente)
 def crear_Cliente(sender, instance, created, **kwargs):
     if created:
-        instance.save()
-        nombre = instance.nombre+'_'+instance.apellido
-        print(nombre)
-        user = User.objects.create_user(nombre, instance.email, 'f.123456')
+        #nombre = instance.nombre.lower()+'_'+instance.apellido.lower()
+        #nombre = remove_accents(nombre)
+        #if User.objects.filter(username=nombre).exists():
+        #    nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
+        user = User.objects.create_user(instance.email, instance.email, 'f.123456')
+        grupo, _ = Group.objects.get_or_create(name='Clientes')
+        user.groups.add(grupo)
         user.save()
         instance.user_django = user
-        print("Se ha creado el perfil de usuario correctamente")        
+        instance.save()
+        #correo = EmailMessage(
+        #    'Tu cuenta GolAhora fue creada correctamente',
+        #    'Tu usuario es: '+instance.email,
+        #    'golahora@yedro.ar',
+        #    [instance.email],
+        #)
+        #correo.attach_alternative(html_content, "text/html")
+        #connection.open()
+        #correo.send()
+        #connection.send_messages(correo)
+        #connection.close()
+        print("Se ha creado el perfil de usuario correctamente")

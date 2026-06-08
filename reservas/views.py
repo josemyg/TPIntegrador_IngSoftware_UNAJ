@@ -5,7 +5,10 @@ from .forms import ReservaForm
 from django.db.models import Q
 from datetime import datetime, timedelta,time
 from django.contrib import messages
+from gestion.models import Usuario
 from django.contrib.auth.decorators import permission_required
+
+
 
 @permission_required("reservas.view_reserva")
 def gestion_reservas(request):
@@ -26,7 +29,7 @@ def gestion_reservas(request):
         form = ReservaForm() # Si el método de la solicitud no es POST, se crea una instancia vacía del formulario ReservaForm para mostrarlo al usuario y permitirle crear una nueva reserva.
 
      # OBTENER RESERVAS
-    reservas = Reserva.objects.all().order_by('-fecha')
+    reservas = Reserva.objects.all().select_related('cliente', 'cancha').order_by('id')
 
     # FILTROS
     fecha = request.GET.get('fecha')
@@ -185,54 +188,97 @@ def cancelar_reserva(request, id):
 
     return redirect('lista_reservas')
 
+@permission_required("reservas.add_reserva")
+def generar_reserva_rapida(request):
+    cancha_id = request.GET.get('cancha')
+    fecha = request.GET.get('fecha')
+    hora_inicio = request.GET.get('hora')
+    cliente_id = request.GET.get('cliente') 
+    
+    cancha = get_object_or_404(Cancha, id=cancha_id)
+    cliente = get_object_or_404(Usuario, id=cliente_id)
+    
+    # Calcular hora de fin (60 minutos)
+    formato = '%H:%M'
+    hora_inicio_dt = datetime.strptime(hora_inicio, formato)
+    hora_fin_dt = hora_inicio_dt + timedelta(minutes=60)
+    hora_fin = hora_fin_dt.strftime(formato)
+    
+    hora_inicio_objeto = hora_inicio_dt.time()
+    hora_fin_objeto = hora_fin_dt.time()
+
+
+    # Crear la reserva directamente
+    reserva = Reserva.objects.create(
+        cancha=cancha,
+        fecha=fecha,
+        hora_inicio=hora_inicio_objeto,
+        hora_fin=hora_fin_objeto,
+        cliente=cliente,
+        estado='PENDIENTE',
+        precio_final=cancha.tipo.precio_hora
+    )
+    return redirect('pago_create_reserva', reserva_id=reserva.id)
+
+
 # CONSULTAR DISPONIBILIDAD
 @permission_required("reservas.view_reserva")
 def consultar_disponibilidad(request):
-
-    canchas = Cancha.objects.filter(estado='DISPONIBLE') # Obtiene todas las canchas que tienen un estado de 'DISPONIBLE' 
-
-    reservas = None # Inicializa reservas como None para el caso que no haya fecha y cancha en la solicitud GET.
+    canchas = Cancha.objects.filter(estado='DISPONIBLE') 
+    reservas = None 
     horarios_libres = []
+    
+    # 1. Calculamos los límites de fechas (Hoy y dentro de 7 días)
+    hoy_dt = datetime.today()
+    max_fecha_dt = hoy_dt + timedelta(days=7)
+    
+    hoy_str = hoy_dt.strftime('%Y-%m-%d')
+    max_fecha_str = max_fecha_dt.strftime('%Y-%m-%d')
+
     fecha = request.GET.get('fecha') 
-    cancha_id = request.GET.get('cancha') # Obtiene la fecha y el ID de la cancha de los parámetros de la solicitud GET.
+    cancha_id = request.GET.get('cancha') 
+
+    # Si ingresan una fecha, validamos que esté dentro del rango de los 7 días
+    if fecha:
+        try:
+            fecha_seleccionada = datetime.strptime(fecha, '%Y-%m-%d')
+            # Si es menor a hoy o mayor a los 7 días permitidos, la reseteamos a hoy
+            if fecha_seleccionada.date() < hoy_dt.date() or fecha_seleccionada.date() > max_fecha_dt.date():
+                fecha = hoy_str
+        except ValueError:
+            fecha = hoy_str
+
+    clientes = Usuario.objects.all().order_by('nombre', 'apellido') 
 
     if fecha and cancha_id:
-
         reservas = Reserva.objects.filter(
             fecha=fecha,
             cancha_id=cancha_id
         ).exclude(
-            estado__startswith='CANCELADA' # Excluye las reservas que tienen un estado que comienza con 'CANCELADA', lo que significa que solo se considerarán las reservas activas para determinar la disponibilidad de la cancha en la fecha seleccionada.
-        ).order_by('hora_inicio') # se ordenan las reservas por la hora de inicio para mostrar la disponibilidad de manera cronológica.
+            estado__startswith='CANCELADA' 
+        ).order_by('hora_inicio') 
         
-        hora_actual = datetime.combine(
-            datetime.today(),
-            time(8, 0)
-        )
+        intervalos_ocupados = [(r.hora_inicio, r.hora_fin) for r in reservas]
 
-        hora_cierre = datetime.combine(
-            datetime.today(),
-            time(23, 0)
-        )
+        hora_actual = datetime.combine(datetime.today(), time(8, 0))
+        hora_cierre = datetime.combine(datetime.today(), time(23, 0))
 
         while hora_actual < hora_cierre:
-
             inicio = hora_actual.time()
+            fin = (hora_actual + timedelta(minutes=60)).time() 
 
-            fin = (hora_actual + timedelta(hours=1)).time()
-
-            ocupado = reservas.filter(
-                hora_inicio__lt=fin,
-                hora_fin__gt=inicio
-            ).exists()
+            ocupado = any(
+                hora_inicio_res < fin and hora_fin_res > inicio 
+                for hora_inicio_res, hora_fin_res in intervalos_ocupados
+            )
 
             if not ocupado:
+                horarios_libres.append({
+                    'hora_inicio': inicio.strftime('%H:%M'),
+                    'texto': f"{inicio.strftime('%H:%M')} - {fin.strftime('%H:%M')}"
+                })
 
-                horarios_libres.append(
-                    f"{inicio.strftime('%H:%M')} - {fin.strftime('%H:%M')}"
-                )
-
-            hora_actual += timedelta(hours=1)
+            hora_actual += timedelta(minutes=60)
 
     return render(
         request,
@@ -243,5 +289,8 @@ def consultar_disponibilidad(request):
             'fecha': fecha,
             'cancha_id': cancha_id,
             'horarios_libres': horarios_libres,
-        }
+            'clientes': clientes,
+            'hoy': hoy_str,          
+            'max_fecha': max_fecha_str, }
     )
+
