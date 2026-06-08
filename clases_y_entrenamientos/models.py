@@ -124,6 +124,7 @@ class Clase(models.Model):
             'inscriptos': self.alumnos.count(),
             'alumnos': [{'id': a.id, 'nombre': str(a)} for a in self.alumnos.all()],
             'estado': self.estado,
+            'cancha': str(self.cancha) if self.cancha else 'Sin cancha',
             'fecha_impresion': localtime(timezone.now()).strftime('%d/%m/%Y %H:%M:%S')
         }
 
@@ -145,6 +146,7 @@ class Clase(models.Model):
                 'cupo_maximo': self.cupo_maximo,
                 'inscriptos': total_inscriptos,
                 'estado': self.estado,
+                'cancha': str(self.cancha) if self.cancha else 'Sin cancha',
             },
             'resumen_asistencia': {
                 'total_registros': total_registros,
@@ -169,6 +171,7 @@ class Clase(models.Model):
         return {
             'clase': self.nombre,
             'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
+            'cancha': str(self.cancha) if self.cancha else 'Sin cancha',
             'total_alumnos_inscriptos': self.alumnos.count(),
             'total_registros_asistencia': total_registros,
             'presentes': presentes,
@@ -320,6 +323,7 @@ class Entrenamiento(models.Model):
             'id': self.id,
             'nombre': self.nombre,
             'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
+            'cancha': str(self.cancha) if self.cancha else 'Sin cancha',
             'entrenador': str(self.entrenador) if self.entrenador else 'Sin entrenador',
             'cupo_maximo': self.cupo_maximo,
             'inscriptos': self.alumnos.count(),
@@ -346,6 +350,7 @@ class Entrenamiento(models.Model):
                 'cupo_maximo': self.cupo_maximo,
                 'inscriptos': total_inscriptos,
                 'estado': self.estado,
+                'cancha': str(self.cancha) if self.cancha else 'Sin cancha',
             },
             'resumen_asistencia': {
                 'total_registros': total_registros,
@@ -374,6 +379,7 @@ class Entrenamiento(models.Model):
         return {
             'entrenamiento': self.nombre,
             'horario': localtime(self.horario).strftime('%d/%m/%Y %H:%M'),
+            'cancha': str(self.cancha) if self.cancha else 'Sin cancha',
             'total_alumnos_inscriptos': self.alumnos.count(),
             'total_registros_asistencia': total_registros,
             'presentes': presentes,
