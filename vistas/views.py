@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 
-
 from gestion.models import Cliente, Profesor
 from gestion.forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm
 from reservas.models import Reserva
@@ -16,8 +15,9 @@ from canchas.models import Cancha
 from clases_y_entrenamientos.models import Clase, Entrenamiento, AsistenciaClase, AsistenciaEntrenamiento
 from competiciones.models import Equipo, Competicion, Liga, Torneo
 from vistas.forms import ClientePerfilForm
+from django.contrib import messages
+from .forms import ReservaForm
 
-# Create your views here.
 class ClientePerfilUpdateView(UpdateView):
     model = Cliente
     form_class = ClientePerfilForm
@@ -124,3 +124,60 @@ def dashboard_cliente(request):
         'ligas': ligas,
         'torneos': torneos,
     })
+
+
+
+def mis_actividades(request):
+    cliente = request.user  # asumiendo que request.user es el cliente
+    clases_futuras = cliente.clases.filter(estado__in=['programada', 'en_curso']).order_by('horario')
+    entrenamientos_futuros = cliente.entrenamientos.filter(estado__in=['programado', 'en_curso']).order_by('horario')
+    clases_pasadas = cliente.clases.filter(estado__in=['finalizada', 'cancelada']).order_by('-horario')
+    entrenamientos_pasados = cliente.entrenamientos.filter(estado__in=['finalizado', 'cancelado']).order_by('-horario')
+    asistencias_clase = AsistenciaClase.objects.filter(alumno=cliente).select_related('clase')
+    asistencias_entrenamiento = AsistenciaEntrenamiento.objects.filter(alumno=cliente).select_related('entrenamiento')
+    context = {
+        'clases_futuras': clases_futuras,
+        'entrenamientos_futuros': entrenamientos_futuros,
+        'clases_pasadas': clases_pasadas,
+        'entrenamientos_pasados': entrenamientos_pasados,
+        'asistencias_clase': asistencias_clase,
+        'asistencias_entrenamiento': asistencias_entrenamiento,
+    }
+    return render(request, 'vistas/mis_actividades.html', context)
+
+
+def mis_reservas(request):
+    cliente = request.user
+    reservas = Reserva.objects.filter(cliente=cliente).order_by('-fecha_creacion')
+    return render(request, 'vistas/mis_reservas.html', {'reservas': reservas})
+
+
+def mis_reservas_crear(request):
+    cliente = request.user
+    if request.method == 'POST':
+        form = ReservaForm(request.POST)
+        if form.is_valid():
+            reserva = form.save(commit=False)
+            reserva.cliente = cliente
+            reserva.save()
+            messages.success(request, "Reserva creada exitosamente.")
+            return redirect('vistas:mis_reservas')
+        else:
+            messages.error(request, "Error en el formulario. Verifica los datos.")
+    else:
+        form = ReservaForm()
+    return render(request, 'vistas/mis_reservas_form.html', {'form': form})
+
+
+def mis_pagos(request):
+    cliente = request.user
+    pagos = Pago.objects.filter(reserva__cliente=cliente).order_by('-fecha')
+    total_adeudado = sum(p.monto_final for p in pagos if p.estado == 'PENDIENTE')
+    return render(request, 'vistas/mis_pagos.html', {'pagos': pagos, 'total_adeudado': total_adeudado})
+
+
+def mis_inscripciones(request):
+    cliente = request.user
+    equipos_cliente = Equipo.objects.filter(clientes=cliente)
+    competiciones = Competicion.objects.filter(equipos__in=equipos_cliente).distinct().order_by('-id')
+    return render(request, 'vistas/mis_inscripciones.html', {'equipos': equipos_cliente, 'competiciones': competiciones})

@@ -1,0 +1,30 @@
+{% extends 'base_cliente.html' %}
+{% load static %}
+
+{% block title %}Nueva Reserva - Gol Ahora{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow w-50 mx-auto">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Nueva Reserva de Cancha</h3>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="text-danger">{{ field.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Reservar</button>
+                <a href="{% url 'vistas:mis_reservas' %}" class="btn btn-danger">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
