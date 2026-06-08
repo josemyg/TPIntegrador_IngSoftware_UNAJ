@@ -29,9 +29,9 @@
                     <tr>
                         <td class="fw-bold ps-4 text-primary">#{{ recibo.id }}</td>
                         <td class="text-muted fw-semibold">Pago #{{ recibo.pago.id }}</td>
-                        <td><span class="badge bg-light text-dark border px-2 py-1.5">{{ recibo.pago.get_origen_pago_display }}</span></td>
+                        <td><span class="badge bg-light text-dark border px-2 py-1.5">{{ recibo.pago.tipo_pago }}</span></td>
                         <td class="text-secondary">{{ recibo.fecha|date:"d/m/Y H:i" }}</td>
-                        <td class="fw-bold text-success">${{ recibo.pago.monto_final|floatformat:0 }}</td>
+                        <td class="fw-bold text-success">${{ recibo.pago.monto|floatformat:2 }}</td>
                         <td class="text-center pe-4">
                             <div class="btn-group gap-1">
                                 <a href="{% url 'recibo_imprimir' recibo.id %}" target="_blank" class="btn btn-sm btn-outline-dark rounded-2" title="Imprimir Comprobante">

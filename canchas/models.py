@@ -60,7 +60,7 @@ class Cancha(models.Model):
         help_text="Ej: Cancha N° 1 Techada"
     )
     
-    # 🔗 Relación con TipoCancha (La flecha de tu diagrama)
+   
     tipo = models.ForeignKey(TipoCancha, on_delete=models.PROTECT, related_name='canchas')
     
     estado = models.CharField(

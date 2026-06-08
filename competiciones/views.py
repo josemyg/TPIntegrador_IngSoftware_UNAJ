@@ -1,6 +1,7 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,DetailView
 from .models import Equipo, Liga, Torneo, Partido
@@ -148,14 +149,14 @@ class LigaListView(PermissionRequiredMixin, ListView):
     template_name = 'competiciones/liga/liga_list.html'
     context_object_name = 'liga_list'
 
-class LigaCreateView(CreateView):
+class LigaCreateView(PermissionRequiredMixin, CreateView):
     model = Liga
     permission_required = 'competiciones.add_liga'
     form_class = LigaForm
     template_name = 'competiciones/liga/liga_form.html'
     success_url = reverse_lazy('liga_list')
 
-class LigaUpdateView(UpdateView):
+class LigaUpdateView(PermissionRequiredMixin, UpdateView):
     model = Liga
     permission_required = 'competiciones.change_liga'
     form_class = LigaForm
@@ -176,14 +177,14 @@ class TorneoListView(PermissionRequiredMixin, ListView):
     template_name = 'competiciones/torneo/torneo_list.html'
     context_object_name = 'torneo_list'
 
-class TorneoCreateView(CreateView):
+class TorneoCreateView(PermissionRequiredMixin, CreateView):
     model = Torneo
     permission_required = 'competiciones.add_liga'
     form_class = TorneoForm
     template_name = 'competiciones/torneo/torneo_form.html'
     success_url = reverse_lazy('torneo_list')
 
-class TorneoUpdateView(UpdateView):
+class TorneoUpdateView(PermissionRequiredMixin, UpdateView):
     model = Torneo
     permission_required = 'competiciones.change_torneo'
     form_class = TorneoForm
@@ -199,7 +200,7 @@ class TorneoDeleteView(PermissionRequiredMixin, DeleteView):
 # ==========================================
 # DETALLE DE LIGA Y GENERACION DE FIXTURE
 # ==========================================
-class LigaDetailView(DetailView):
+class LigaDetailView(PermissionRequiredMixin, DetailView):
     model = Liga
     permission_required = 'competiciones.view_liga'
     template_name = 'competiciones/liga/liga_detail.html'

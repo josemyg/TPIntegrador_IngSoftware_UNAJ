@@ -2,45 +2,164 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <title>Comprobante de Pago #{{ recibo.id }}</title>
     <style>
-        @page { size: A4; margin: 2cm; }
-        body { font-family: Helvetica, Arial, sans-serif; color: #333; }
-        .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #198754; padding-bottom: 10px; }
-        .invoice-box { max-width: 800px; margin: auto; }
-        table { width: 100%; line-height: inherit; text-align: left; border-collapse: collapse; }
-        table td { padding: 8px; vertical-align: top; }
-        .fw-bold { font-weight: bold; }
-        .total-box { background-color: #f8f9fa; font-size: 1.2rem; padding: 15px; text-align: right; margin-top: 20px; }
+        @page {
+            size: a4;
+            margin: 20mm;
+        }
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #333333;
+            line-height: 1.4;
+            background-color: #ffffff;
+        }
+        .ticket-container {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 30px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background-color: #ffffff;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .brand {
+            font-size: 26px;
+            font-weight: bold;
+            color: #1b4332; /* Verde oscuro institucional del club */
+            letter-spacing: 1px;
+            margin: 0 0 4px 0;
+        }
+        .subtitle {
+            font-size: 12px;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+        hr {
+            border: 0;
+            border-top: 1px solid #edf2f7;
+            margin: 15px 0;
+        }
+        .data-table {
+            width: 100%;
+            font-size: 13px;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .data-table td {
+            padding: 6px 0;
+            vertical-align: top;
+        }
+        .label {
+            color: #718096;
+            font-weight: 500;
+            width: 35%;
+        }
+        .value {
+            color: #1a202c;
+            font-weight: bold;
+            text-align: right;
+            width: 65%;
+        }
+        .totals-table {
+            width: 100%;
+            font-size: 13px;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .totals-table td {
+            padding: 5px 0;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-success {
+            color: #2f855a;
+            font-weight: 600;
+        }
+        .total-row {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a202c;
+            border-top: 2px dashed #cbd5e0;
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+        .total-label {
+            color: #1b4332;
+        }
+        .footer-msg {
+            text-align: center;
+            font-size: 11px;
+            color: #a0aec0;
+            margin-top: 30px;
+        }
     </style>
 </head>
 <body>
-    <div class="invoice-box">
+
+    <div class="ticket-container">
         <div class="header">
-            <h2>GOL AHORA COMPROBANTE</h2>
+            <h1 class="brand">GOL AHORA</h1>
+            <p class="subtitle">Comprobante Oficial de Pago</p>
         </div>
         
-        <table>
+        <hr>
+        
+        <table class="data-table">
             <tr>
-                <td class="fw-bold">Nro. Comprobante:</td>
-                <td>#{{ recibo.id }}</td>
+                <td class="label">Recibo N°:</td>
+                <td class="value">#{{ recibo.id }}</td>
             </tr>
             <tr>
-                <td class="fw-bold">Fecha de Emisión:</td>
-                <td>{{ recibo.fecha|date:"d/m/Y H:i" }}</td>
+                <td class="label">Fecha/Hora:</td>
+                <td class="value">{{ recibo.fecha|date:"d/m/Y H:i" }}</td>
             </tr>
             <tr>
-                <td class="fw-bold">Concepto:</td>
-                <td>{{ pago.get_origen_pago_display }}</td>
+                <td class="label">Concepto:</td>
+                <td class="value">{{ recibo.pago.get_origen_pago_display }}</td>
             </tr>
             <tr>
-                <td class="fw-bold">Método de Pago:</td>
-                <td>{{ pago.tipo_pago.nombre }}</td>
+                <td class="label">Método:</td>
+                <td class="value">
+                    {% if recibo.pago.tipo_pago %}{{ recibo.pago.tipo_pago }}{% else %}No especificado{% endif %}
+                </td>
             </tr>
         </table>
+        
+        <hr>
 
-        <div class="total-box">
-            <span class="fw-bold">MONTO NETO COBRADO: ${{ pago.monto }}</span>
+        <table class="totals-table">
+            {% if recibo.pago.descuento %}
+                <tr>
+                    <td style="color: #718096;">Subtotal Bruto:</td>
+                    <td class="text-right" style="color: #4a5568;">${{ recibo.pago.monto_bruto|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td class="text-success">Descuento ({{ recibo.pago.descuento.cantidad }}%):</td>
+                    <td class="text-right text-success">- ${{ recibo.pago.valor_descuento|floatformat:2 }}</td>
+                </tr>
+            {% endif %}
+        </table>
+
+        <table class="totals-table total-row">
+            <tr>
+                <td class="total-label">TOTAL NETO:</td>
+                <td class="text-right" style="color: #1b4332;">${{ recibo.pago.monto|floatformat:2 }}</td>
+            </tr>
+        </table>
+        
+        <div class="footer-msg">
+            ¡Gracias por elegir a Gol Ahora!<br>
+            Conserve este comprobante como respaldo de su transacción.
         </div>
     </div>
+
 </body>
 </html>
