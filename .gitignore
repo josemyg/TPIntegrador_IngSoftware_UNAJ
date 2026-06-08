@@ -17,16 +17,6 @@ archivo/
 # Migraciones locales (opcional, pero util para evitar conflictos)
 */migrations/00*.py
 !*/migrations/__init__.py
-tp_integrador/settings.py
-
-<<<<<<< HEAD
-tp_integrador/settings.py
 .env.dev
-.gitignore
-tp_integrador/settings.py
 tp_integrador/settings.py
 tp_integrador/urls.py
-.gitignore
-tp_integrador/settings.py
-=======
->>>>>>> 7d2b21657e7893112a404849e3eb42e2f3e2226b
