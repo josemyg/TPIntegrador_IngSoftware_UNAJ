@@ -57,7 +57,7 @@
                                                 
                                                 <strong>{{ reserva.hora_inicio|time:"H:i" }}</strong> - <strong>{{ reserva.hora_fin|time:"H:i" }}</strong>
                                             </span>
-                                            <span class="badge {% if reserva.estado == 'CONFIRMADA' %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill small text-uppercase">
+                                            <span class="badge {% if reserva.estado == 'CONFIRMADA' %}bg-success{% else %}bg-warning text-dark{% endif %} small text-uppercase">
                                                 {{ reserva.estado }}
                                             </span>
                                         </li>
@@ -81,7 +81,7 @@
                                 <div class="d-flex flex-wrap gap-2">
                                     {% for horario in horarios_libres %}
                                         <button type="button" 
-                                                class="badge bg-white text-dark border border-success border-2 p-2.5 fs-6 font-monospace rounded-3 shadow-sm text-decoration-none btn-hover-click"
+                                                class="badge bg-white text-dark border border-success border-2 p-2.5 fs-6 font-monospace shadow-sm text-decoration-none btn-hover-click"
                                                 data-bs-toggle="modal" 
                                                 data-bs-target="#modalCliente"
                                                 data-hora="{{ horario.hora_inicio }}"
@@ -133,7 +133,7 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-secondary">Cliente</label>
-                        <select name="cliente" class="form-select border-2" required>
+                        <select name="cliente" class="form-control" required>
                             <option value="">-- Seleccione el cliente --</option>
                             {% for cliente in clientes %}
                                 <option value="{{ cliente.id }}">

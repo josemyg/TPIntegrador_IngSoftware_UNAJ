@@ -39,16 +39,15 @@ class ClaseForm(forms.ModelForm):
         if not self.instance.pk:
             self.fields.pop('estado')
             self.fields['reserva'].queryset = Reserva.objects.filter(
-            estado__in=['CONFIRMADA', 'PENDIENTE']
+            estado__in=['CONFIRMADA', 'PENDIENTE', 'CANCELADA']
         ).exclude(
             clases__isnull=False
         ).exclude(
             entrenamientos__isnull=False
         )
         else:
-            self.fields['reserva'].queryset = Reserva.objects.filter(estado__in=['CONFIRMADA', 'PENDIENTE']).exclude(
+            self.fields['reserva'].queryset = Reserva.objects.filter(estado__in=['CONFIRMADA', 'PENDIENTE', 'CANCELADA']).exclude(
                 clases__isnull=False).exclude(entrenamientos__isnull=False) | Reserva.objects.filter(clases=self.instance)
-        
 
 
 class EntrenamientoForm(forms.ModelForm):
@@ -83,9 +82,9 @@ class EntrenamientoForm(forms.ModelForm):
         if not self.instance.pk:
             self.fields.pop('estado')
             self.fields['reserva'].queryset = Reserva.objects.filter(
-            estado__in=['CONFIRMADA', 'PENDIENTE']).exclude(clases__isnull=False).exclude(entrenamientos__isnull=False)
+            estado__in=['CONFIRMADA', 'PENDIENTE', 'CANCELADA']).exclude(clases__isnull=False).exclude(entrenamientos__isnull=False)
         else:
-            self.fields['reserva'].queryset = Reserva.objects.filter(estado__in=['CONFIRMADA', 'PENDIENTE']).exclude(
+            self.fields['reserva'].queryset = Reserva.objects.filter(estado__in=['CONFIRMADA', 'PENDIENTE', 'CANCELADA']).exclude(
                 clases__isnull=False).exclude(entrenamientos__isnull=False) | Reserva.objects.filter(entrenamientos=self.instance)
 
 

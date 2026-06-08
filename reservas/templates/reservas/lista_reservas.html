@@ -1,200 +1,356 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %} <!-- uso base.html de gestion -->
+<!-- {% load static %} --> <!-- habilito el sistema de archivos estáticos -->
+
+<!-- espacio que base.html deja vacío para que se complete.-->
 {% block title %} 
 Lista de Reservas 
 {% endblock %}
 
 {% block content %} 
-<div class="container py-5"> 
+
+
+
+ <!-- contenido visual -->
+
+  
+
+<div class="container py-5"> <!-- clase de bootstrap con márgenes automáticos, ancho responsive y contenido centrado. padding top y bottom = 5-->
     
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Gestión de Reservas</h2>
-        <div class="gap-2 d-flex">
-            <a href="{% url 'crear_reserva' %}" class="btn btn-success fw-semibold shadow-sm">
-                <i class="bi bi-plus-circle me-1"></i> Nueva Reserva
-            </a>
-            <a href="{% url 'consultar_disponibilidad' %}" class="btn btn-primary fw-semibold shadow-sm">
-                <i class="bi bi-calendar3 me-1"></i> Ver Disponibilidad de Canchas
-            </a>
+    <h2>Gestión de Reservas</h2>
+
+    <div class="mb-3">
+    <a href="{% url 'crear_reserva' %}"
+       class="btn btn-primary">
+        Nueva Reserva
+    </a>
+
+    <a href="{% url 'consultar_disponibilidad' %}"
+       class="btn btn-primary">
+        Ver disponibilidad de canchas
+    </a>
+</div>
+
+
+    <!-- FILTROS -->
+<div class="card shadow-lg p-4 mb-4"> <!-- crea tarjeta visual con sombra, padding = 4, margin bottom = 4 -->
+
+    <h4 class="mb-4"> 
+         <!-- ícono de búsqueda de Bootstrap Icons. -->
+        Buscar Reservas
+    </h4>
+
+    <form method="GET" 
+        class="row g-3"
+        id="form-busqueda"> <!-- GET: Envía los datos visibles en la URL para filtrar resultados. Bootstrap Grid System. gap=3. id para identificar el formulario en JavaScript. -->
+
+        <!-- FECHA -->
+        <div class="col-md-3"> 
+
+            <input type="date" 
+                   name="fecha"
+                   class="form-control"> <!-- tipo fecha, nombre del campo para la consulta, clase de bootstrap para estilo. -->
+
         </div>
-    </div>
 
-    <div class="card shadow-lg p-4 mb-4 border-0 bg-white rounded-3"> 
-        <h4 class="mb-4 text-dark fw-bold"> 
-            <i class="bi bi-search text-primary me-2"></i>Buscar Reservas
-        </h4>
+        <!-- CLIENTE -->
+        <div class="col-md-3">
 
-        <form method="GET" class="row g-3" id="form-busqueda"> 
-            <div class="col-md-3"> 
-                <label class="form-label small fw-bold text-secondary">Fecha</label>
-                <input type="date" name="fecha" value="{{ request.GET.fecha }}" class="form-control"> 
-            </div>
+            <input type="text"
+                   name="cliente"
+                   class="form-control"
+                   placeholder="Nombre, apellido o DNI"> <!-- tipo texto, nombre del campo para la consulta, clase de bootstrap para estilo, texto de ayuda dentro del campo. -->
 
-            <div class="col-md-3">
-                <label class="form-label small fw-bold text-secondary">Cliente</label>
-                <input type="text" name="cliente" value="{{ request.GET.cliente }}" class="form-control" placeholder="Nombre, apellido o DNI"> 
-            </div>
+        </div>
 
-            <div class="col-md-3">
-                <label class="form-label small fw-bold text-secondary">Estado</label>
-                <select name="estado" class="form-select">
-                    <option value="">Seleccionar estado</option>
-                    <option value="PENDIENTE" {% if request.GET.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
-                    <option value="CONFIRMADA" {% if request.GET.estado == 'CONFIRMADA' %}selected{% endif %}>Confirmada</option>
-                    <option value="CANCELADA" {% if request.GET.estado == 'CANCELADA' %}selected{% endif %}>Cancelada</option>
-                </select> 
-            </div>
+        <!-- ESTADO -->
+        <div class="col-md-3">
 
-            <div class="col-md-3">
-                <label class="form-label small fw-bold text-secondary">Cancha</label>
-                <select name="cancha" class="form-select">
-                    <option value="">Seleccionar cancha</option>
-                    {% for cancha in canchas %}
-                        <option value="{{ cancha.id }}" {% if request.GET.cancha == cancha.id|stringformat:"i" %}selected{% endif %}>
-                            {{ cancha.nombre }}
-                        </option>
-                    {% endfor %}
-                </select> 
-            </div>
+            <select name="estado"
+                    class="form-control">
 
-            <div class="col-12 d-flex gap-2 mt-4"> 
-                <button type="submit" class="btn btn-primary px-4 fw-semibold"> 
-                    <i class="bi bi-search me-1"></i> Buscar
-                </button>
-                <a href="{% url 'lista_reservas' %}" class="btn btn-secondary px-4 fw-semibold">
-                    <i class="bi bi-arrow-clockwise me-1"></i> Limpiar
-                </a>
-            </div> 
-        </form>
-    </div>
+                <option value="">
+                    Seleccionar estado
+                </option>
 
-    <div class="card shadow-lg p-4 border-0 bg-white rounded-3">
-        <div class="table-responsive"> 
-            <div id="tabla-reservas"> 
-                <table class="table table-hover align-middle mb-0"> 
-                    <thead class="table-dark text-uppercase fs-7"> 
+                <option value="PENDIENTE">
+                    Pendiente
+                </option>
+
+                <option value="CONFIRMADA">
+                    Confirmada
+                </option>
+
+                <option value="CANCELADA">
+                    Cancelada
+                </option>
+
+            </select> <!-- tipo selección, nombre del campo para la consulta, clase de bootstrap para estilo. Las opciones permiten filtrar por estado de la reserva. -->
+
+        </div>
+
+        <!-- CANCHA -->
+        <div class="col-md-3">
+
+            <select name="cancha"
+                    class="form-control">
+
+                <option value="">
+                    Seleccionar cancha
+                </option>
+
+                {% for cancha in canchas %}
+
+                    <option value="{{ cancha.id }}">
+                        {{ cancha.nombre }}
+                    </option>
+
+                {% endfor %}
+
+            </select> <!-- tipo selección, nombre del campo para la consulta, clase de bootstrap para estilo. Las opciones permiten filtrar por tipo de cancha. -->
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="col-12 d-flex gap-3 mt-4"> 
+
+            <button type="submit"
+                    class="btn btn-primary"> 
+                Buscar
+            </button>
+
+            <a href="{% url 'lista_reservas' %}"
+               class="btn btn-secondary">
+                Limpiar
+            </a>
+
+        </div> <!-- El botón de búsqueda envía el formulario para aplicar los filtros. El enlace de limpiar redirige a la misma página sin parámetros para mostrar todas las reservas. -->
+
+    </form>
+
+</div>
+
+    <!-- TABLA -->
+
+        <div class="table-responsive"> <!-- Hace que la tabla sea horizontalmente desplazable en pantallas pequeñas. -->
+
+            <div id="tabla-reservas"> <!-- id para identificar la tabla en JavaScript. -->
+
+                <table class="table table-striped"> 
+
+                    <thead class="table-primary"> <!-- Encabezado de la tabla con fondo oscuro. -->
+
                         <tr>
-                            <th class="ps-3">ID</th>
-                            <th><i class="bi bi-person-fill me-1"></i>Cliente</th>
-                            <th><i class="bi bi-dribbble me-1"></i>Cancha</th>
-                            <th><i class="bi bi-calendar-event me-1"></i>Fecha</th>
-                            <th><i class="bi bi-clock-fill me-1"></i>Inicio</th>
-                            <th><i class="bi bi-clock-history me-1"></i>Fin</th>
-                            <th class="text-center"><i class="bi bi-tag-fill me-1"></i>Descuento</th>
-                            <th class="text-end"><i class="bi bi-cash-stack me-1"></i>Monto Final</th>
-                            <th class="text-center"><i class="bi bi-check-circle-fill me-1"></i>Estado</th>
-                            <th class="text-center pe-3"><i class="bi bi-gear-fill me-1"></i>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for reserva in reservas %}
-                        <tr>
-                            <td class="fw-bold text-secondary ps-3">#{{ reserva.id }}</td>
+                            <th>
+                                Id
+                            </th>
+                            <th>
+                            Cliente
+                            </th>
 
-                            <td class="fw-medium text-dark">
-                                {{ reserva.cliente.nombre }} {{ reserva.cliente.apellido }}
-                                <div class="text-muted small">DNI: {{ reserva.cliente.dni }}</div>
-                            </td>
+                            <th>
+                                Cancha
+                            </th>
 
-                            <td>
-                                <span class="badge bg-light text-dark border">{{ reserva.cancha.nombre }}</span>
-                            </td> 
+                            <th>
+                                Fecha
+                            </th>
 
-                            <td>{{ reserva.fecha|date:"d/m/Y" }}</td>
+                            <th>
+                                Inicio
+                            </th>
 
-                            <td class="font-monospace text-secondary">{{ reserva.hora_inicio|time:"H:i" }}</td>
+                            <th>
+                                Fin
+                            </th>
 
-                            <td class="font-monospace text-secondary">{{ reserva.hora_fin|time:"H:i" }}</td>
+                            <th>
+                                Precio
+                            </th>
 
-                            <td class="text-center">
-                                {% with pago=reserva.pagos.first %}
-                                    {% if pago and pago.descuento.tipo.nombreDescuento %}
-                                        <span class="text-success fw-semibold">
-                                            <i class="bi bi-tag-fill me-1"></i>{{ p.descuento.tipo.nombreDescuento }}{{ pago.descuento.cantidad }}%
-                                        </span>
-                                    {% else %}
-                                        <span class="text-muted small">Ninguno</span>
-                                    {% endif %}
-                                {% endwith %}
-                            </td>
+                            <th>
+                                Estado
+                            </th>
 
-                            <td class="fw-bold text-end text-dark">
-                                {% with pago=reserva.pagos.first %}
-                                    {% if pago and pago.monto %}
-                                        ${{ pago.monto|floatformat:2 }}
-                                    {% else %}
-                                        ${{ reserva.precio_final|floatformat:2 }}
-                                    {% endif %}
-                                {% endwith %}
-                            </td>
+                            <th>
+                                Acciones
+                            </th>
 
-                            <td class="text-center">
-                                {% if reserva.estado == "CONFIRMADA" %}
-                                    <span class="badge bg-success px-2.5 py-1.5 rounded-pill">
-                                        <i class="bi bi-check-circle me-1"></i>{{ reserva.estado }}
-                                    </span>
-                                {% elif reserva.estado == "PENDIENTE" %}
-                                    <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill">
-                                        <i class="bi bi-clock me-1"></i>{{ reserva.estado }}
-                                    </span>
-                                {% else %}
-                                    <span class="badge bg-danger px-2.5 py-1.5 rounded-pill">
-                                        <i class="bi bi-x-circle me-1"></i>{{ reserva.estado }}
-                                    </span>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for reserva in reservas %}
+
+                    <tr>
+
+                        <!-- id -->
+                        <td>
+
+                            {{ reserva.id }} <!-- Muestra el ID de la reserva para referencia interna. -->
+
+                        </td>
+
+                        <!-- CLIENTE -->
+                        <td>
+
+                            {{ reserva.cliente.nombre }}
+                            {{ reserva.cliente.apellido }}
+                            ({{ reserva.cliente.dni }})
+
+                        </td>
+
+                        <!-- CANCHA -->
+                        <td>
+
+                            {{ reserva.cancha.nombre }}
+
+
+                        </td> 
+
+                        <!-- FECHA -->
+                        <td>
+
+                            {{ reserva.fecha|date:"d/m/Y" }}
+
+                        </td>
+
+                        <!-- HORA INICIO -->
+                        <td>
+
+                            {{ reserva.hora_inicio|time:"H:i" }}
+
+                        </td>
+
+                        <!-- HORA FIN -->
+                        <td>
+
+                            {{ reserva.hora_fin|time:"H:i" }}
+
+                        </td>
+
+                        <!-- PRECIO -->
+                        <td>
+
+                            ${{ reserva.precio_final }} ARS
+
+                        </td>
+
+                        <!-- ESTADO -->
+                        <td>
+
+                            {% if reserva.estado == "CONFIRMADA" %}
+
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 fs-7">
+                                    {{ reserva.get_estado_display }}
+                                </span>
+
+                            {% elif reserva.estado == "PENDIENTE" %}
+
+                                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1 fs-7">
+                                    {{ reserva.get_estado_display }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1 fs-7">
+                                    {{ reserva.get_estado_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <!-- ACCIONES -->
+                        <td>
+                                <!-- EDITAR -->
+                                <a href="{% url 'editar_reserva' reserva.id %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-pen-line-icon lucide-file-pen-line"><path d="M14.364 13.634a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506l4.013-4.009a1 1 0 0 0-3.004-3.004z"/><path d="M14.487 7.858A1 1 0 0 1 14 7V2"/><path d="M20 19.645V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l2.516 2.516"/><path d="M8 18h1"/></svg></a>
+                                <!-- CANCELAR -->
+                                {% if reserva.estado != "CANCELADA" %}
+                                    <a href="{% url 'cancelar_reserva' reserva.id %}" onclick="return confirm('¿Cancelar reserva?')"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#970707" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ban-icon lucide-ban"><circle cx="12" cy="12" r="10"/><path d="M4.929 4.929 19.07 19.071"/></svg></a>
                                 {% endif %}
-                            </td>
+                        </td>
 
-                            <td class="text-center pe-3">
-                                <div class="d-flex gap-1 justify-content-center">
-                                    <a href="{% url 'editar_reserva' reserva.id %}" class="btn btn-warning btn-sm border-0 shadow-sm" title="Editar">
-                                        <i class="bi bi-pencil-fill text-dark"></i>
-                                    </a>
+                    </tr>
 
-                                    {% if reserva.estado != "CANCELADA" %}
-                                        <a href="{% url 'cancelar_reserva' reserva.id %}" class="btn btn-danger btn-sm border-0 shadow-sm" title="Cancelar" onclick="return confirm('¿Está seguro de que desea cancelar esta reserva?')">
-                                            <i class="bi bi-x-circle-fill"></i>
-                                        </a>
-                                    {% endif %}
-                                </div>
-                            </td>
-                        </tr>
-                        {% empty %} 
-                        <tr>
-                            <td colspan="10" class="text-center text-muted py-5"> 
-                                <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
-                                No hay reservas registradas que coincidan con la búsqueda.
-                            </td> 
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    {% empty %} <!-- Si no hay reservas, muestra este mensaje. empty es una etiqueta de Django que se ejecuta si el for no itera ningún elemento. -->
+
+                    <tr>
+
+                        <td colspan="9"
+                            class="text-center text-muted py-4"> 
+
+                            No hay reservas registradas
+
+                        </td> <!-- colspan=9 para que el mensaje ocupe toda la fila. text-center para centrar el texto. text-muted para un color más claro. py-4 para padding vertical. -->
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
         </div>
+
+        </div>
+
     </div>
+
 </div>
 
 <script>
-    $(document).ready(function () {
-        $('.select2').select2({
-            placeholder: 'Buscar cliente',
-            allowClear: true
+
+    $(document).ready(function () { // Espera a que el documento esté listo para ejecutar el código.
+
+        $('.select2').select2({ //Aplica Select2 a los elementos con clase select2.
+            placeholder: 'Buscar cliente', //Texto de marcador de posición
+            allowClear: true // Permite limpiar la selección
         });
+
     });
 
-    document.getElementById('form-busqueda').addEventListener('submit', function(e) { 
-        e.preventDefault(); 
-        const formData = new FormData(this); 
-        const params = new URLSearchParams(formData); 
-        
-        fetch(`?${params.toString()}`) 
-            .then(response => response.text())
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const nuevaTabla = doc.getElementById('tabla-reservas');
-                
-                document.getElementById('tabla-reservas').innerHTML = nuevaTabla.innerHTML;
-            })
-            .catch(error => console.error('Error al filtrar:', error));
-    });
+
+document 
+.getElementById('form-busqueda') // Obtiene el formulario de búsqueda por su id para agregar un evento de escucha.
+.addEventListener('submit', function(e) { 
+
+   
+    e.preventDefault(); // evita que el formulario se envíe de forma tradicional y recargue la página.
+
+
+    const formData = new FormData(this); // crea un objeto FormData con los datos del formulario, lo que facilita la manipulación de los datos para enviarlos en la petición AJAX.
+
+
+    const params = new URLSearchParams(formData); // convierte los datos del formulario en una cadena de consulta URL, lo que permite enviar los filtros como parámetros en la petición AJAX.
+
+  
+    fetch(?${params.toString()}) 
+
+        .then(response => response.text())
+
+        .then(html => {
+
+           
+            const parser = new DOMParser();
+
+            const doc =
+                parser.parseFromString(html, 'text/html');
+
+           
+            const nuevaTabla =
+                doc.getElementById('tabla-reservas');
+
+           
+            document.getElementById('tabla-reservas')
+                .innerHTML = nuevaTabla.innerHTML;
+
+        });// Realiza una petición AJAX a la misma URL con los filtros como parámetros. Luego, procesa la respuesta HTML para extraer la nueva tabla de reservas y actualizar el contenido de la tabla en la página sin recargarla.
+
+});
+
 </script>
+
 {% endblock %}
