@@ -95,4 +95,4 @@ def create_teams():
         print(f"Equipo creado: {name} con profesor {profesor} y {len(selected_clients)} alumnos.")
 
 # Ejecutar la función
-create_teams()
+#create_teams()

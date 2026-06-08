@@ -105,6 +105,7 @@ def crear_clientes():
         )
         client.save()
 
-if __name__ == "__crear_clientes__":
-    crear_clientes()
+#if __name__ == "__crear_clientes__":
+#    crear_clientes()
 
+#crear_clientes()
