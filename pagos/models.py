@@ -67,16 +67,17 @@ class Pago(models.Model):
     
     @property
     def valor_descuento(self):
-        """Calcula cuántos pesos representa el descuento aplicado"""
-        if self.monto and self.descuento and getattr(self.descuento, 'cantidad', None):
-            try:
-                porcentaje_num = float(self.descuento.cantidad)
-                return round((self.monto * porcentaje_num) / 100.0, 2)
-            except (ValueError, TypeError):
-                return 0.0
-        return 0.0
+        """Calcula cuántos pesos representa el descuento aplicado."""
+        if self.monto is None or not self.descuento or not getattr(self.descuento, 'cantidad', None):
+            return 0.0
 
-   
+        try:
+            bruto = self.monto_bruto
+            return round(bruto - self.monto, 2)
+        except (ValueError, TypeError):
+            return 0.0
+
+
     def calcular_monto_con_descuento(self, monto_base=None):
         """Devuelve el monto después de aplicar el descuento en porcentaje."""
         if monto_base is None:
@@ -107,7 +108,8 @@ class Pago(models.Model):
         # Un fix por si se lista un pago que todavía no tiene el monto asignado
         monto_str = f"${self.monto}" if self.monto else "Sin Monto Asignado"
         return f"Pago #{self.id} - {self.get_origen_pago_display()} ({monto_str}) - [{self.get_estado_display()}]"
-
+    
+    
 class Recibo(models.Model):
     fecha = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Emisión")
     pago = models.OneToOneField(Pago, on_delete=models.PROTECT, related_name='recibo')
