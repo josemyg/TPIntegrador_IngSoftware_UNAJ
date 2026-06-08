@@ -27,37 +27,36 @@
                     <span class="badge bg-light text-dark border border-info-subtle px-2 py-1">{{ liga.equipos.count }} Equipos</span>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped text-center align-middle mb-0">
-                        <thead class="table-light small text-secondary">
+                    <table class="table table-hover table-bordered text-center align-middle shadow-sm">
+                        <thead class="table-dark">
                             <tr>
-                                <th class="py-3">#</th>
-                                <th class="text-start">Equipo</th>
-                                <th>Pts</th>
-                                <th>PJ</th>
-                                <th>PG</th>
-                                <th>PE</th>
-                                <th>PP</th>
+                                <th>Posicion</th>
+                                <th>Equipo</th>
+                                <th>Puntos</th>
+                                <th>Partidos</th>
+                                <th>Diferencia</th>
                                 <th>GF</th>
                                 <th>GC</th>
-                                <th>DG</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for fila_estadistica in tabla_de_posiciones %}
                             <tr>
                                 <td class="fw-bold text-muted">{{ forloop.counter }}</td>
-
                                 <td class="fw-bold text-primary">{{ fila_estadistica.equipo.nombre }}</td>
-
-                                <td>{{ fila_estadistica.puntos_totales }}</td>
+                                <td class="fw-bold">{{ fila_estadistica.puntos_totales }}</td>
                                 <td>{{ fila_estadistica.partidos_jugados }}</td>
-                                <td>{{ fila_estadistica.diferencia_de_goles }}</td>
+
+                                <td class="fw-bold text-success">{{ fila_estadistica.diferencia_de_goles }}</td>
+
                                 <td>{{ fila_estadistica.goles_a_favor }}</td>
                                 <td>{{ fila_estadistica.goles_en_contra }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="7" class="text-center text-muted">Aun no hay equipos o partidos evaluados.</td>
+                                <td colspan="7" class="text-center text-muted p-4">
+                                    Aun no hay equipos o partidos evaluados en esta competicion.
+                                </td>
                             </tr>
                             {% endfor %}
                         </tbody>
