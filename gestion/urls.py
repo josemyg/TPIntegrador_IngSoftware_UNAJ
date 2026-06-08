@@ -29,4 +29,7 @@ urlpatterns = [
 
     # VistaCliente
     path('inicio/', views.inicio, name='inicio'),
+
+    #Dashboard
+    path('cliente/<int:pk>/dashboard/', views.dashboard_cliente, name='dashboard_cliente'),
 ]   

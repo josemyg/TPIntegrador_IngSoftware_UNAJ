@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Dashboard - {{ cliente.nombre }} {{ cliente.apellido }}
+{% endblock %}
+
+{% block content %}
+  <div class="container mt-4">
+    <!-- Bienvenida -->
+    <div class="row mb-4">
+      <div class="col">
+        <div class="card shadow">
+          <div class="card-body d-flex justify-content-between align-items-center">
+            <div>
+              <h2 class="mb-0">Bienvenido, {{ cliente.nombre }} {{ cliente.apellido }}</h2>
+              <small class="text-muted">{{ cliente.email }}</small>
+            </div>
+            <div>
+              {% if cliente.esSocio %}
+                <span class="badge bg-success fs-6">Socio Activo</span>
+              {% else %}
+                <span class="badge bg-secondary fs-6">No Socio</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Próximas actividades -->
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <div class="card shadow h-100">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Próxima Clase</h5>
+          </div>
+          <div class="card-body">
+            {% if proxima_clase %}
+              <h6>{{ proxima_clase.nombre }}</h6>
+              <p class="mb-1">
+                <strong>Horario:</strong> {{ proxima_clase.horario|date:'d/m/Y H:i' }}
+              </p>
+              <p class="mb-1">
+                <strong>Profesor:</strong> {{ proxima_clase.profesor|default:'Sin asignar' }}
+              </p>
+              <span class="badge bg-success">{{ proxima_clase.get_estado_display }}</span>
+            {% else %}
+              <p class="text-muted">No tenés clases programadas.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="card shadow h-100">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Próximo Entrenamiento</h5>
+          </div>
+          <div class="card-body">
+            {% if proximo_entrenamiento %}
+              <h6>{{ proximo_entrenamiento.nombre }}</h6>
+              <p class="mb-1">
+                <strong>Horario:</strong> {{ proximo_entrenamiento.horario|date:'d/m/Y H:i' }}
+              </p>
+              <p class="mb-1">
+                <strong>Entrenador:</strong> {{ proximo_entrenamiento.entrenador|default:'Sin asignar' }}
+              </p>
+              <span class="badge bg-success">{{ proximo_entrenamiento.get_estado_display }}</span>
+            {% else %}
+              <p class="text-muted">No tenés entrenamientos programados.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="row mb-4">
+      <div class="col-md-6 mb-3">
+        <div class="card shadow h-100">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Asistencias a clases</h5>
+          </div>
+          <div class="card-body">
+            <p>{{ presentes_clases }} presentes de {{ total_clases }} registros</p>
+            <div class="progress mb-2" style="height: 20px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: {{ porcentaje_clases }}%">{{ porcentaje_clases }}%</div>
+            </div>
+            {% if total_clases == 0 %}
+              <small class="text-muted">Sin registros de asistencia aún.</small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <div class="card shadow h-100">
+          <div class="card-header bg-success text-white">
+            <h5 class="mb-0">Asistencias a entrenamientos</h5>
+          </div>
+          <div class="card-body">
+            <p>{{ presentes_entrenamientos }} presentes de {{ total_entrenamientos }} registros</p>
+            <div class="progress mb-2" style="height: 20px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: {{ porcentaje_entrenamientos }}%">{{ porcentaje_entrenamientos }}%</div>
+            </div>
+            {% if total_entrenamientos == 0 %}
+              <small class="text-muted">Sin registros de asistencia aún.</small>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="row mb-4">
+      <div class="col">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Clases activas</h5>
+          </div>
+          <div class="card-body">
+            {% if clases_activas %}
+              <table class="table table-striped">
+                <thead>
+                  <tr class="table-primary">
+                    <th>Nombre</th>
+                    <th>Horario</th>
+                    <th>Profesor</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for clase in clases_activas %}
+                    <tr>
+                      <td>{{ clase.nombre }}</td>
+                      <td>{{ clase.horario|date:'d/m/Y H:i' }}</td>
+                      <td>{{ clase.profesor|default:'Sin asignar' }}</td>
+                      <td>
+                        {% if clase.estado == 'programada' %}
+                          <span class="badge bg-success">{{ clase.get_estado_display }}</span>
+                        {% elif clase.estado == 'en_curso' %}
+                          <span class="badge bg-primary">{{ clase.get_estado_display }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="text-muted">No tenés clases activas.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="row mb-4">
+      <div class="col">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Entrenamientos activos</h5>
+          </div>
+          <div class="card-body">
+            {% if entrenamientos_activos %}
+              <table class="table table-striped">
+                <thead>
+                  <tr class="table-primary">
+                    <th>Nombre</th>
+                    <th>Horario</th>
+                    <th>Entrenador</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for ent in entrenamientos_activos %}
+                    <tr>
+                      <td>{{ ent.nombre }}</td>
+                      <td>{{ ent.horario|date:'d/m/Y H:i' }}</td>
+                      <td>{{ ent.entrenador|default:'Sin asignar' }}</td>
+                      <td>
+                        {% if ent.estado == 'programado' %}
+                          <span class="badge bg-success">{{ ent.get_estado_display }}</span>
+                        {% elif ent.estado == 'en_curso' %}
+                          <span class="badge bg-primary">{{ ent.get_estado_display }}</span>
+                        {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="text-muted">No tenés entrenamientos activos.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row mb-4">
+      <div class="col">
+        <div class="card shadow">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="mb-0">Reservas</h5>
+          </div>
+          <div class="card-body">
+            <table class="table table-striped">
+              <thead>
+                <tr class="table-warning">
+                  <th>Cancha</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for reserva in reservas %}
+<tr>
+    <td>{{ reserva.cancha }}</td>
+    <td>{{ reserva.fecha }} {{ reserva.hora_inicio }}</td>
+    <td>
+        {% if reserva.estado == 'CONFIRMADA' %}
+            <span class="badge bg-success">{{ reserva.estado }}</span>
+        {% elif reserva.estado == 'PENDIENTE' %}
+            <span class="badge bg-warning text-dark">{{ reserva.estado }}</span>
+        {% elif reserva.estado == 'CANCELADA' %}
+            <span class="badge bg-danger">{{ reserva.estado }}</span>
+        {% endif %}
+    </td>
+</tr>
+{% empty %}
+<tr><td colspan="3" class="text-muted">No tenés reservas.</td></tr>
+{% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+   <div class="row mb-4">
+    <!-- Pagos -->
+    <div class="col-md-6 mb-3">
+        <div class="card shadow h-100">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">Pagos</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="table-danger">
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pago in pagos %}
+                        <tr>
+                            <td>{{ pago.get_origen_pago_display }}</td>
+                            <td>${{ pago.monto_final }}</td>
+                            <td>
+                                {% if pago.estado == 'PAGADO' %}
+                                    <span class="badge bg-success">{{ pago.get_estado_display }}</span>
+                                {% elif pago.estado == 'PENDIENTE' %}
+                                    <span class="badge bg-warning text-dark">{{ pago.get_estado_display }}</span>
+                                {% elif pago.estado == 'RECHAZADO' %}
+                                    <span class="badge bg-danger">{{ pago.get_estado_display }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="3" class="text-muted">Sin pagos registrados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Equipos -->
+    <div class="col-md-6 mb-3">
+        <div class="card shadow h-100">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Equipos</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr class="table-dark">
+                            <th>Equipo</th>
+                            <th>Profesor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for equipo in equipos %}
+                        <tr>
+                            <td>{{ equipo.nombre }}</td>
+                            <td>{{ equipo.profesor|default:'Sin asignar' }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="2" class="text-muted">No pertenece a ningún equipo.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+      <div class="card-header bg-secondary text-white">
+    <h5 class="mb-0">Ligas y Torneos</h5>
+</div>
+<div class="card-body">
+    <table class="table table-striped">
+        <thead>
+            <tr class="table-secondary">
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Equipo</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for liga in ligas %}
+            <tr>
+                <td>{{ liga.nombre }}</td>
+                <td>Liga</td>
+                <td>
+                    {% for eq in equipos %}
+                        {% if eq in liga.equipos.all %}{{ eq.nombre }}{% endif %}
+                    {% endfor %}
+                </td>
+                <td><span class="badge bg-primary">{{ liga.get_estado_display }}</span></td>
+            </tr>
+            {% endfor %}
+            {% for torneo in torneos %}
+            <tr>
+                <td>{{ torneo.nombre }}</td>
+                <td>Torneo</td>
+                <td>
+                    {% for eq in equipos %}
+                        {% if eq in torneo.equipos.all %}{{ eq.nombre }}{% endif %}
+                    {% endfor %}
+                </td>
+                <td><span class="badge bg-warning text-dark">{{ torneo.get_estado_display }}</span></td>
+            </tr>
+            {% endfor %}
+            {% if not ligas and not torneos %}
+            <tr>
+                <td colspan="4" class="text-muted">Sin competiciones.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+    </div>
+  </div>
+{% endblock %}
