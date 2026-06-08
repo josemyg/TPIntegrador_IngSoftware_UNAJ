@@ -3,5 +3,7 @@ django-filter
 pillow
 xhtml2pdf[pycairo]
 qrcode
+dotenv
 psycopg2
+python-dotenv
 gunicorn

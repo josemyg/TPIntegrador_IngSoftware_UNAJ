@@ -21,3 +21,5 @@ services:
      - .env.prod
 volumes:
    postgres_data:
+   
+   restart: always
