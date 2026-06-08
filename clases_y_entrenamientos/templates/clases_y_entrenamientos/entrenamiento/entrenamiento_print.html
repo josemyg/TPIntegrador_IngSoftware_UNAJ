@@ -13,6 +13,7 @@
     <p><b>Cupo máximo:</b> {{ datos_imprimir.cupo_maximo }}</p>
     <p><b>Inscriptos:</b> {{ datos_imprimir.inscriptos }}</p>
     <p><b>Estado:</b> {{ datos_imprimir.estado|default:"-" }}</p>
+    <p><b>Cancha:</b> {{ datos_imprimir.cancha }}</p>
 
     <h3>Alumnos inscriptos</h3>
     <ul>
@@ -24,7 +25,29 @@
     </ul>
 
     <h3>Resumen de asistencia</h3>
-    <p>Presentes: {{ reporte_asistencia.presentes }} | Ausentes: {{ reporte_asistencia.ausentes }}</p>
+<p>Presentes: {{ reporte_asistencia.presentes }} | Ausentes: {{ reporte_asistencia.ausentes }}</p>
+
+<h3>Detalle de asistencia</h3>
+<table class="table table-striped">
+    <thead>
+        <tr class="table-primary">
+            <th>Alumno</th>
+            <th>Asistió</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for a in reporte_asistencia.detalle %}
+            <tr>
+                <td>{{ a.alumno }}</td>
+                <td>{{ a.asistencia|yesno:'Sí,No' }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="2">No hay registros de asistencia.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
     
     <button onclick="window.print()" class="btn btn-primary">Imprimir</button>

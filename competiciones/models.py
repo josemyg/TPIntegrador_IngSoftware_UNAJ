@@ -2,6 +2,7 @@ from django.db import models
 from gestion.models import Profesor, Cliente
 from canchas.models import Cancha
 
+
 # ==========================================
 # 2. MODELO DE EQUIPO
 # ==========================================
