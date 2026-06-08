@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 
@@ -18,16 +18,28 @@ from vistas.forms import ClientePerfilForm
 from django.contrib import messages
 from .forms import ReservaForm
 
-class ClientePerfilUpdateView(UpdateView):
+def get_cliente_por_usuario(user):
+    try:
+        return Cliente.objects.get(user_django=user)
+    except Cliente.DoesNotExist:
+        return None
+
+class ClientePerfilUpdateView(LoginRequiredMixin, UpdateView):
     model = Cliente
     form_class = ClientePerfilForm
     template_name = 'vistas/cliente_perfil_form.html'
 
-    def get_success_url(self):
-        return reverse_lazy('vistas:dashboard_cliente')
+    def get_object(self, queryset=None):
+        return get_cliente_por_usuario(self.request.user)
 
+    def get_success_url(self):
+        return reverse_lazy('vistas:dashboard_bienvenida')
+
+@login_required
 def dashboard_cliente(request):
-    cliente = request.user
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
     # Clases
     try:
         clases = cliente.clases.all()
@@ -127,8 +139,11 @@ def dashboard_cliente(request):
 
 
 
+@login_required
 def mis_actividades(request):
-    cliente = request.user  # asumiendo que request.user es el cliente
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
     clases_futuras = cliente.clases.filter(estado__in=['programada', 'en_curso']).order_by('horario')
     entrenamientos_futuros = cliente.entrenamientos.filter(estado__in=['programado', 'en_curso']).order_by('horario')
     clases_pasadas = cliente.clases.filter(estado__in=['finalizada', 'cancelada']).order_by('-horario')
@@ -146,14 +161,18 @@ def mis_actividades(request):
     return render(request, 'vistas/mis_actividades.html', context)
 
 
+@login_required
 def mis_reservas(request):
-    cliente = request.user
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
     reservas = Reserva.objects.filter(cliente=cliente).order_by('-fecha_creacion')
     return render(request, 'vistas/mis_reservas.html', {'reservas': reservas})
 
 
+@login_required
 def mis_reservas_crear(request):
-    cliente = request.user
+    cliente = get_cliente_por_usuario(request.user)
     if request.method == 'POST':
         form = ReservaForm(request.POST)
         if form.is_valid():
@@ -169,15 +188,21 @@ def mis_reservas_crear(request):
     return render(request, 'vistas/mis_reservas_form.html', {'form': form})
 
 
+@login_required
 def mis_pagos(request):
-    cliente = request.user
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
     pagos = Pago.objects.filter(reserva__cliente=cliente).order_by('-fecha')
     total_adeudado = sum(p.monto_final for p in pagos if p.estado == 'PENDIENTE')
     return render(request, 'vistas/mis_pagos.html', {'pagos': pagos, 'total_adeudado': total_adeudado})
 
 
+@login_required
 def mis_inscripciones(request):
-    cliente = request.user
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
     equipos_cliente = Equipo.objects.filter(clientes=cliente)
     competiciones = Competicion.objects.filter(equipos__in=equipos_cliente).distinct().order_by('-id')
     return render(request, 'vistas/mis_inscripciones.html', {'equipos': equipos_cliente, 'competiciones': competiciones})
