@@ -42,25 +42,22 @@
                                 <th>DG</th>
                             </tr>
                         </thead>
-                        <tbody class="small">
-                            {% for fila in tabla_posiciones %}
+                        <tbody>
+                            {% for fila_estadistica in tabla_de_posiciones %}
                             <tr>
                                 <td class="fw-bold text-muted">{{ forloop.counter }}</td>
-                                <td class="text-start fw-bold text-dark">{{ fila.equipo.nombre }}</td>
-                                <td class="fw-bold text-primary fs-6">{{ fila.pts }}</td>
-                                <td>{{ fila.pj }}</td>
-                                <td>{{ fila.pg }}</td>
-                                <td>{{ fila.pe }}</td>
-                                <td>{{ fila.pp }}</td>
-                                <td>{{ fila.gf }}</td>
-                                <td>{{ fila.gc }}</td>
-                                <td class="fw-semibold {% if fila.dg > 0 %}text-success{% elif fila.dg < 0 %}text-danger{% else %}text-muted{% endif %}">
-                                    {% if fila.dg > 0 %}+{{ fila.dg }}{% else %}{{ fila.dg }}{% endif %}
-                                </td>
+
+                                <td class="fw-bold text-primary">{{ fila_estadistica.equipo.nombre }}</td>
+
+                                <td>{{ fila_estadistica.puntos_totales }}</td>
+                                <td>{{ fila_estadistica.partidos_jugados }}</td>
+                                <td>{{ fila_estadistica.diferencia_de_goles }}</td>
+                                <td>{{ fila_estadistica.goles_a_favor }}</td>
+                                <td>{{ fila_estadistica.goles_en_contra }}</td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="10" class="text-center py-4 text-muted">No hay datos disponibles en la tabla.</td>
+                                <td colspan="7" class="text-center text-muted">Aun no hay equipos o partidos evaluados.</td>
                             </tr>
                             {% endfor %}
                         </tbody>

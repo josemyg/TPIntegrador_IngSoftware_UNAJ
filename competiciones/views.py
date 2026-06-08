@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 import math
 import random
 from django.db.models import Q
+from functools import cmp_to_key
 
 def obtener_tabla_posiciones(liga):
     # Preparamos un diccionario vacio para cada equipo
@@ -219,23 +220,28 @@ class LigaDetailView(PermissionRequiredMixin, DetailView):
     context_object_name = 'liga'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Enviamos los partidos y la tabla calculada en tiempo real
-        context['partidos'] = Partido.objects.filter(competicion=self.object).order_by('id')
-        context['tabla_posiciones'] = obtener_tabla_posiciones(self.object)
-        return context
+        contexto_de_la_vista = super().get_context_data(**kwargs)
+        
+        # Pasamos los partidos a la plantilla
+        contexto_de_la_vista['partidos'] = self.object.partidos.all().order_by('id')
+        
+        # Inyectamos nuestra tabla
+        contexto_de_la_vista['tabla_de_posiciones'] = calcular_tabla_posiciones_oficial(self.object)
+        
+        return contexto_de_la_vista
 
+@permission_required("competiciones.change_liga")
 def generar_fixture_liga(request, liga_id):
     liga_actual = get_object_or_404(Liga, pk=liga_id)
     
-    # 1. Seguro: Evitar regenerar si ya hay partidos
-    if liga_actual.partidos.exists():
-        return redirect('liga_detail', pk=liga_id)
+    # 1. En lugar de bloquear, borramos el fixture anterior para regenerar todo
+    Partido.objects.filter(competicion=liga_actual).delete()
         
     lista_equipos = list(liga_actual.equipos.all())
     
     # 2. Seguro: Minimo 2 equipos para jugar
     if len(lista_equipos) < 2:
+        messages.error(request, "Se necesitan al menos 2 equipos para generar el fixture.")
         return redirect('liga_detail', pk=liga_id) 
         
     # Mezclamos para que el sorteo sea aleatorio cada vez
@@ -248,7 +254,7 @@ def generar_fixture_liga(request, liga_id):
     total_fechas = len(lista_equipos) - 1
     mitad_equipos = len(lista_equipos) // 2
     
-    # Algoritmo Round-Robin (Todos contra Todos)
+    # Algoritmo Round-Robin (Todos contra Todos) - PRIMERA RUEDA
     for numero_fecha in range(total_fechas):
         for indice_equipo in range(mitad_equipos):
             equipo_local = lista_equipos[indice_equipo]
@@ -270,13 +276,29 @@ def generar_fixture_liga(request, liga_id):
         # Rotar la lista dejando al primer equipo fijo
         ultimo_equipo = lista_equipos.pop()
         lista_equipos.insert(1, ultimo_equipo)
+
+    # 3. Generamos la Segunda Rueda (Vuelta) si esta tildado el casillero
+    if getattr(liga_actual, 'es_ida_y_vuelta', False):
+        # Envolver en list() es vital para asegurar los datos y evitar bucles infinitos
+        partidos_primera = list(Partido.objects.filter(competicion=liga_actual).order_by('id'))
+        
+        for p in partidos_primera:
+            # Extraemos el numero de la fecha original (Ej: de "Fecha 1" saca el "1")
+            num_fecha_original = int(p.fase.split(' ')[1])
+            nueva_fecha = num_fecha_original + total_fechas
+            
+            Partido.objects.create(
+                competicion=liga_actual,
+                equipo_local=p.equipo_visitante, # Invertimos localia
+                equipo_visitante=p.equipo_local, # Invertimos localia
+                fase=f"Fecha {nueva_fecha}"
+            )
         
     # Actualizamos el estado de la liga
     liga_actual.estado = 'En_Curso'
     liga_actual.save()
     
     return redirect('liga_detail', pk=liga_id)
-
 # ==========================================
 # DETALLE DE TORNEO Y GENERACION DE FIXTURE
 # ==========================================
@@ -516,3 +538,124 @@ def cargar_resultado_partido(request, partido_id):
         form = CargarResultadoForm(instance=partido)
 
     return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
+
+def calcular_tabla_posiciones_oficial(liga_evaluada):
+    equipos_participantes = list(liga_evaluada.equipos.all())
+    diccionario_estadisticas = {}
+
+    # Preparamos el casillero vacio para cada equipo
+    for equipo_actual in equipos_participantes:
+        diccionario_estadisticas[equipo_actual.id] = {
+            'equipo': equipo_actual,
+            'puntos_totales': 0,
+            'diferencia_de_goles': 0,
+            'goles_a_favor': 0,
+            'goles_en_contra': 0,
+            'partidos_jugados': 0
+        }
+
+    # Obtenemos todos los partidos que ya tienen resultado cargado
+    todos_los_partidos_jugados = list(Partido.objects.filter(
+        competicion=liga_evaluada, 
+        jugado=True
+    ))
+
+    # Sumamos los puntos y goles basicos de la temporada regular
+    for partido_finalizado in todos_los_partidos_jugados:
+        # Los partidos de desempate no suman puntos a la tabla general, se evaluan al final
+        if "Desempate" in partido_finalizado.fase:
+            continue
+
+        id_local = partido_finalizado.equipo_local.id
+        id_visitante = partido_finalizado.equipo_visitante.id
+
+        diccionario_estadisticas[id_local]['partidos_jugados'] += 1
+        diccionario_estadisticas[id_visitante]['partidos_jugados'] += 1
+
+        diccionario_estadisticas[id_local]['goles_a_favor'] += partido_finalizado.goles_local
+        diccionario_estadisticas[id_local]['goles_en_contra'] += partido_finalizado.goles_visitante
+        
+        diccionario_estadisticas[id_visitante]['goles_a_favor'] += partido_finalizado.goles_visitante
+        diccionario_estadisticas[id_visitante]['goles_en_contra'] += partido_finalizado.goles_local
+
+        if partido_finalizado.goles_local > partido_finalizado.goles_visitante:
+            diccionario_estadisticas[id_local]['puntos_totales'] += liga_evaluada.puntos_victoria
+        elif partido_finalizado.goles_local < partido_finalizado.goles_visitante:
+            diccionario_estadisticas[id_visitante]['puntos_totales'] += liga_evaluada.puntos_victoria
+        else:
+            diccionario_estadisticas[id_local]['puntos_totales'] += liga_evaluada.puntos_empate
+            diccionario_estadisticas[id_visitante]['puntos_totales'] += liga_evaluada.puntos_empate
+
+    # Calculamos la diferencia de goles final para cada equipo
+    for id_equipo in diccionario_estadisticas:
+        goles_favor = diccionario_estadisticas[id_equipo]['goles_a_favor']
+        goles_contra = diccionario_estadisticas[id_equipo]['goles_en_contra']
+        diccionario_estadisticas[id_equipo]['diferencia_de_goles'] = goles_favor - goles_contra
+
+    # ==========================================
+    # EL MOTOR DE DESEMPATE MATEMATICO
+    # ==========================================
+    def comparar_dos_equipos(estadisticas_equipo_uno, estadisticas_equipo_dos):
+        # Regla 1: Quien tiene mas puntos
+        if estadisticas_equipo_uno['puntos_totales'] != estadisticas_equipo_dos['puntos_totales']:
+            return estadisticas_equipo_dos['puntos_totales'] - estadisticas_equipo_uno['puntos_totales']
+
+        # Regla 2: Quien tiene mejor diferencia de goles
+        if estadisticas_equipo_uno['diferencia_de_goles'] != estadisticas_equipo_dos['diferencia_de_goles']:
+            return estadisticas_equipo_dos['diferencia_de_goles'] - estadisticas_equipo_uno['diferencia_de_goles']
+
+        # Regla 3: Como salieron cuando jugaron entre ellos (Enfrentamiento Directo)
+        equipo_uno = estadisticas_equipo_uno['equipo']
+        equipo_dos = estadisticas_equipo_dos['equipo']
+
+        puntos_directos_equipo_uno = 0
+        puntos_directos_equipo_dos = 0
+
+        for partido_evaluado in todos_los_partidos_jugados:
+            es_cruce_directo = (partido_evaluado.equipo_local == equipo_uno and partido_evaluado.equipo_visitante == equipo_dos) or (partido_evaluado.equipo_local == equipo_dos and partido_evaluado.equipo_visitante == equipo_uno)
+            
+            if es_cruce_directo and "Desempate" not in partido_evaluado.fase:
+                if partido_evaluado.goles_local == partido_evaluado.goles_visitante:
+                    puntos_directos_equipo_uno += liga_evaluada.puntos_empate
+                    puntos_directos_equipo_dos += liga_evaluada.puntos_empate
+                elif partido_evaluado.goles_local > partido_evaluado.goles_visitante:
+                    if partido_evaluado.equipo_local == equipo_uno:
+                        puntos_directos_equipo_uno += liga_evaluada.puntos_victoria
+                    else:
+                        puntos_directos_equipo_dos += liga_evaluada.puntos_victoria
+                else:
+                    if partido_evaluado.equipo_visitante == equipo_uno:
+                        puntos_directos_equipo_uno += liga_evaluada.puntos_victoria
+                    else:
+                        puntos_directos_equipo_dos += liga_evaluada.puntos_victoria
+
+        if puntos_directos_equipo_uno != puntos_directos_equipo_dos:
+            return puntos_directos_equipo_dos - puntos_directos_equipo_uno
+
+        # Regla 4: Buscar si existe un Partido de Desempate jugado entre ellos
+        for partido_evaluado in todos_los_partidos_jugados:
+            es_cruce_directo = (partido_evaluado.equipo_local == equipo_uno and partido_evaluado.equipo_visitante == equipo_dos) or (partido_evaluado.equipo_local == equipo_dos and partido_evaluado.equipo_visitante == equipo_uno)
+            
+            if es_cruce_directo and "Desempate" in partido_evaluado.fase:
+                # Quien gano en los 90 minutos
+                if partido_evaluado.goles_local > partido_evaluado.goles_visitante:
+                    return -1 if partido_evaluado.equipo_local == equipo_uno else 1
+                elif partido_evaluado.goles_local < partido_evaluado.goles_visitante:
+                    return -1 if partido_evaluado.equipo_visitante == equipo_uno else 1
+                else:
+                    # Si empataron el desempate, definen los penales
+                    penales_del_local = partido_evaluado.penales_local or 0
+                    penales_del_visitante = partido_evaluado.penales_visitante or 0
+                    if penales_del_local > penales_del_visitante:
+                        return -1 if partido_evaluado.equipo_local == equipo_uno else 1
+                    elif penales_del_local < penales_del_visitante:
+                        return -1 if partido_evaluado.equipo_visitante == equipo_uno else 1
+
+        # Si llegamos a este punto, estan empatados absolutamente en todo y requieren jugar un desempate
+        return 0
+
+    # Ordenamos la lista usando nuestro motor matematico
+    lista_final_estadisticas = list(diccionario_estadisticas.values())
+    lista_final_estadisticas.sort(key=cmp_to_key(comparar_dos_equipos))
+    
+    return lista_final_estadisticas
