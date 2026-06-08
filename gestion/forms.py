@@ -102,5 +102,3 @@ class ClienteForm(forms.ModelForm):
             'fechaAlta': forms.TextInput(attrs={'class':'form-control'}),
             'esSocio': forms.CheckboxInput(attrs={'class':'form-control form-check-input'}),
         }
-
-

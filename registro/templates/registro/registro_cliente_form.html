@@ -1,13 +1,12 @@
 {% extends 'form_base.html' %}
 {% load static %}
 
-{% block navbar %}{% endblock %}
+{% block navbar %}{% endblock navbar %}
 
-{% block name %}Registro{% endblock %}
-
+{% block name %}Registrarse{% endblock %}
 
 {% block button_link %}
-<a name="" id="" class="btn btn-dark m-2" href="{% url 'inicio' %}">
+<a name="" id="" class="btn btn-dark m-2" href="{% url 'cliente_list' %}">
     Cancelar
 </a>
 {% endblock %}
