@@ -1,6 +1,6 @@
 import random
 from django.core.management.base import BaseCommand
-from tuapp.models import Cliente
+from gestion.models import Cliente
 from datetime import datetime
 
 # Listas de nombres y apellidos comunes sin acentos
@@ -82,6 +82,5 @@ def crear_clientes():
 
 if __name__ == "__crear_clientes__":
     crear_clientes()
-
 
 crear_clientes()

@@ -2426,7 +2426,7 @@ progress {
     color: var(--bs-secondary-color)
 }
 
-.form-control {
+.form-control z{
     display: block;
     width: 100%;
     padding: .375rem .75rem;

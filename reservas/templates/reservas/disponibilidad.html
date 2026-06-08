@@ -20,6 +20,7 @@
                         {% for cancha in canchas %}
                             <option value="{{ cancha.id }}" {% if cancha.id|stringformat:"s" == cancha_id %}selected{% endif %}>
                                 {{ cancha.nombre }}
+                                {% if cancha.tipo %} - {{ cancha.tipo.nombreTipo }} - {{ cancha.tipo.capacidad }} jugadores {% endif %}
                             </option>
                         {% endfor %}
                     </select>
@@ -27,7 +28,12 @@
 
                 <div class="col-12 col-md-4">
                     <label class="form-label fw-semibold text-secondary">Fecha</label>
-                    <input type="date" name="fecha" value="{{ fecha }}" class="form-select border-2 py-2">
+                    <input type="date" 
+                         name="fecha" 
+                        value="{{ fecha }}" 
+                        min="{{ hoy }}" 
+                        max="{{ max_fecha }}" 
+                        class="form-select border-2 py-2">
                 </div>
 
                 <div class="col-12 col-md-3">
@@ -79,9 +85,15 @@
                             {% if horarios_libres %}
                                 <div class="d-flex flex-wrap gap-2">
                                     {% for horario in horarios_libres %}
-                                        <span class="badge bg-white text-dark border border-success border-2 p-2.5 fs-6 font-monospace rounded-3 shadow-sm">
-                                            <i class="bi bi-unlock text-success me-1"></i>{{ horario }}
-                                        </span>
+                                        <button type="button" 
+                                                class="badge bg-white text-dark border border-success border-2 p-2.5 fs-6 font-monospace rounded-3 shadow-sm text-decoration-none btn-hover-click"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#modalCliente"
+                                                data-hora="{{ horario.hora_inicio }}"
+                                                data-texto="{{ horario.texto }}"
+                                                onclick="configurarModal(this)">
+                                            <i class="bi bi-unlock text-success me-1"></i>{{ horario.texto }}
+                                        </button>
                                     {% endfor %}
                                 </div>
                             {% else %}
@@ -102,4 +114,68 @@
 
         </div>
     </div>
+</div>
+
+<div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="modalClienteLabel">
+                    <i class="bi bi-person-plus me-2"></i>Asignar Cliente al Turno
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form method="get" action="{% url 'generar_reserva_rapida' %}">
+                <div class="modal-body">
+                    <input type="hidden" name="cancha" value="{{ cancha_id }}">
+                    <input type="hidden" name="fecha" value="{{ fecha }}">
+                    <input type="hidden" name="hora" id="modal_hora_input">
+
+                    <div class="alert alert-info py-2 small shadow-sm">
+                        <i class="bi bi-info-circle-fill me-1"></i><strong>Turno Seleccionado:</strong> <span id="modal_info_turno"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold text-secondary">Cliente</label>
+                        <select name="cliente" class="form-select border-2" required>
+                            <option value="">-- Seleccione el cliente --</option>
+                            {% for cliente in clientes %}
+                                <option value="{{ cliente.id }}">
+                                    {{ cliente.nombre}} {{ cliente.apellido }}
+                                    {% if cliente.email %}({{ cliente.email }}){% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary fw-semibold" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-success fw-semibold">
+                        Continuar al Pago <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .btn-hover-click:hover {
+        background-color: #d1e7dd !important;
+        cursor: pointer;
+        transform: scale(1.03);
+        transition: all 0.15s ease-in-out;
+    }
+</style>
+
+<script>
+function configurarModal(boton) {
+    const hora = boton.getAttribute('data-hora');
+    const texto = boton.getAttribute('data-texto');
+    
+    document.getElementById('modal_hora_input').value = hora;
+    document.getElementById('modal_info_turno').innerText = texto + " hs";
+}
+</script>
 {% endblock %}

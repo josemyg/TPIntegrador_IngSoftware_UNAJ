@@ -1,82 +1,79 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block content %}
-
 <div class="container my-5">
-
-    <div class="card shadow">
-
-        <div class="card-header bg-primary text-white">
-            <h3 class="mb-0">
+    <div class="card shadow border-0 rounded-3" style="overflow: hidden;">
+        <div class="card-header bg-primary bg-gradient text-white py-3">
+            <h3 class="mb-0 fw-bold fs-5 d-flex align-items-center gap-2">
+                <i class="bi bi-calendar-check-fill"></i>
                 {% block create %}{% endblock %}
                 {% block name %}{% endblock %}
             </h3>
         </div>
 
-        <div class="card-body">
-
-            <form method="post" enctype="multipart/form-data">
-
+        <div class="card-body p-4 bg-light-subtle">
+            <form method="post" enctype="multipart/form-data" novalidate>
                 {% csrf_token %}
 
                 {% if form.non_field_errors %}
-                    <div class="alert alert-danger">
-                        {{ form.non_field_errors }}
+                    <div class="alert alert-danger rounded-3 border-start border-4 border-danger shadow-sm d-flex align-items-start gap-3 mb-4 animate__animated animate__fadeIn" role="alert">
+                        <i class="bi bi-exclamation-octagon-fill fs-5 text-danger mt-1"></i>
+                        <div>
+                            <h6 class="fw-bold text-danger mb-1">Atención con el formulario</h6>
+                            <span class="small text-secondary">{{ form.non_field_errors }}</span>
+                        </div>
                     </div>
                 {% endif %}
 
                 {% for field in form %}
-
-                    <div class="mb-3">
-
-                        <label class="form-label">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-secondary small text-uppercase tracking-wider mb-1">
                             {{ field.label }}
                         </label>
 
-                        {{ field }}
-
-                        {% if field.help_text %}
-                            <small class="text-muted">
-                                {{ field.help_text }}
-                            </small>
+                        {% if field.errors %}
+                            {% render_field field class="form-control is-invalid shadow-sm" %}
+                        {% else %}
+                            {% render_field field class="form-control shadow-sm" %}
                         {% endif %}
 
-                        {% if field.errors %}
-                            <div class="text-danger mt-1">
-                                {{ field.errors }}
+                        {% if field.help_text and not field.errors %}
+                            <div class="form-text text-muted small mt-1">
+                                <i class="bi bi-info-circle me-1"></i>{{ field.help_text }}
                             </div>
                         {% endif %}
 
+                        {% if field.errors %}
+                            <div class="invalid-feedback d-block mt-2">
+                                <div class="p-2.5 px-3 bg-danger-subtle text-danger border border-danger-subtle rounded-3 d-flex align-items-center gap-2 small fw-semibold animate__animated animate__headShake">
+                                    <i class="bi bi-exclamation-circle-fill fs-6 flex-shrink-0"></i>
+                                    <div>
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
-
                 {% endfor %}
 
-                <hr>
+                <hr class="text-black-50 my-4">
 
-                <div class="d-flex gap-2">
-
-                    <button type="submit" class="btn btn-success">
-                        {% block boton_save %}
-                            Guardar
-                        {% endblock %}
+                <div class="d-flex gap-2 justify-content-start align-items-center">
+                    <button type="submit" class="btn btn-success px-4 py-2 fw-bold rounded-3 shadow-sm text-uppercase fs-7 d-flex align-items-center gap-2">
+                        <i class="bi bi-save2-fill"></i>
+                        {% block boton_save %}Guardar Registro{% endblock %}
                     </button>
 
                     {% block button_link %}
-                    <a href="{% url 'lista_reservas' %}"
-                       class="btn btn-secondary">
+                    <a href="{% url 'lista_reservas' %}" class="btn btn-light border px-4 py-2 fw-semibold rounded-3 text-muted shadow-sm fs-7">
                         Cancelar
                     </a>
                     {% endblock %}
-
                 </div>
-
             </form>
-
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}

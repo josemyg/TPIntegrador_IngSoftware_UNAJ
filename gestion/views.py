@@ -101,3 +101,4 @@ class ClientePrintView(PermissionRequiredMixin, DetailView):
 
 def inicio(request):
     return render(request, 'principal.html')
+

@@ -2,6 +2,7 @@ from django.db import models
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.utils.timezone import now as Now
+from descuentos.models import Descuento
 
 class TipoPago(models.Model):
     nombre = models.CharField(max_length=50) # Efectivo, Transferencia, Débito, etc.
@@ -47,8 +48,23 @@ class Pago(models.Model):
     
     fecha = models.DateField(auto_now_add=True)
 
-    descuento = models.ForeignKey('descuentos.Descuento', on_delete=models.PROTECT, null=True, blank=True)
+    descuento = models.ForeignKey(Descuento, on_delete=models.PROTECT, null=True, blank=True)
 
+
+    @property
+    def monto_bruto(self):
+        """Calcula el monto original antes de aplicar el descuento."""
+        if self.monto and self.descuento and getattr(self.descuento, 'cantidad', None):
+            try:
+                porcentaje_num = float(self.descuento.cantidad)
+                if porcentaje_num >= 100:
+                    return round(self.monto, 2)
+                bruto = self.monto / (1 - porcentaje_num / 100.0)
+                return round(bruto, 2)
+            except (ValueError, TypeError, ZeroDivisionError):
+                return round(self.monto, 2)
+        return round(self.monto or 0.0, 2)
+    
     @property
     def valor_descuento(self):
         """Calcula cuántos pesos representa el descuento aplicado"""
@@ -60,18 +76,37 @@ class Pago(models.Model):
                 return 0.0
         return 0.0
 
+   
+    def calcular_monto_con_descuento(self, monto_base=None):
+        """Devuelve el monto después de aplicar el descuento en porcentaje."""
+        if monto_base is None:
+            monto_base = self.monto or 0.0
+        try:
+            monto_base = float(monto_base)
+        except (ValueError, TypeError):
+            return 0.0
+
+        if self.descuento and getattr(self.descuento, 'cantidad', None):
+            try:
+                porcentaje_num = float(self.descuento.cantidad)
+                descuento_calculado = (monto_base * porcentaje_num) / 100.0
+                return round(monto_base - descuento_calculado, 2)
+            except (ValueError, TypeError):
+                return round(monto_base, 2)
+
+        return round(monto_base, 2)
+
+
+
     @property
     def monto_final(self):
-        """Calcula el monto neto restando los pesos del descuento si existe"""
-        if self.monto:
-            return round(self.monto - self.valor_descuento, 2)
-        return 0.0
+        """Devuelve el monto final cobrado."""
+        return round(self.monto or 0.0, 2)
 
     def __str__(self):
         # Un fix por si se lista un pago que todavía no tiene el monto asignado
         monto_str = f"${self.monto}" if self.monto else "Sin Monto Asignado"
         return f"Pago #{self.id} - {self.get_origen_pago_display()} ({monto_str}) - [{self.get_estado_display()}]"
-
 
 class Recibo(models.Model):
     fecha = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de Emisión")
