@@ -1,5 +1,7 @@
-python3 manage.py collecstatic --noinput
-python3 manage.py makemigrations --noinput
-python3 manage.py migrations --noinput
-python3 manage.py createsuperuser --noinput 
-python3 -m gunicorn --bind 0.0.0.0:8000 --workers 3 golahora.yedro.ar
+#!/usr/bin/env bash
+
+python manage.py makemigrations --noinput
+python manage.py migrations --noinput
+python manage.py createsuperuser --noinput 
+python manage.py collecstatic --noinput
+python -m gunicorn --bind 0.0.0.0:8000 --workers 3 tp_integrador.wsgi:application

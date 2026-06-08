@@ -1,5 +1,5 @@
 # Stage 1: Base build stage
-FROM python:3.13 AS builder
+FROM python:3.13-bookworm AS builder
  
 # Create the app directory
 RUN mkdir /app
@@ -12,16 +12,16 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1 
  
 # Upgrade pip and install dependencies
-RUN pip3 install --upgrade pip 
+RUN pip install --upgrade pip 
  
 # Copy the requirements file first (better caching)
 COPY requirements.txt /app/
  
 # Install Python dependencies
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
  
 # Stage 2: Production stage
-FROM python:3.13
+FROM python:3.13-bookworm
  
 RUN useradd -m -r appuser && \
    mkdir /app && \
@@ -46,6 +46,7 @@ USER appuser
  
 # Expose the application port
 EXPOSE 8000 
- 
-# Start the application using Gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "tp_integrador.wsgi:application"]
+
+RUN chmod +x /app/entrypoint.prod.sh
+
+CMD ["/app/entrypoint.prod.sh"]
