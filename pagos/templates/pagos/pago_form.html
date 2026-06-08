@@ -18,7 +18,7 @@
                 </div>
                 
                 <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
-                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3">
+                    <div class="p-3 bg-success bg-opacity-10 text-success me-3">
                         <i class="bi bi-calculator fs-3"></i>
                     </div>
                     <div>
@@ -39,7 +39,7 @@
                     <span class="fs-3 fw-black text-primary">$ {{ form.monto.value|default:"0.00" }}</span>
                 </div>
                 
-                <div class="p-3 bg-white bg-opacity-50 rounded-3 border border-dashed mt-3">
+                <div class="p-3 bg-white bg-opacity-50 border border-dashed mt-3">
                     <p class="text-muted small mb-0">
                         <i class="bi bi-info-circle me-1 text-primary"></i> 
                         El monto final impactará directamente en los balances diarios del sistema y cerrará la cuenta corriente del turno seleccionado.
@@ -60,7 +60,7 @@
                     {% csrf_token %}
                     
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+                        <div class="alert alert-danger py-2 px-3 small mb-3">
                             <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ form.non_field_errors.0 }}
                         </div>
                     {% endif %}
@@ -82,7 +82,7 @@
                         </div>
                         <div class="col-4">
                             <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Tarjeta" id="methodCard">
-                                <i class="bi bi-credit-card fs-3 text-secondary mb-2"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card-icon lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
                                 <span class="fw-bold d-block text-dark small">Tarjeta Débito</span>
                             </div>
                         </div>
@@ -95,7 +95,7 @@
                     </div>
                     
                     {% if form.tipo_pago.errors %}
-                        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
+                        <div class="alert alert-danger py-2 px-3 small mb-3">
                             <i class="bi bi-exclamation-circle me-1"></i> Debe seleccionar una forma de pago válida.
                         </div>
                     {% endif %}
@@ -152,7 +152,7 @@
                         </p>
                     </div>
 
-                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small rounded-3 mb-3 d-none">
+                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small mb-3 d-none">
                         <i class="bi bi-exclamation-triangle-fill me-1"></i> <span id="jsAlertText"></span>
                     </div>
 
@@ -160,12 +160,12 @@
 
                     <div class="row g-3">
                         <div class="col-12 col-sm-4 order-2 order-sm-1">
-                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 rounded-3 fs-6 fw-semibold py-2.5 border border-secondary-subtle">
+                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 fs-6 fw-semibold py-2.5 border border-secondary-subtle">
                                 Volver a Lista
                             </a>
                         </div>
                         <div class="col-12 col-sm-8 order-1 order-sm-2">
-                            <button type="submit" class="btn btn-success btn-lg w-100 rounded-3 fs-6 fw-semibold shadow-sm py-2.5">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold shadow-sm py-2.5">
                                 <i class="bi bi-check-circle-fill me-2"></i> Confirmar y Registrar Pago
                             </button>
                         </div>

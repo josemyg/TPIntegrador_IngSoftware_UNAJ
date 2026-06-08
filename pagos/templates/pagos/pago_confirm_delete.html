@@ -18,8 +18,8 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="d-flex gap-2">
-                    <a href="{% url 'pago_list' %}" class="btn btn-light w-100 rounded-3 py-2">No, Cancelar</a>
-                    <button type="submit" class="btn btn-danger w-100 rounded-3 py-2">Sí, Eliminar Permanentemente</button>
+                    <a href="{% url 'pago_list' %}" class="btn btn-light w-100 py-2">No, Cancelar</a>
+                    <button type="submit" class="btn btn-danger w-100 py-2">Sí, Eliminar Permanentemente</button>
                 </div>
             </form>
         </div>
