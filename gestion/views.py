@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth import logout
 
 from .models import Cliente, Profesor
-from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm
+from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm, CreateProfesorForm
 from reservas.models import Reserva
 from pagos.models import Pago
 from canchas.models import Cancha
