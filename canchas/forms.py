@@ -8,25 +8,25 @@ class TipoCanchaForm(forms.ModelForm):
         
         widgets = {
             'nombreTipo': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
                 'placeholder': 'Completar campo...'
             }),
             'superficie': forms.Select(attrs={
-                'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
             }),
             'capacidad': forms.NumberInput(attrs={
-                'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
                 'placeholder': 'Completar campo...'
             }),
             'precio_hora': forms.NumberInput(attrs={
-                'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
                 'placeholder': 'Completar campo...',
             }),
             'estado': forms.Select(attrs={
-                'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
             }),
             'max_horas': forms.NumberInput(attrs={
-                'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
                 'placeholder': 'Completar campo...'
             }),
         }
@@ -53,13 +53,17 @@ class CanchaForm(forms.ModelForm):
         
         widgets = {
             'nombre': forms.TextInput(attrs={
-                'class': 'form-control form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
                 'placeholder': 'Completar campo...'
             }),
             'tipo': forms.Select(attrs={
-                'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
             }),
             'estado': forms.Select(attrs={
-                'class': 'form-select form-control-lg bg-light border-0 rounded-3 fs-6 py-2.5',
+                'class': 'form-control',
             }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['tipo'].queryset = TipoCancha.objects.filter(estado = 'activo')

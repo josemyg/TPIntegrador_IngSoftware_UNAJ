@@ -6,7 +6,7 @@
     <div class="card shadow mb-4">
         <div class="card-header bg-dark text-white py-3">
             <h3 class="mb-0 fs-4 fw-bold">
-                <i class="bi bi-calendar-check me-2"></i>Disponibilidad de Canchas
+                Disponibilidad de Canchas
             </h3>
         </div>
 
@@ -15,7 +15,7 @@
                 
                 <div class="col-12 col-md-5">
                     <label class="form-label fw-semibold text-secondary">Cancha</label>
-                    <select name="cancha" class="form-select border-2 py-2">
+                    <select name="cancha" class="form-control border-2 py-2">
                         <option value="">Seleccione una cancha...</option>
                         {% for cancha in canchas %}
                             <option value="{{ cancha.id }}" {% if cancha.id|stringformat:"s" == cancha_id %}selected{% endif %}>
@@ -28,17 +28,12 @@
 
                 <div class="col-12 col-md-4">
                     <label class="form-label fw-semibold text-secondary">Fecha</label>
-                    <input type="date" 
-                         name="fecha" 
-                        value="{{ fecha }}" 
-                        min="{{ hoy }}" 
-                        max="{{ max_fecha }}" 
-                        class="form-select border-2 py-2">
+                    <input type="date" name="fecha" value="{{ fecha }}" class="form-control border-2 py-2">
                 </div>
 
                 <div class="col-12 col-md-3">
                     <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold py-2">
-                        <i class="bi bi-search me-1"></i> Buscar Disponibilidad
+                         Buscar Disponibilidad
                     </button>
                 </div>
             </form>
@@ -49,9 +44,9 @@
                 <div class="row g-4">
                     
                     <div class="col-12 col-md-6">
-                        <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="p-3 bg-light border h-100">
                             <h4 class="fs-5 fw-bold text-danger mb-3">
-                                <i class="bi bi-calendar-x-fill me-1"></i> Horarios Ocupados
+                                 Horarios Ocupados
                             </h4>
                             
                             {% if reservas %}
@@ -59,7 +54,7 @@
                                     {% for reserva in reservas %}
                                         <li class="list-group-item d-flex justify-content-between align-items-center border-0 border-bottom">
                                             <span>
-                                                <i class="bi bi-clock text-secondary me-2"></i>
+                                                
                                                 <strong>{{ reserva.hora_inicio|time:"H:i" }}</strong> - <strong>{{ reserva.hora_fin|time:"H:i" }}</strong>
                                             </span>
                                             <span class="badge {% if reserva.estado == 'CONFIRMADA' %}bg-success{% else %}bg-warning text-dark{% endif %} rounded-pill small text-uppercase">
@@ -70,16 +65,16 @@
                                 </ul>
                             {% else %}
                                 <p class="text-muted small mb-0 p-2">
-                                    <i class="bi bi-info-circle me-1"></i> No existen reservas para esta cancha en la fecha seleccionada.
+                                     No existen reservas para esta cancha en la fecha seleccionada.
                                 </p>
                             {% endif %}
                         </div>
                     </div>
 
                     <div class="col-12 col-md-6">
-                        <div class="p-3 bg-light rounded-3 border h-100">
+                        <div class="p-3 bg-light border h-100">
                             <h4 class="fs-5 fw-bold text-success mb-3">
-                                <i class="bi bi-calendar-check-fill me-1"></i> Horarios Libres
+                                 Horarios Libres
                             </h4>
                             
                             {% if horarios_libres %}
@@ -98,7 +93,7 @@
                                 </div>
                             {% else %}
                                 <p class="text-muted small mb-0 p-2">
-                                    <i class="bi bi-exclamation-triangle me-1"></i> No hay horarios disponibles para el resto del día.
+                                     No hay horarios disponibles para el resto del día.
                                 </p>
                             {% endif %}
                         </div>
@@ -107,7 +102,7 @@
                 </div>
             {% else %}
                 <div class="text-center py-4 text-secondary">
-                    <i class="bi bi-arrow-up-circle fs-2 d-block mb-2 text-primary opacity-50"></i>
+                    
                     Por favor, selecciona una cancha y una fecha para consultar el estado de los turnos.
                 </div>
             {% endif %}

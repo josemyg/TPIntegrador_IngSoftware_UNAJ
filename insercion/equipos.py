@@ -1,6 +1,7 @@
 import random
 from django.core.management.base import BaseCommand
-from app.models import Equipo, Profesor, Cliente
+from gestion.models import Profesor, Cliente
+from competiciones.models import Equipo
 
 # Lista inicial de nombres de clubes argentinos
 club_base = [

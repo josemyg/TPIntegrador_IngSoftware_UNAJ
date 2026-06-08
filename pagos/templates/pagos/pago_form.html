@@ -19,7 +19,7 @@
                 
                 <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
                     <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3">
-                        <i class="bi bi-calculator fs-3"></i>
+                        <i class="bi bi-calculator fs-4"></i>
                     </div>
                     <div>
                         <span class="text-uppercase text-muted fw-bold tracking-wider small" style="font-size: 0.75rem;">Consola de Gestión</span>
@@ -39,9 +39,8 @@
                     <span class="fs-3 fw-black text-primary" id="montoVisual" data-base="{{ form.monto.value|default:'0.00' }}">$ {{ form.monto.value|default:"0.00" }}</span>
                 </div>
                 
-                <div class="p-3 bg-white bg-opacity-50 rounded-3 border border-dashed mt-3">
+                <div class="p-3 bg-white bg-opacity-50 border border-dashed rounded-3 mt-3">
                     <p class="text-muted small mb-0">
-                        <i class="bi bi-info-circle me-1 text-primary"></i> 
                         El monto final impactará directamente en los balances diarios del sistema y cerrará la cuenta corriente del turno seleccionado.
                     </p>
                 </div>
@@ -60,8 +59,8 @@
                     {% csrf_token %}
                     
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
-                            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ form.non_field_errors.0 }}
+                        <div class="alert alert-danger py-2 px-3 small mb-3 rounded-3">
+                             {{ form.non_field_errors.0 }}
                         </div>
                     {% endif %}
                     
@@ -75,38 +74,44 @@
                     <label class="form-label fw-bold text-dark mb-2">Canal de Cobro</label>
                     <div class="row g-2 mb-4">
                         <div class="col-4">
-                            <div class="card p-3 text-center border-2 cursor-pointer payment-method-card active" data-value="Transferencia" id="methodTransfer">
-                                <i class="bi bi-bank fs-3 text-primary mb-2"></i>
-                                <span class="fw-bold d-block text-dark small">Transferencia</span>
+                            <div class="card p-3 text-center border-2 cursor-pointer payment-method-card active border-primary bg-primary bg-opacity-10" data-value="Transferencia" id="methodTransfer">
+                                <div class="mb-2 text-primary icon-container">
+                                    <i class="bi bi-bank fs-4"></i>
+                                </div>
+                                <span class="fw-bold d-block text-primary small">Transferencia</span>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Tarjeta" id="methodCard">
-                                <i class="bi bi-credit-card fs-3 text-secondary mb-2"></i>
+                                <div class="mb-2 text-secondary icon-container">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                                </div>
                                 <span class="fw-bold d-block text-dark small">Tarjeta Débito</span>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Efectivo" id="methodCash">
-                                <i class="bi bi-cash-stack fs-3 text-secondary mb-2"></i>
+                                <div class="mb-2 text-secondary icon-container">
+                                    <i class="bi bi-cash-coin fs-4"></i>
+                                </div>
                                 <span class="fw-bold d-block text-dark small">Efectivo Caja</span>
                             </div>
                         </div>
                     </div>
                     
                     {% if form.tipo_pago.errors %}
-                        <div class="alert alert-danger py-2 px-3 small rounded-3 mb-3">
-                            <i class="bi bi-exclamation-circle me-1"></i> Debe seleccionar una forma de pago válida.
+                        <div class="alert alert-danger py-2 px-3 small mb-3 rounded-3">
+                             Debe seleccionar una forma de pago válida.
                         </div>
                     {% endif %}
 
                     <div class="mb-4 p-3 bg-light rounded-4 border">
                         <label class="form-label fw-bold small text-dark mb-1">
-                            <i class="bi bi-percentage text-danger me-1"></i> Descuento Aplicable (Bonificación)
+                             Descuento Aplicable (Bonificación)
                         </label>
                         {{ form.descuento }} 
                         {% if form.descuento.errors %}
-                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.descuento.errors.0 }}</div>
+                            <div class="text-danger small mt-1">{{ form.descuento.errors.0 }}</div>
                         {% endif %}
                         <div class="form-text text-muted" style="font-size: 0.75rem;">
                             Seleccione si corresponde una promoción del cliente o un ajuste por convenio.
@@ -114,7 +119,7 @@
                     </div>
 
                     <div id="transferDetails" class="bg-light border rounded-4 p-4 mb-4">
-                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-check-fill me-2 text-primary"></i>Verificación de Transferencia</h6>
+                        <h6 class="fw-bold text-dark mb-3">Verificación de Transferencia</h6>
                         <div class="mb-3">
                             <label class="form-label small text-secondary mb-1">Cargar Archivo/Comprobante de respaldo *</label>
                             {{ form.comprobante_archivo }}
@@ -126,7 +131,7 @@
                     </div>
 
                     <div id="cardDetails" class="bg-light border rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-terminal-fill me-2 text-primary"></i>Datos del Terminal de Captura (Posnet)</h6>
+                        <h6 class="fw-bold text-dark mb-3">Datos del Terminal de Captura (Posnet)</h6>
                         <div class="row g-2">
                             <div class="col-8">
                                 <label class="form-label small text-secondary mb-1">Últimos 4 dígitos del plástico *</label>
@@ -146,27 +151,27 @@
                     </div>
 
                     <div id="cashDetails" class="bg-success bg-opacity-10 border border-success-subtle rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-success-emphasis mb-2"><i class="bi bi-cash me-2"></i>Ingreso de Efectivo Directo</h6>
+                        <h6 class="fw-bold text-success-emphasis mb-2">Ingreso de Efectivo Directo</h6>
                         <p class="small text-dark mb-0">
                             Asegúrese de contar el efectivo físico antes de confirmar el cobro para evitar diferencias en el arqueo final de caja al cierre de turno.
                         </p>
                     </div>
 
-                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small rounded-3 mb-3 d-none">
-                        <i class="bi bi-exclamation-triangle-fill me-1"></i> <span id="jsAlertText"></span>
+                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small mb-3 d-none rounded-3">
+                         <span id="jsAlertText"></span>
                     </div>
 
                     <hr class="my-4 text-muted opacity-25">
 
                     <div class="row g-3">
                         <div class="col-12 col-sm-4 order-2 order-sm-1">
-                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 rounded-3 fs-6 fw-semibold py-2.5 border border-secondary-subtle">
+                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 fs-6 fw-semibold py-2.5 border border-secondary-subtle rounded-3">
                                 Volver a Lista
                             </a>
                         </div>
                         <div class="col-12 col-sm-8 order-1 order-sm-2">
-                            <button type="submit" class="btn btn-success btn-lg w-100 rounded-3 fs-6 fw-semibold shadow-sm py-2.5">
-                                <i class="bi bi-check-circle-fill me-2"></i> Confirmar y Registrar Pago
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold shadow-sm py-2.5 rounded-3">
+                                 Confirmar y Registrar Pago
                             </button>
                         </div>
                     </div>
@@ -190,16 +195,24 @@ document.addEventListener("DOMContentLoaded", function() {
     const jsAlertBlock = document.getElementById('jsAlertBlock');
     const jsAlertText = document.getElementById('jsAlertText');
 
-    let canalSeleccionado = "Transferencia"; // Estado local por defecto
+    let canalSeleccionado = "Transferencia"; 
 
-    // Estilizar los inputs nativos de Django para mantener la UI impecable
+    // Estilizar campos nativos de Django
     const descuentoSelect = document.querySelector('select[name="descuento"]');
-    if (descuentoSelect) { 
-        descuentoSelect.classList.add('form-select', 'rounded-3'); 
-    }
+    if (descuentoSelect) { descuentoSelect.classList.add('form-select', 'rounded-3'); }
     
     const origenSelect = document.querySelector('select[name="origen_pago"]');
-    if (origenSelect) { origenSelect.classList.add('form-select'); }
+    if (origenSelect) { origenSelect.classList.add('form-control'); }
+
+    // Sincronizar clases en inputs de detalles cargados por Django
+    const fileInput = document.querySelector('input[type="file"]');
+    if (fileInput) { fileInput.classList.add('form-control', 'rounded-3'); }
+
+    const t4Input = document.querySelector('input[name*="tarjeta_ultimos_4"]');
+    if (t4Input) { t4Input.classList.add('form-control', 'rounded-3'); t4Input.setAttribute('maxlength', '4'); }
+
+    const cuponInput = document.querySelector('input[name*="tarjeta_cupon"]');
+    if (cuponInput) { cuponInput.classList.add('form-control', 'rounded-3'); }
 
     // LÓGICA DINÁMICA DE DESCUENTOS EN VIVO
     const montoVisual = document.getElementById('montoVisual');
@@ -207,10 +220,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (descuentoSelect) {
         descuentoSelect.addEventListener('change', function() {
-            // Buscamos el texto de la opción seleccionada. Ej: "Descuento Socio (10.0%)" o "Socio - 15"
             const optionText = this.options[this.selectedIndex].text;
-            
-            // Expresión regular para capturar cualquier número (entero o decimal) dentro del texto del descuento
             const match = optionText.match(/(\d+(?:\.\d+)?)/);
             let porcentaje = 0;
 
@@ -218,11 +228,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 porcentaje = parseFloat(match[1]);
             }
 
-            // Calculamos el monto con el descuento reflejado en la UI
             const descuentoCalculado = (precioBase * porcentaje) / 100;
             const montoFinal = precioBase - descuentoCalculado;
 
-            // Actualizamos la visual de la caja registradora
             montoVisual.innerText = `$ ${montoFinal.toFixed(2)}`;
         });
     }
@@ -232,17 +240,24 @@ document.addEventListener("DOMContentLoaded", function() {
         card.addEventListener('click', function() {
             cards.forEach(c => {
                 c.classList.remove('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
-                c.querySelector('span.fw-bold').classList.remove('text-primary');
-                c.querySelector('i').classList.replace('text-primary', 'text-secondary');
+                
+                const span = c.querySelector('span.fw-bold');
+                if (span) { span.classList.remove('text-primary'); span.classList.add('text-dark'); }
+                
+                const iconContainer = c.querySelector('.icon-container');
+                if (iconContainer) { iconContainer.classList.remove('text-primary'); iconContainer.classList.add('text-secondary'); }
             });
 
             this.classList.add('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
-            this.querySelector('span.fw-bold').classList.add('text-primary');
-            this.querySelector('i').classList.replace('text-secondary', 'text-primary');
+            
+            const activeSpan = this.querySelector('span.fw-bold');
+            if (activeSpan) { activeSpan.classList.remove('text-dark'); activeSpan.classList.add('text-primary'); }
+            
+            const activeIconContainer = this.querySelector('.icon-container');
+            if (activeIconContainer) { activeIconContainer.classList.remove('text-secondary'); activeIconContainer.classList.add('text-primary'); }
 
             canalSeleccionado = this.getAttribute('data-value');
             
-            // Sincronizar con el select oculto de Django
             if (djangoSelect) {
                 for (let i = 0; i < djangoSelect.options.length; i++) {
                     if (djangoSelect.options[i].text.toLowerCase().includes(canalSeleccionado.toLowerCase())) {
@@ -252,12 +267,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             }
 
-            // Ocultar todos los bloques de detalle
             transferDetails.classList.add('d-none');
             cardDetails.classList.add('d-none');
             cashDetails.classList.add('d-none');
 
-            // Mostrar el bloque correspondiente
             if (canalSeleccionado === 'Transferencia') {
                 transferDetails.classList.remove('d-none');
             } else if (canalSeleccionado === 'Tarjeta') {
@@ -268,13 +281,11 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    // VALIDACIÓN BLOQUEANTE ANTES DEL ENVÍO (FRONTEND)
+    // VALIDACIÓN ANTES DEL ENVÍO
     paymentForm.addEventListener('submit', function(event) {
-        jsAlertBlock.classList.add('d-none'); // Resetear alerta
+        jsAlertBlock.classList.add('d-none');
         
         if (canalSeleccionado === 'Transferencia') {
-            // Ajustá estos ID según correspondan con los que genera tu PagoForm de Django
-            const fileInput = document.querySelector('input[type="file"]');
             if (!fileInput || !fileInput.value) {
                 event.preventDefault();
                 jsAlertText.innerText = "¡Atención! Debe adjuntar obligatoriamente el archivo del comprobante bancario antes de continuar.";
@@ -283,9 +294,6 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         } 
         else if (canalSeleccionado === 'Tarjeta') {
-            const t4Input = document.querySelector('input[name*="tarjeta_ultimos_4"]');
-            const cuponInput = document.querySelector('input[name*="tarjeta_cupon"]');
-            
             const t4 = t4Input ? t4Input.value.trim() : "";
             const cupon = cuponInput ? cuponInput.value.trim() : "";
             
@@ -299,5 +307,4 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 });
 </script>
-
 {% endblock %}

@@ -21,7 +21,7 @@ class Clase(models.Model):
         max_length=20, choices=ESTADO_OPCIONES, default='programada')
     profesor = models.ForeignKey(
         Profesor,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name='clases',
         blank=True,
         null=True
@@ -198,7 +198,7 @@ class Entrenamiento(models.Model):
         max_length=20, choices=ESTADO_OPCIONES, default='programado')
     entrenador = models.ForeignKey(
         Profesor,
-        on_delete=models.PROTECT,
+        on_delete=models.SET_NULL,
         related_name='entrenamientos',
         blank=True,
         null=True

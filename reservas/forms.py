@@ -34,11 +34,31 @@ class ReservaForm(forms.ModelForm):
         model = Reserva
         fields = ['cliente', 'cancha', 'fecha', 'hora_inicio', 'hora_fin']
         widgets = {
-            'cliente': forms.Select(attrs={'class': 'form-select select2'}),
-            'cancha': forms.Select(attrs={'class': 'form-select'}),
-            'fecha': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'hora_inicio': forms.Select(choices=HORARIOS, attrs={'class': 'form-select'}),
-            'hora_fin': forms.Select(choices=HORARIOS, attrs={'class': 'form-select'}),
+
+            'cliente': forms.Select(
+                attrs={'class': 'form-control'}
+            ),
+
+            'cancha': forms.Select(
+                attrs={'class': 'form-control'}
+            ),
+
+            'fecha': forms.DateInput(
+                attrs={
+                    'type': 'date',
+                    'class': 'form-control'
+                }
+            ),
+
+            'hora_inicio': forms.Select(
+                choices=HORARIOS,
+                attrs={'class': 'form-control'}
+            ),
+
+            'hora_fin': forms.Select(
+                choices=HORARIOS,
+                attrs={'class': 'form-control'}
+            ),
         }
 
     def clean(self):

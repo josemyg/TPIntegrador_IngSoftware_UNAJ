@@ -117,4 +117,4 @@ class EntrenamientoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['profesor'].queryset = Profesor.objects.filter(estado = 'activo')
+        self.fields['entrenador'].queryset = Profesor.objects.filter(estado = 'activo')
