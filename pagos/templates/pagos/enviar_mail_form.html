@@ -13,7 +13,7 @@
 
                 {% if error %}
                     <div class="alert alert-danger small py-2 mb-3">
-                        <i class="bi bi-exclamation-triangle me-1"></i> {{ error }}
+                         {{ error }}
                     </div>
                 {% endif %}
 
@@ -23,7 +23,7 @@
                     <div class="mb-4">
                         <label for="email_cliente" class="form-label fw-semibold text-secondary small mb-1">Correo Electrónico del Cliente</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-light text-muted"><i class="bi bi-person-at"></i></span>
+                            <span class="input-group-text bg-light text-muted"></span>
                             <input type="email" name="email_cliente" id="email_cliente" class="form-control bg-light" placeholder="ejemplo@cliente.com" required>
                         </div>
                         <div class="form-text small text-muted">El archivo PDF se generará y adjuntará de forma automática.</div>
@@ -37,7 +37,7 @@
                         </div>
                         <div class="col-6">
                             <button type="submit" class="btn btn-primary w-100 py-2 fw-bold small">
-                                <i class="bi bi-send me-1"></i> Enviar Correo
+                                 Enviar Correo
                             </button>
                         </div>
                     </div>

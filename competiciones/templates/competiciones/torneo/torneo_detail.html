@@ -61,7 +61,7 @@
                             {% if partido_fixture.jugado %}
                             <div class="text-end ms-auto">
                                 <span class="badge bg-dark-subtle text-dark border border-dark-subtle fs-6 px-3 py-2">{{ partido_fixture.goles_local }} - {{ partido_fixture.goles_visitante }}</span><br>
-                                <small class="text-success fw-bold d-block mt-1"><i class="bi bi-check-circle-fill"></i> Finalizado</small>
+                                <small class="text-success fw-bold d-block mt-1"> Finalizado</small>
                                 <a href="{% url 'cargar_resultado' partido_fixture.id %}" class="btn btn-sm btn-outline-secondary mt-1" style="font-size: 0.75rem;">Editar Resultado</a>
                             </div>
                             {% else %}

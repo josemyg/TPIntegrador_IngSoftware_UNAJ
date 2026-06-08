@@ -16,9 +16,7 @@
                            placeholder="Buscar por tipo o superficie..." 
                            value="{{ request.GET.b|default:'' }}">
                     {% if request.GET.b %}
-                        <a href="{% url 'tipo_cancha_list' %}" class="btn border-0 bg-dark text-danger pe-3 d-flex align-items-center">
-                            <i class="bi bi-x-circle-fill"></i>
-                        </a>
+                        <a href="{% url 'tipo_cancha_list' %}" class="btn border-0 bg-dark text-danger pe-3 d-flex align-items-center"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#970707" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-circle-alert-icon lucide-circle-alert"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg></a>
                     {% endif %}
                 </div>
                 <button type="submit" class="btn btn-secondary">Filtrar</button>
@@ -85,7 +83,7 @@
                     {% empty %}
                     <tr>
                         <td colspan="6" class="text-center py-5 text-muted">
-                            <i class="bi bi-info-circle fs-3 d-block mb-2"></i>
+                            
                             No se encontraron tipos de canchas registrados.
                         </td>
                     </tr>

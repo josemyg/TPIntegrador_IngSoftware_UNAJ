@@ -97,7 +97,7 @@
                         <td class="text-center">
                             {% if pago.descuento.tipo.nombreDescuento %}
                                 <span class="text-success fw-semibold">
-                                    <i class="bi bi-tag-fill me-1"></i>{{ pago.descuento.tipo.nombreDescuento }}
+                                    {{ pago.descuento.tipo.nombreDescuento }}
                                 </span>
                             {% elif pago.descuento.cantidad %}
                                 <span class="text-success fw-semibold">
@@ -141,7 +141,7 @@
                     {% empty %}
                     <tr>
                         <td colspan="9" class="text-center text-muted py-5">
-                            <i class="bi bi-inbox fs-2 d-block mb-2 opacity-50"></i>
+                            
                             No se encontraron registros de cobros efectuados.
                         </td>
                     </tr>

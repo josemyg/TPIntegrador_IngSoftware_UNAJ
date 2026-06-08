@@ -19,7 +19,7 @@
                 
                 <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
                     <div class="p-3 bg-success bg-opacity-10 text-success me-3">
-                        <i class="bi bi-calculator fs-3"></i>
+                        
                     </div>
                     <div>
                         <span class="text-uppercase text-muted fw-bold tracking-wider small" style="font-size: 0.75rem;">Consola de Gestión</span>
@@ -41,7 +41,7 @@
                 
                 <div class="p-3 bg-white bg-opacity-50 border border-dashed mt-3">
                     <p class="text-muted small mb-0">
-                        <i class="bi bi-info-circle me-1 text-primary"></i> 
+                         
                         El monto final impactará directamente en los balances diarios del sistema y cerrará la cuenta corriente del turno seleccionado.
                     </p>
                 </div>
@@ -61,7 +61,7 @@
                     
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger py-2 px-3 small mb-3">
-                            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ form.non_field_errors.0 }}
+                             {{ form.non_field_errors.0 }}
                         </div>
                     {% endif %}
                     
@@ -76,7 +76,7 @@
                     <div class="row g-2 mb-4">
                         <div class="col-4">
                             <div class="card p-3 text-center border-2 cursor-pointer payment-method-card active" data-value="Transferencia" id="methodTransfer">
-                                <i class="bi bi-bank fs-3 text-primary mb-2"></i>
+                                
                                 <span class="fw-bold d-block text-dark small">Transferencia</span>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                         </div>
                         <div class="col-4">
                             <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Efectivo" id="methodCash">
-                                <i class="bi bi-cash-stack fs-3 text-secondary mb-2"></i>
+                                
                                 <span class="fw-bold d-block text-dark small">Efectivo Caja</span>
                             </div>
                         </div>
@@ -96,17 +96,17 @@
                     
                     {% if form.tipo_pago.errors %}
                         <div class="alert alert-danger py-2 px-3 small mb-3">
-                            <i class="bi bi-exclamation-circle me-1"></i> Debe seleccionar una forma de pago válida.
+                             Debe seleccionar una forma de pago válida.
                         </div>
                     {% endif %}
 
                     <div class="mb-4 p-3 bg-light rounded-4 border">
                         <label class="form-label fw-bold small text-dark mb-1">
-                            <i class="bi bi-percentage text-danger me-1"></i> Descuento Aplicable (Bonificación)
+                             Descuento Aplicable (Bonificación)
                         </label>
                         {{ form.descuento }} 
                         {% if form.descuento.errors %}
-                            <div class="text-danger small mt-1"><i class="bi bi-exclamation-circle me-1"></i>{{ form.descuento.errors.0 }}</div>
+                            <div class="text-danger small mt-1">{{ form.descuento.errors.0 }}</div>
                         {% endif %}
                         <div class="form-text text-muted" style="font-size: 0.75rem;">
                             Seleccione si corresponde una promoción del cliente o un ajuste por convenio.
@@ -114,7 +114,7 @@
                     </div>
 
                     <div id="transferDetails" class="bg-light border rounded-4 p-4 mb-4">
-                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-file-earmark-check-fill me-2 text-primary"></i>Verificación de Transferencia</h6>
+                        <h6 class="fw-bold text-dark mb-3">Verificación de Transferencia</h6>
                         <div class="mb-3">
                             <label class="form-label small text-secondary mb-1">Cargar Archivo/Comprobante de respaldo *</label>
                             {{ form.comprobante_archivo }}
@@ -126,7 +126,7 @@
                     </div>
 
                     <div id="cardDetails" class="bg-light border rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-terminal-fill me-2 text-primary"></i>Datos del Terminal de Captura (Posnet)</h6>
+                        <h6 class="fw-bold text-dark mb-3">Datos del Terminal de Captura (Posnet)</h6>
                         <div class="row g-2">
                             <div class="col-8">
                                 <label class="form-label small text-secondary mb-1">Últimos 4 dígitos del plástico *</label>
@@ -146,14 +146,14 @@
                     </div>
 
                     <div id="cashDetails" class="bg-success bg-opacity-10 border border-success-subtle rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-success-emphasis mb-2"><i class="bi bi-cash me-2"></i>Ingreso de Efectivo Directo</h6>
+                        <h6 class="fw-bold text-success-emphasis mb-2">Ingreso de Efectivo Directo</h6>
                         <p class="small text-dark mb-0">
                             Asegúrese de contar el efectivo físico antes de confirmar el cobro para evitar diferencias en el arqueo final de caja al cierre de turno.
                         </p>
                     </div>
 
                     <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small mb-3 d-none">
-                        <i class="bi bi-exclamation-triangle-fill me-1"></i> <span id="jsAlertText"></span>
+                         <span id="jsAlertText"></span>
                     </div>
 
                     <hr class="my-4 text-muted opacity-25">
@@ -166,7 +166,7 @@
                         </div>
                         <div class="col-12 col-sm-8 order-1 order-sm-2">
                             <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold shadow-sm py-2.5">
-                                <i class="bi bi-check-circle-fill me-2"></i> Confirmar y Registrar Pago
+                                 Confirmar y Registrar Pago
                             </button>
                         </div>
                     </div>
