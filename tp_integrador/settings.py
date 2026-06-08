@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'reportes',
     'insercion',
     'registro',
+    'vistas',
 ]
 
 MIDDLEWARE = [

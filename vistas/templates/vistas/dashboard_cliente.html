@@ -22,9 +22,9 @@
               {% else %}
                 <span class="badge bg-secondary fs-6">No Socio</span>
               {% endif %}
-               <a href="{% url 'vistas:cliente_perfil_update' cliente.pk %}" class="btn btn-outline-primary btn-sm mt-2">
+{% comment %}                <a href="{% url 'vistas:cliente_perfil_update' cliente.pk %}" class="btn btn-outline-primary btn-sm mt-2">
     Editar mis datos
-</a>
+</a> {% endcomment %}
             </div>
           </div>
         </div>
@@ -85,13 +85,18 @@
             <h5 class="mb-0">Asistencias a clases</h5>
           </div>
           <div class="card-body">
+            {% if total_clases %}
             <p>{{ presentes_clases }} presentes de {{ total_clases }} registros</p>
             <div class="progress mb-2" style="height: 20px;">
               <div class="progress-bar bg-success" role="progressbar" style="width: {{ porcentaje_clases }}%">{{ porcentaje_clases }}%</div>
             </div>
-            {% if total_clases == 0 %}
-              <small class="text-muted">Sin registros de asistencia aún.</small>
+              {% if total_clases == 0 %}
+                <small class="text-muted">Sin registros de asistencia aún.</small>
+              {% endif %}
+            {% else %}
+            <p>No hay asistencias a clases.</p>
             {% endif %}
+
           </div>
         </div>
       </div>
@@ -101,12 +106,16 @@
             <h5 class="mb-0">Asistencias a entrenamientos</h5>
           </div>
           <div class="card-body">
+            {% if total_entrenamientos %}
             <p>{{ presentes_entrenamientos }} presentes de {{ total_entrenamientos }} registros</p>
             <div class="progress mb-2" style="height: 20px;">
               <div class="progress-bar bg-success" role="progressbar" style="width: {{ porcentaje_entrenamientos }}%">{{ porcentaje_entrenamientos }}%</div>
             </div>
-            {% if total_entrenamientos == 0 %}
+              {% if total_entrenamientos == 0 %}
               <small class="text-muted">Sin registros de asistencia aún.</small>
+              {% endif %}
+            {% else%}
+              <p>No hay asistencias a entrenamientos.</p>
             {% endif %}
           </div>
         </div>
@@ -311,7 +320,7 @@
     </div>
 </div>
 
-      <div class="card-header bg-secondary text-white">
+      <div class="row mb-4">
     <h5 class="mb-0">Ligas y Torneos</h5>
 </div>
 <div class="card-body">
