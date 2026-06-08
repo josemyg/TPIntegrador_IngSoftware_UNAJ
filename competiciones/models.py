@@ -7,7 +7,7 @@ from canchas.models import Cancha
 # ==========================================
 class Equipo(models.Model):
     nombre = models.CharField("Nombre del Equipo", max_length=100, unique=True)
-    profesor = models.ForeignKey(Profesor, on_delete=models.PROTECT, null=True, blank=True, verbose_name="Profesor Asignado")
+    profesor = models.ForeignKey(Profesor, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Profesor Asignado")
     clientes = models.ManyToManyField(Cliente, blank=True, verbose_name="Integrantes (Maximo 15)")
 
     class Meta:
