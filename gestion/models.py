@@ -84,7 +84,7 @@ def crear_Profesor(sender, instance, created, **kwargs):
     if created:
         nombre = instance.nombre+'_'+instance.apellido
         if User.objects.filter(username=nombre).exists():
-            nombre = instance.nombre+'_'+instance.apellido+User.objects.count()+1
+            nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
         user = User.objects.get(nombre,instance.email, 'f.123456')
         user.groups.add(Profesores)
         user.save()
@@ -98,7 +98,7 @@ def crear_Cliente(sender, instance, created, **kwargs):
         instance.save()
         nombre = instance.nombre+'_'+instance.apellido
         if User.objects.filter(username=nombre).exists():
-            nombre = instance.nombre+'_'+instance.apellido+User.objects.count()+1
+            nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
         print(nombre)
         user = User.objects.create_user(nombre, instance.email, 'f.123456')
         user.save()
