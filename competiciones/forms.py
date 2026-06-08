@@ -1,5 +1,7 @@
 from django import forms
-from .models import Equipo, Liga, Torneo, Profesor
+from .models import Equipo, Liga, Torneo, Partido
+from gestion.models import Profesor, Cliente
+from canchas.models import Cancha
 
 class EquipoForm(forms.ModelForm):
     class Meta:
@@ -43,4 +45,41 @@ class TorneoForm(forms.ModelForm):
             'estado': forms.Select(attrs={'class': 'form-control'}),
             'equipos': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
             'es_ida_y_vuelta': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+class AsignarCanchaForm(forms.ModelForm):
+    class Meta:
+        model = Partido
+        fields = ['cancha_asignada', 'fecha_y_hora_encuentro']
+        widgets = {
+            'fecha_y_hora_encuentro': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+            'cancha_asignada': forms.Select(attrs={'class': 'form-control'})
+        }
+
+    def clean(self):
+        datos_limpios = super().clean()
+        cancha_seleccionada = datos_limpios.get('cancha_asignada')
+        fecha_seleccionada = datos_limpios.get('fecha_y_hora_encuentro')
+
+        if cancha_seleccionada and fecha_seleccionada:
+            # Buscamos si existe algun otro partido en esa misma cancha y hora exacta
+            partido_existente = Partido.objects.filter(
+                cancha_asignada=cancha_seleccionada,
+                fecha_y_hora_encuentro=fecha_seleccionada
+            ).exclude(id=self.instance.id).exists()
+
+            if partido_existente:
+                raise forms.ValidationError("Error: La cancha seleccionada ya esta reservada para otro partido en ese mismo horario.")
+
+        return datos_limpios
+
+class CargarResultadoForm(forms.ModelForm):
+    class Meta:
+        model = Partido
+        fields = ['goles_local', 'goles_visitante', 'penales_local', 'penales_visitante', 'jugado']
+        widgets = {
+            'goles_local': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'goles_visitante': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'penales_local': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'penales_visitante': forms.NumberInput(attrs={'class': 'form-control', 'min': '0'}),
+            'jugado': forms.CheckboxInput(attrs={'class': 'form-check-input'})
         }

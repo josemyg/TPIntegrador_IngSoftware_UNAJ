@@ -1,7 +1,8 @@
 import random
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
-from .models import Usuario, Profesor, Cliente, Clase, Entrenamiento
+from clases_y_entrenamientos.models import Clase, Entrenamiento
+from gestion.models import Profesor, Cliente
 
 def crear_clases_entrenamientos():
     # Obtener todos los profesores existentes
@@ -64,4 +65,4 @@ if __name__ == "__crear_clases_entrenamientos__":
     crear_clases_entrenamientos()
 
 
-crear_clases_entrenamientos()
+#crear_clases_entrenamientos()

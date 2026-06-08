@@ -20,13 +20,30 @@ urlpatterns = [
     path('torneos/nuevo/', views.TorneoCreateView.as_view(), name='torneo_create'),
     path('torneos/editar/<int:pk>/', views.TorneoUpdateView.as_view(), name='torneo_update'),
     path('torneos/eliminar/<int:pk>/', views.TorneoDeleteView.as_view(), name='torneo_delete'),
+
     # Rutas para Ligas
     path('ligas/', views.LigaListView.as_view(), name='liga_list'),
     path('ligas/nueva/', views.LigaCreateView.as_view(), name='liga_create'),
     path('ligas/editar/<int:pk>/', views.LigaUpdateView.as_view(), name='liga_update'),
     path('ligas/eliminar/<int:pk>/', views.LigaDeleteView.as_view(), name='liga_delete'),
-    
+    path('ligas/<int:pk>/', views.LigaDetailView.as_view(), name='liga_detail'),
+    path('ligas/<int:liga_id>/generar-fixture/', views.generar_fixture_liga, name='generar_fixture_liga'),
+
+    # Rutas para Torneos
+    path('torneos/', views.TorneoListView.as_view(), name='torneo_list'),
+    path('torneos/nuevo/', views.TorneoCreateView.as_view(), name='torneo_create'),
+    path('torneos/editar/<int:pk>/', views.TorneoUpdateView.as_view(), name='torneo_update'),
+    path('torneos/eliminar/<int:pk>/', views.TorneoDeleteView.as_view(), name='torneo_delete'),
+
+    #RUTAS DE FIXTURE PARA TORNEOS
+    path('torneos/<int:pk>/', views.TorneoDetailView.as_view(), name='torneo_detail'),
+    path('torneos/<int:torneo_id>/generar-fixture/', views.generar_fixture_torneo, name='generar_fixture_torneo'),
     # rUTAS DE FIXTURE
     path('ligas/<int:pk>/', views.LigaDetailView.as_view(), name='liga_detail'),
-    path('ligas/<int:pk>/generar-fixture/', views.generar_fixture_liga, name='generar_fixture_liga'),
+    path('ligas/<int:liga_id>/generar-fixture/', views.generar_fixture_liga, name='generar_fixture_liga'),
+    # Ruta para asignar canchas a los partidos
+    path('partidos/<int:partido_id>/asignar-cancha/', views.asignar_cancha_partido, name='asignar_cancha'),
+
+    path('partidos/<int:partido_id>/cargar-resultado/', views.cargar_resultado_partido, name='cargar_resultado'),
+
 ]

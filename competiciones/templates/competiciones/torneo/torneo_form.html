@@ -12,32 +12,30 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Nombre de Torneo</label>
+                    <label class="form-label fw-bold">Nombre del Torneo</label>
                     {{ form.nombre }}
                 </div>
-                <div class="row mb-3">
-                    <div class="col">
-                        <label class="form-label fw-bold">Puntos por Victoria</label>
-                        {{ form.puntos_victoria }}
-                    </div>
-                    <div class="col">
-                        <label class="form-label fw-bold">Puntos por Empate</label>
-                        {{ form.puntos_empate }}
-                    </div>
+
+                <div class="mb-3 form-check">
+                    {{ form.es_ida_y_vuelta }}
+                    <label class="form-check-label fw-bold ms-1">
+                        Torneo con formato Ida y Vuelta
+                    </label>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Estado</label>
+                    <label class="form-label fw-bold">Estado Actual</label>
                     {{ form.estado }}
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label fw-bold">Seleccionar Equipos Participantes</label>
                     <div class="caja-scroll-clientes shadow-sm">
-                        {% for checkbox in form.equipos %}
+                        {% for opcion_equipo in form.equipos %}
                         <div class="form-check mb-2">
-                            {{ checkbox.tag }}
-                            <label class="form-check-label ms-2" for="{{ checkbox.id_for_label }}">
-                                {{ checkbox.choice_label }}
+                            {{ opcion_equipo.tag }}
+                            <label class="form-check-label ms-2" for="{{ opcion_equipo.id_for_label }}">
+                                {{ opcion_equipo.choice_label }}
                             </label>
                         </div>
                         {% endfor %}

@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+
+{% block title %}Detalle del Torneo{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+        <div>
+            <h1 class="text-primary">{{ torneo_actual.nombre }}</h1>
+            <span class="badge bg-info-subtle text-info border border-info-subtle fs-6 px-2 py-1">Estado: {{ torneo_actual.get_estado_display }}</span>
+            {% if torneo_actual.es_ida_y_vuelta %}
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-6 ms-2">Formato: Ida y Vuelta</span>
+            {% else %}
+            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 fs-6 ms-2">Formato: Partido Unico</span>
+            {% endif %}
+        </div>
+        <div>
+            <a href="{% url 'torneo_list' %}" class="btn btn-secondary">Volver al listado</a>
+            {% if torneo_actual.estado == 'Inscripcion' and torneo_actual.equipos.count > 1 %}
+            <a href="{% url 'generar_fixture_torneo' torneo_actual.id %}" class="btn btn-success fw-bold text-white shadow-sm">
+                Generar Cruces Iniciales
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white fw-bold">
+                    Equipos Inscritos ({{ torneo_actual.equipos.count }})
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for equipo_inscrito in torneo_actual.equipos.all %}
+                    <li class="list-group-item">{{ equipo_inscrito.nombre }}</li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">Aun no hay equipos inscritos.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white fw-bold">
+                    Cruces y Partidos
+                </div>
+                <div class="card-body">
+                    {% if partidos %}
+                    <ul class="list-group">
+                        {% for partido_fixture in partidos %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center py-3">
+                            <div class="d-flex flex-column">
+                                <span class="badge bg-secondary align-self-start mb-1">{{ partido_fixture.fase }}</span>
+                                <div>
+                                    <span class="fw-bold text-dark">{{ partido_fixture.equipo_local.nombre }}</span>
+                                    <span class="mx-2 text-muted">vs</span>
+                                    <span class="fw-bold text-dark">{{ partido_fixture.equipo_visitante.nombre }}</span>
+                                </div>
+                            </div>
+
+                            {% if partido_fixture.jugado %}
+                            <div class="text-end ms-auto">
+                                <span class="badge bg-dark-subtle text-dark border border-dark-subtle fs-6 px-3 py-2">{{ partido_fixture.goles_local }} - {{ partido_fixture.goles_visitante }}</span><br>
+                                <small class="text-success fw-bold d-block mt-1"> Finalizado</small>
+                                <a href="{% url 'cargar_resultado' partido_fixture.id %}" class="btn btn-sm btn-outline-secondary mt-1" style="font-size: 0.75rem;">Editar Resultado</a>
+                            </div>
+                            {% else %}
+                            <div class="text-end ms-auto">
+                                {% if partido_fixture.cancha_asignada %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle mb-1">{{ partido_fixture.cancha_asignada.nombre }}</span><br>
+                                <small class="text-muted d-block fw-bold mb-1">{{ partido_fixture.fecha_y_hora_encuentro|date:"d/m/Y H:i" }}</small>
+                                <div class="btn-group gap-1">
+                                    <a href="{% url 'cargar_resultado' partido_fixture.id %}" class="btn btn-sm btn-success fw-bold shadow-sm">
+                                        Cargar Resultado
+                                    </a>
+                                    <a href="{% url 'asignar_cancha' partido_fixture.id %}" class="btn btn-sm btn-outline-secondary" style="font-size: 0.75rem;" title="Reasignar Cancha">
+                                        Reasignar
+                                    </a>
+                                </div>
+                                {% else %}
+                                <a href="{% url 'asignar_cancha' partido_fixture.id %}" class="btn btn-sm btn-primary fw-bold shadow-sm">
+                                    Asignar Cancha
+                                </a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <h5 class="text-muted">Aun no se han sorteado los cruces.</h5>
+                        <p class="text-secondary small">Presiona el boton verde de arriba para generar los partidos.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
