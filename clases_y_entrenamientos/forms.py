@@ -1,4 +1,6 @@
 from django import forms
+
+from reservas.models import Reserva
 from .models import Clase, Entrenamiento
 from gestion.models import Cliente, Profesor
 from django.core.exceptions import ValidationError
@@ -33,10 +35,19 @@ class ClaseForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['profesor'].queryset = Profesor.objects.filter(estado = 'activo')
+        self.fields['profesor'].queryset = Profesor.objects.filter(estado='activo')
         if not self.instance.pk:
             self.fields.pop('estado')
-        
+            self.fields['reserva'].queryset = Reserva.objects.filter(
+            estado__in=['CONFIRMADA', 'PENDIENTE']
+        ).exclude(
+            clases__isnull=False
+        ).exclude(
+            entrenamientos__isnull=False
+        )
+        else:
+            self.fields['reserva'].queryset = Reserva.objects.filter(estado__in=['CONFIRMADA', 'PENDIENTE']).exclude(
+                clases__isnull=False).exclude(entrenamientos__isnull=False) | Reserva.objects.filter(clases=self.instance)
         
 
 
@@ -68,10 +79,13 @@ class EntrenamientoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['entrenador'].queryset = Profesor.objects.filter(estado = 'activo')
+        self.fields['entrenador'].queryset = Profesor.objects.filter(estado='activo')
         if not self.instance.pk:
             self.fields.pop('estado')
-        
-
+            self.fields['reserva'].queryset = Reserva.objects.filter(
+            estado__in=['CONFIRMADA', 'PENDIENTE']).exclude(clases__isnull=False).exclude(entrenamientos__isnull=False)
+        else:
+            self.fields['reserva'].queryset = Reserva.objects.filter(estado__in=['CONFIRMADA', 'PENDIENTE']).exclude(
+                clases__isnull=False).exclude(entrenamientos__isnull=False) | Reserva.objects.filter(entrenamientos=self.instance)
 
 
