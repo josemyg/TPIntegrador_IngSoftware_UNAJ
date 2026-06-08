@@ -1,5 +1,5 @@
 services:
- db:
+ dbpsql:
    image: postgres:17
    ports:
      - "5432:5432"
@@ -14,7 +14,7 @@ services:
    ports:
      - "8000:8000"
    depends_on:
-     - db
+     - dbpsql
    volumes:
      - ./static:/app/staticfiles
    restart: always
