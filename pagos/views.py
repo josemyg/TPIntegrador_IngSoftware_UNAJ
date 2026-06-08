@@ -245,8 +245,9 @@ class ReciboDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'recibos/recibo_confirm_delete.html'
     success_url = reverse_lazy('recibo_list')
 
-class PagoCreateView(TemplateView):
+class PagoCreateView(PermissionRequiredMixin, TemplateView):
     template_name = 'pagos/pago_menu.html' # Tu HTML con los 4 botones grandes
+    permission_required = 'pagos.add_pago'
 
     def get(self, request, *args, **kwargs):
         # Leemos si el operador hizo clic en algún botón del selector (?origen=xxx)

@@ -136,13 +136,13 @@ class EquipoUpdateView(UpdateView):
     template_name = 'competiciones/equipo/equipo_form.html'
     success_url = reverse_lazy('equipo_list')
 
-class EquipoDeleteView(DeleteView):
+class EquipoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Equipo
     permission_required = 'competiciones.delete_equipo'
     template_name = 'competiciones/equipo/equipo_confirm_delete.html'
     success_url = reverse_lazy('equipo_list')
 
-class LigaListView(ListView):
+class LigaListView(PermissionRequiredMixin, ListView):
     model = Liga
     permission_required = 'competiciones.view_liga'
     template_name = 'competiciones/liga/liga_list.html'
@@ -162,7 +162,7 @@ class LigaUpdateView(UpdateView):
     template_name = 'competiciones/liga/liga_form.html'
     success_url = reverse_lazy('liga_list')
 
-class LigaDeleteView(DeleteView):
+class LigaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Liga
     permission_required = 'competiciones.delete_liga'
     template_name = 'competiciones/liga/liga_confirm_delete.html'
@@ -170,7 +170,7 @@ class LigaDeleteView(DeleteView):
 
 
 # --- CRUD DE TORNEOS ---
-class TorneoListView(ListView):
+class TorneoListView(PermissionRequiredMixin, ListView):
     model = Torneo
     permission_required = 'competiciones.view_torneo'
     template_name = 'competiciones/torneo/torneo_list.html'
@@ -190,7 +190,7 @@ class TorneoUpdateView(UpdateView):
     template_name = 'competiciones/torneo/torneo_form.html'
     success_url = reverse_lazy('torneo_list')
 
-class TorneoDeleteView(DeleteView):
+class TorneoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Torneo
     permission_required = 'competiciones.delete_torneo'
     template_name = 'competiciones/torneo/torneo_confirm_delete.html'

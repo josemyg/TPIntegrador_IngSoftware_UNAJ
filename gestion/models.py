@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.urls import reverse
@@ -85,22 +85,22 @@ def crear_Profesor(sender, instance, created, **kwargs):
         nombre = instance.nombre+'_'+instance.apellido
         if User.objects.filter(username=nombre).exists():
             nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
-        user = User.objects.get(nombre,instance.email, 'f.123456')
-        user.groups.add(Profesores)
+        user = User.objects.create_user(nombre, instance.email, 'f.123456')
+        grupo, _ = Group.objects.get_or_create(name="Profesores")
+        user.groups.add(grupo)
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")
 
-
 @receiver(post_save, sender=Cliente)
 def crear_Cliente(sender, instance, created, **kwargs):
     if created:
-        instance.save()
         nombre = instance.nombre+'_'+instance.apellido
         if User.objects.filter(username=nombre).exists():
             nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
-        print(nombre)
         user = User.objects.create_user(nombre, instance.email, 'f.123456')
+        grupo, _ = Group.objects.get_or_create(name="Clientes")
+        user.groups.add(grupo)
         user.save()
         instance.user_django = user
         print("Se ha creado el perfil de usuario correctamente")
