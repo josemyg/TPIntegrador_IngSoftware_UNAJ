@@ -123,6 +123,14 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEFAULT_FROM_EMAIL: 'golahora@yedro.ar'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST: 'mail.yedro.ar'
+EMAIL_PORT: 587
+EMAIL_USE_TLS: True
+EMAIL_USE_SSL: False
+EMAIL_HOST_USER: 'golahora@yedro.ar'
+EMAIL_HOST_PASSWORD: 'j5nOv}2Xdfp0e:pCy}1cO/sP#dCk=bv(hQ-yEB;dK%PIk3}P'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/

@@ -24,7 +24,7 @@ class ClientePerfilUpdateView(UpdateView):
     template_name = 'vistas/cliente_perfil_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('vistas:dashboard_cliente', kwargs={'pk': self.object.pk})
+        return reverse_lazy('vistas:dashboard_cliente')
 
 def dashboard_cliente(request):
     cliente = request.user
