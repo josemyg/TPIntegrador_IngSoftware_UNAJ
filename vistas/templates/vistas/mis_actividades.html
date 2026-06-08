@@ -1,0 +1,116 @@
+{% extends 'base_cliente.html' %}
+{% load static %}
+
+{% block title %}Mis Actividades - Gol Ahora{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Mis Actividades</h2>
+
+    <!-- Clases y entrenamientos futuros -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Próximas Clases</h5>
+                </div>
+                <div class="card-body">
+                    {% if clases_futuras %}
+                        <ul class="list-group">
+                            {% for clase in clases_futuras %}
+                            <li class="list-group-item">
+                                <strong>{{ clase.nombre }}</strong><br>
+                                {{ clase.horario|date:'d/m/Y H:i' }}<br>
+                                Profesor: {{ clase.profesor|default:'Sin asignar' }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No tenés clases próximas.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Próximos Entrenamientos</h5>
+                </div>
+                <div class="card-body">
+                    {% if entrenamientos_futuros %}
+                        <ul class="list-group">
+                            {% for ent in entrenamientos_futuros %}
+                            <li class="list-group-item">
+                                <strong>{{ ent.nombre }}</strong><br>
+                                {{ ent.horario|date:'d/m/Y H:i' }}<br>
+                                Entrenador: {{ ent.entrenador|default:'Sin asignar' }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No tenés entrenamientos próximos.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial de asistencia -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Historial de Asistencia a Clases</h5>
+                </div>
+                <div class="card-body">
+                    {% if asistencias_clase %}
+                        <table class="table table-sm">
+                            <thead>
+                                <tr><th>Clase</th><th>Fecha</th><th>Asistió</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for a in asistencias_clase %}
+                                <tr>
+                                    <td>{{ a.clase.nombre }}</td>
+                                    <td>{{ a.clase.horario|date:'d/m/Y H:i' }}</td>
+                                    <td>{% if a.asistencia %}✅ Sí{% else %}❌ No{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No hay registros de asistencia a clases.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Historial de Asistencia a Entrenamientos</h5>
+                </div>
+                <div class="card-body">
+                    {% if asistencias_entrenamiento %}
+                        <table class="table table-sm">
+                            <thead>
+                                <tr><th>Entrenamiento</th><th>Fecha</th><th>Asistió</th></tr>
+                            </thead>
+                            <tbody>
+                                {% for a in asistencias_entrenamiento %}
+                                <tr>
+                                    <td>{{ a.entrenamiento.nombre }}</td>
+                                    <td>{{ a.entrenamiento.horario|date:'d/m/Y H:i' }}</td>
+                                    <td>{% if a.asistencia %}✅ Sí{% else %}❌ No{% endif %}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-muted">No hay registros de asistencia a entrenamientos.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

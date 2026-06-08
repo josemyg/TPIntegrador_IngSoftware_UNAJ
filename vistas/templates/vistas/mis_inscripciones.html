@@ -1,0 +1,51 @@
+{% extends 'base_cliente.html' %}
+{% load static %}
+
+{% block title %}Mis Inscripciones - Gol Ahora{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Mis Equipos,torneos y ligas</h2>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Mis Equipos</h5>
+                </div>
+                <div class="card-body">
+                    {% if equipos %}
+                        <ul class="list-group">
+                            {% for equipo in equipos %}
+                            <li class="list-group-item">{{ equipo.nombre }} ({{ equipo.clientes.count }} integrantes)</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No perteneces a ningún equipo.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Competiciones en las que participo</h5>
+                </div>
+                <div class="card-body">
+                    {% if competiciones %}
+                        <ul class="list-group">
+                            {% for comp in competiciones %}
+                            <li class="list-group-item">
+                                <strong>{{ comp.nombre }}</strong> ({{ comp.get_estado_display }})
+                                <br><small class="text-muted">{{ comp.equipos.count }} equipos participantes</small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No estás inscrito en ninguna liga o torneo.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
