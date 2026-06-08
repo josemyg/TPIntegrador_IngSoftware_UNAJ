@@ -10,7 +10,6 @@ from canchas.models import Cancha
 
 class ClaseForm(forms.ModelForm):
     
-
     class Meta:
         model = Clase
         fields = ['nombre','profesor', 'alumnos','reserva', 'estado']

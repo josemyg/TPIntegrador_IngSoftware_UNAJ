@@ -31,18 +31,6 @@ class Usuario(models.Model):
         verbose_name = ("Usuario")
         verbose_name_plural = ("Usuarios")
 
-    def __str__(self):
-        return self.nombre + ' ' + self.apellido
-
-    def get_absolute_url(self):
-        return reverse("Usuario_detail", kwargs={"pk": self.pk})
-
-    def registrarUsuario(self):
-        return self.nombre
-
-    def modificarUsuario(self):
-        return self.nombre
-
 class Profesor(Usuario):
 
     estados = {
