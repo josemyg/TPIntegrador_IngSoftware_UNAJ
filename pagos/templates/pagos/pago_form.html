@@ -11,14 +11,14 @@
     <div class="row justify-content-center g-4">
         
         <div class="col-12 col-md-5 col-lg-4">
-            <div class="card border-0 shadow-sm  bg-light p-4 sticky-md-top" style="top: 2rem;">
+            <div class="card border-0 shadow-sm rounded-4 bg-light p-4 sticky-md-top" style="top: 2rem;">
                 <div class="d-flex align-items-center justify-content-between mb-3">
                     <h4 class="fw-bold text-dark m-0">Resumen</h4>
                     <span class="badge bg-dark text-uppercase font-monospace px-2 py-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Modo Operador</span>
                 </div>
                 
                 <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
-                    <div class="p-3 bg-success bg-opacity-10 text-success me-3">
+                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3">
                         <i class="bi bi-calculator fs-4"></i>
                     </div>
                     <div>
@@ -39,7 +39,7 @@
                     <span class="fs-3 fw-black text-primary" id="montoVisual" data-base="{{ form.monto.value|default:'0.00' }}">$ {{ form.monto.value|default:"0.00" }}</span>
                 </div>
                 
-                <div class="p-3 bg-white bg-opacity-50 border border-dashed mt-3">
+                <div class="p-3 bg-white bg-opacity-50 border border-dashed rounded-3 mt-3">
                     <p class="text-muted small mb-0">
                         El monto final impactará directamente en los balances diarios del sistema y cerrará la cuenta corriente del turno seleccionado.
                     </p>
@@ -48,7 +48,7 @@
         </div>
 
         <div class="col-12 col-md-7 col-lg-6">
-            <div class="card border-0 shadow-sm p-4 bg-white ">
+            <div class="card border-0 shadow-sm p-4 bg-white rounded-4">
                 
                 <div class="mb-4">
                     <h2 class="fw-bold text-dark mb-1">Registrar Operación</h2>
@@ -59,7 +59,7 @@
                     {% csrf_token %}
                     
                     {% if form.non_field_errors %}
-                        <div class="alert alert-danger py-2 px-3 small mb-3 ">
+                        <div class="alert alert-danger py-2 px-3 small mb-3 rounded-3">
                              {{ form.non_field_errors.0 }}
                         </div>
                     {% endif %}
@@ -100,12 +100,12 @@
                     </div>
                     
                     {% if form.tipo_pago.errors %}
-                        <div class="alert alert-danger py-2 px-3 small mb-3 ">
+                        <div class="alert alert-danger py-2 px-3 small mb-3 rounded-3">
                              Debe seleccionar una forma de pago válida.
                         </div>
                     {% endif %}
 
-                    <div class="mb-4 p-3 bg-light  border">
+                    <div class="mb-4 p-3 bg-light rounded-4 border">
                         <label class="form-label fw-bold small text-dark mb-1">
                              Descuento Aplicable (Bonificación)
                         </label>
@@ -118,7 +118,7 @@
                         </div>
                     </div>
 
-                    <div id="transferDetails" class="bg-light border  p-4 mb-4">
+                    <div id="transferDetails" class="bg-light border rounded-4 p-4 mb-4">
                         <h6 class="fw-bold text-dark mb-3">Verificación de Transferencia</h6>
                         <div class="mb-3">
                             <label class="form-label small text-secondary mb-1">Cargar Archivo/Comprobante de respaldo *</label>
@@ -130,7 +130,7 @@
                         <span class="text-muted d-block" style="font-size: 0.75rem;">Obligatorio para auditorías internas del predio.</span>
                     </div>
 
-                    <div id="cardDetails" class="bg-light border  p-4 mb-4 d-none">
+                    <div id="cardDetails" class="bg-light border rounded-4 p-4 mb-4 d-none">
                         <h6 class="fw-bold text-dark mb-3">Datos del Terminal de Captura (Posnet)</h6>
                         <div class="row g-2">
                             <div class="col-8">
@@ -150,14 +150,14 @@
                         </div>
                     </div>
 
-                    <div id="cashDetails" class="bg-success bg-opacity-10 border border-success-subtle  p-4 mb-4 d-none">
+                    <div id="cashDetails" class="bg-success bg-opacity-10 border border-success-subtle rounded-4 p-4 mb-4 d-none">
                         <h6 class="fw-bold text-success-emphasis mb-2">Ingreso de Efectivo Directo</h6>
                         <p class="small text-dark mb-0">
                             Asegúrese de contar el efectivo físico antes de confirmar el cobro para evitar diferencias en el arqueo final de caja al cierre de turno.
                         </p>
                     </div>
 
-                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small mb-3 d-none ">
+                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small mb-3 d-none rounded-3">
                          <span id="jsAlertText"></span>
                     </div>
 
@@ -165,12 +165,12 @@
 
                     <div class="row g-3">
                         <div class="col-12 col-sm-4 order-2 order-sm-1">
-                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 fs-6 fw-semibold py-2.5 border border-secondary-subtle ">
+                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 fs-6 fw-semibold py-2.5 border border-secondary-subtle rounded-3">
                                 Volver a Lista
                             </a>
                         </div>
                         <div class="col-12 col-sm-8 order-1 order-sm-2">
-                            <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold shadow-sm py-2.5 ">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold shadow-sm py-2.5 rounded-3">
                                  Confirmar y Registrar Pago
                             </button>
                         </div>
@@ -199,20 +199,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Estilizar campos nativos de Django
     const descuentoSelect = document.querySelector('select[name="descuento"]');
-    if (descuentoSelect) { descuentoSelect.classList.add('form-control', ''); }
+    if (descuentoSelect) { descuentoSelect.classList.add('form-select', 'rounded-3'); }
     
     const origenSelect = document.querySelector('select[name="origen_pago"]');
     if (origenSelect) { origenSelect.classList.add('form-control'); }
 
     // Sincronizar clases en inputs de detalles cargados por Django
     const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) { fileInput.classList.add('form-control', ''); }
+    if (fileInput) { fileInput.classList.add('form-control', 'rounded-3'); }
 
     const t4Input = document.querySelector('input[name*="tarjeta_ultimos_4"]');
-    if (t4Input) { t4Input.classList.add('form-control', ''); t4Input.setAttribute('maxlength', '4'); }
+    if (t4Input) { t4Input.classList.add('form-control', 'rounded-3'); t4Input.setAttribute('maxlength', '4'); }
 
     const cuponInput = document.querySelector('input[name*="tarjeta_cupon"]');
-    if (cuponInput) { cuponInput.classList.add('form-control', ''); }
+    if (cuponInput) { cuponInput.classList.add('form-control', 'rounded-3'); }
 
     // LÓGICA DINÁMICA DE DESCUENTOS EN VIVO
     const montoVisual = document.getElementById('montoVisual');
