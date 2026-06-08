@@ -10,7 +10,7 @@ from django.core.mail import EmailMessage
 
 import random
 
-connection = mail.get_connection()
+#connection = mail.get_connection()
 
 
 def remove_accents(s):
@@ -113,15 +113,15 @@ def crear_Cliente(sender, instance, created, **kwargs):
         user.save()
         instance.user_django = user
         instance.save()
-        correo = EmailMessage(
-            'Tu cuenta GolAhora fue creada correctamente',
-            'Tu usuario es: '+instance.email,
-            'golahora@yedro.ar',
-            [instance.email],
-        )
+        #correo = EmailMessage(
+        #    'Tu cuenta GolAhora fue creada correctamente',
+        #    'Tu usuario es: '+instance.email,
+        #    'golahora@yedro.ar',
+        #    [instance.email],
+        #)
         #correo.attach_alternative(html_content, "text/html")
-        connection.open()
-        correo.send()
-        connection.send_messages(correo)
-        connection.close()
+        #connection.open()
+        #correo.send()
+        #connection.send_messages(correo)
+        #connection.close()
         print("Se ha creado el perfil de usuario correctamente")
