@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User, Group, Permission
 from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.urls import reverse
@@ -30,6 +30,10 @@ class Usuario(models.Model):
     class Meta:
         verbose_name = ("Usuario")
         verbose_name_plural = ("Usuarios")
+
+    def __str__(self):
+        return (self.nombre + " " + self.apellido)
+
 
 class Profesor(Usuario):
 
@@ -70,7 +74,7 @@ class Cliente(Usuario):
 @receiver(post_save, sender=Profesor)
 def crear_Profesor(sender, instance, created, **kwargs):
     if created:
-        nombre = instance.nombre+'_'+instance.apellido
+        nombre = instance.nombre.lower()+'_'+instance.apellido.lower()
         if User.objects.filter(username=nombre).exists():
             nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
         user = User.objects.create_user(nombre, instance.email, 'f.123456')
@@ -78,17 +82,19 @@ def crear_Profesor(sender, instance, created, **kwargs):
         user.groups.add(grupo)
         user.save()
         instance.user_django = user
+        instance.save()
         print("Se ha creado el perfil de usuario correctamente")
 
 @receiver(post_save, sender=Cliente)
 def crear_Cliente(sender, instance, created, **kwargs):
     if created:
-        nombre = instance.nombre+'_'+instance.apellido
+        nombre = instance.nombre.lower()+'_'+instance.apellido.lower()
         if User.objects.filter(username=nombre).exists():
             nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
         user = User.objects.create_user(nombre, instance.email, 'f.123456')
-        grupo, _ = Group.objects.get_or_create(name="Clientes")
+        grupo, _ = Group.objects.get_or_create(name='Clientes')
         user.groups.add(grupo)
         user.save()
         instance.user_django = user
+        instance.save()
         print("Se ha creado el perfil de usuario correctamente")

@@ -11,5 +11,5 @@ class RegistroClienteCreateView(CreateView):
     model = Cliente
     form_class = ClienteRegistroForm
     template_name = 'registro/registro_cliente_form.html'
-    success_url = reverse_lazy('inicio')
+    success_url = reverse_lazy('dashboard_bienvenida')
 
