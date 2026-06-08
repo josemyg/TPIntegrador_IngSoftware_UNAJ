@@ -9,29 +9,27 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-import os
-from pathlib import Path
-from dotenv import load_dotenv
 
+from pathlib import Path
 from django.urls import reverse_lazy
 
-load_dotenv('.env.local')
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
+SECRET_KEY = 'django-insecure-!-o7t5xi100e_5%o%i416#cm)n@ma$(s*jqq1p-ampf-*-b-j+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.getenv("DEBUG", default=0))
+DEBUG = True
 
-#ALLOWED_HOSTS = ['127.0.0.1']
-ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS","127.0.0.1").split(",")
-CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS","https://127.0.0.1").split(",")
+ALLOWED_HOSTS = ['*']
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -87,25 +85,12 @@ WSGI_APPLICATION = 'tp_integrador.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
-	
 DATABASES = {
-     'default': {
-         'ENGINE': 'django.db.backends.{}'.format(
-             os.getenv('DATABASE_ENGINE', 'sqlite3')
-         ),
-         'NAME': os.getenv('DATABASE_NAME', 'golahora'),
-         'USER': os.getenv('DATABASE_USERNAME', 'myprojectuser'),
-         'PASSWORD': os.getenv('DATABASE_PASSWORD', 'password'),
-         'HOST': os.getenv('DATABASE_HOST', '127.0.0.1'),
-         'PORT': os.getenv('DATABASE_PORT', 5432),
-     }
- }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 
 # Password validation
@@ -138,20 +123,12 @@ USE_I18N = True
 
 USE_TZ = True
 
-DEFAULT_FROM_EMAIL: 'golahora@yedro.ar'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST: ''
-EMAIL_PORT: 587
-EMAIL_USE_TLS: True
-EMAIL_USE_SSL: False
-EMAIL_HOST_USER: 'golahora@yedro.ar'
-EMAIL_HOST_PASSWORD: ''
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = 'static/'
 
 
 # Default primary key field type
