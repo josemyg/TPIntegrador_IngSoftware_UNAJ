@@ -1,4 +1,4 @@
-{% extends 'base_cliente.html' %}
+{% extends 'vistas/base_cliente.html' %}
 {% load static %}
 
 {% block title %}Mis Datos{% endblock %}
@@ -22,7 +22,7 @@
                 </div>
                 {% endfor %}
                 <button type="submit" class="btn btn-primary">Guardar</button>
-                <a href="{% url 'vistas:dashboard_cliente' object.pk %}" class="btn btn-danger">Cancelar</a>
+                <a href="{% url 'vistas:dashboard_bienvenida' %}" class="btn btn-danger">Cancelar</a>
             </form>
         </div>
     </div>
