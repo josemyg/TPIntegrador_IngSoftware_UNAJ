@@ -35,7 +35,7 @@ class Reserva(models.Model):
     hora_fin = models.TimeField(verbose_name="Hora de fin")
 
     estado = models.CharField(
-        max_length=20,
+        max_length=100,
         choices=ESTADOS,
         default='PENDIENTE'
     ) # Campo de texto para el estado de la reserva, con opciones limitadas a las definidas en ESTADOS y un valor predeterminado de 'PENDIENTE'.
