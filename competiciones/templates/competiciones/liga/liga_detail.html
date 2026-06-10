@@ -42,7 +42,7 @@
                         <tbody>
                             {% for fila_estadistica in tabla_de_posiciones %}
                             <tr>
-                                <td class="fw-bold text-muted">{{ forloop.counter }}</td>
+                                <td class="fw-bold text-muted">{{ fila_estadistica.posicion_en_tabla }}</td>
                                 <td class="fw-bold text-primary">{{ fila_estadistica.equipo.nombre }}</td>
                                 <td class="fw-bold">{{ fila_estadistica.puntos_totales }}</td>
                                 <td>{{ fila_estadistica.partidos_jugados }}</td>

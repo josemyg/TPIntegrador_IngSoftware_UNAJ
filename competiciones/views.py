@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import permission_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,DetailView
@@ -152,9 +152,25 @@ class EquipoUpdateView(UpdateView):
 
 class EquipoDeleteView(PermissionRequiredMixin, DeleteView):
     model = Equipo
-    permission_required = 'competiciones.delete_equipo'
     template_name = 'competiciones/equipo/equipo_confirm_delete.html'
     success_url = reverse_lazy('equipo_list')
+    permission_required = 'competiciones.delete_equipo'
+
+    # NUEVO: Revisamos todas las conexiones antes de dejarlo borrar
+    def dispatch(self, request, *args, **kwargs):
+        id_del_equipo = kwargs.get('pk')
+        equipo_a_evaluar = get_object_or_404(Equipo, pk=id_del_equipo)
+        
+        # Buscamos si el equipo esta atrapado en alguna relacion oficial
+        esta_en_liga = Liga.objects.filter(equipos=equipo_a_evaluar).exists()
+        esta_en_torneo = Torneo.objects.filter(equipos=equipo_a_evaluar).exists()
+        tiene_partidos = Partido.objects.filter(equipo_local=equipo_a_evaluar).exists() or Partido.objects.filter(equipo_visitante=equipo_a_evaluar).exists()
+        
+        if esta_en_liga or esta_en_torneo or tiene_partidos:
+            messages.error(request, "Integridad de Datos: No puedes eliminar este equipo porque forma parte de competiciones oficiales o tiene partidos registrados.")
+            return redirect('equipo_list') 
+            
+        return super().dispatch(request, *args, **kwargs)
 
 class LigaListView(PermissionRequiredMixin, ListView):
     model = Liga
@@ -171,10 +187,25 @@ class LigaCreateView(PermissionRequiredMixin, CreateView):
 
 class LigaUpdateView(PermissionRequiredMixin, UpdateView):
     model = Liga
-    permission_required = 'competiciones.change_liga'
     form_class = LigaForm
     template_name = 'competiciones/liga/liga_form.html'
-    success_url = reverse_lazy('liga_list')
+    permission_required = 'competiciones.change_liga'
+
+    # Le indicamos a Django hacia donde navegar despues de guardar
+    def get_success_url(self):
+        return reverse_lazy('liga_detail', kwargs={'pk': self.object.pk})
+
+    # Interceptamos la peticion leyendo la URL directamente
+    def dispatch(self, request, *args, **kwargs):
+        id_de_la_liga = kwargs.get('pk')
+        liga_a_editar = get_object_or_404(Liga, pk=id_de_la_liga)
+        
+        # Si la liga ya tiene partidos generados, bloqueamos la edicion
+        if liga_a_editar.partidos.exists():
+            messages.error(request, "Seguridad de Datos: No puedes modificar los equipos ni las reglas de una liga que ya tiene el fixture generado.")
+            return redirect('liga_detail', pk=id_de_la_liga)
+            
+        return super().dispatch(request, *args, **kwargs)
 
 class LigaDeleteView(PermissionRequiredMixin, DeleteView):
     model = Liga
@@ -475,69 +506,97 @@ def generar_fixture_torneo(request, torneo_id):
 
 @permission_required('competiciones.change_partido')
 def cargar_resultado_partido(request, partido_id):
-    partido = get_object_or_404(Partido, id=partido_id)
-    url_anterior = request.POST.get('next', request.META.get('HTTP_REFERER', '/'))
-    es_torneo = Torneo.objects.filter(id=partido.competicion_id).exists()
+    partido_evaluado = get_object_or_404(Partido, id=partido_id)
+    
+    url_de_retorno = request.POST.get('next', request.META.get('HTTP_REFERER', '/'))
+    
+    # El sistema detecta de que tipo de competicion estamos hablando
+    es_un_torneo = Torneo.objects.filter(id=partido_evaluado.competicion_id).exists()
 
     if request.method == 'POST':
-        form = CargarResultadoForm(request.POST, instance=partido)
-        if form.is_valid():
-            partido_guardado = form.save(commit=False)
+        formulario_resultado = CargarResultadoForm(request.POST, instance=partido_evaluado)
+        if formulario_resultado.is_valid():
+            partido_guardado = formulario_resultado.save(commit=False)
 
-            if es_torneo:
-                torneo_real = Torneo.objects.get(id=partido_guardado.competicion_id)
-                es_ida_vuelta = getattr(torneo_real, 'es_ida_y_vuelta', False)
-                es_ida = "(Ida)" in partido.fase
-                es_vuelta = "(Vuelta)" in partido.fase
-                
+            if es_un_torneo:
+                # ==========================================
+                # LOGICA DE TORNEOS (Requiere desempate)
+                # ==========================================
+                torneo_vinculado = Torneo.objects.get(id=partido_guardado.competicion_id)
+                es_ida_y_vuelta = getattr(torneo_vinculado, 'es_ida_y_vuelta', False)
+                es_partido_de_vuelta = "(Vuelta)" in partido_evaluado.fase
                 requiere_penales = False
                 
-                # Inteligencia del arbitro: ¿Cuando pedir penales?
-                if es_ida_vuelta:
-                    if es_vuelta:
-                        # Si es la vuelta, calculamos como va el marcador global
-                        fase_ida = partido.fase.replace("(Vuelta)", "(Ida)")
-                        partido_ida = Partido.objects.filter(
-                            competicion=torneo_real,
-                            fase=fase_ida,
-                            equipo_local=partido.equipo_visitante,
-                            equipo_visitante=partido.equipo_local
+                if es_ida_y_vuelta:
+                    if es_partido_de_vuelta:
+                        fase_de_ida = partido_evaluado.fase.replace("(Vuelta)", "(Ida)")
+                        partido_de_ida = Partido.objects.filter(
+                            competicion=torneo_vinculado,
+                            fase=fase_de_ida,
+                            equipo_local=partido_evaluado.equipo_visitante,
+                            equipo_visitante=partido_evaluado.equipo_local
                         ).first()
                         
-                        if partido_ida:
-                            global_local_actual = partido_guardado.goles_local + partido_ida.goles_visitante
-                            global_visitante_actual = partido_guardado.goles_visitante + partido_ida.goles_local
-                            if global_local_actual == global_visitante_actual:
+                        if partido_de_ida:
+                            goles_globales_local = partido_guardado.goles_local + partido_de_ida.goles_visitante
+                            goles_globales_visitante = partido_guardado.goles_visitante + partido_de_ida.goles_local
+                            if goles_globales_local == goles_globales_visitante:
                                 requiere_penales = True
                 else:
                     if partido_guardado.goles_local == partido_guardado.goles_visitante:
                         requiere_penales = True
-                        
+                
+                # Validamos que si se requieren penales, esten cargados
                 if requiere_penales:
-                    penales_l = form.cleaned_data.get('penales_local')
-                    penales_v = form.cleaned_data.get('penales_visitante')
+                    penales_del_local = partido_guardado.penales_local
+                    penales_del_visitante = partido_guardado.penales_visitante
                     
-                    if penales_l is None or penales_v is None:
+                    if penales_del_local is None or penales_del_visitante is None:
                         messages.error(request, "El resultado global termino empatado. Debes ingresar los penales.")
-                        return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
-                    if penales_l == penales_v:
+                        return render(request, 'competiciones/partido/cargar_resultado.html', {
+                            'form': formulario_resultado, 
+                            'partido': partido_evaluado, 
+                            'url_anterior': url_de_retorno,
+                            'es_un_torneo': es_un_torneo
+                        })
+                    
+                    if penales_del_local == penales_del_visitante:
                         messages.error(request, "Los penales no pueden terminar empatados.")
-                        return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
+                        return render(request, 'competiciones/partido/cargar_resultado.html', {
+                            'form': formulario_resultado, 
+                            'partido': partido_evaluado, 
+                            'url_anterior': url_de_retorno,
+                            'es_un_torneo': es_un_torneo
+                        })
+            else:
+                # ==========================================
+                # LOGICA DE LIGAS (El empate es valido)
+                # ==========================================
+                # Forzamos los penales a nulo por seguridad para no ensuciar la base de datos
+                partido_guardado.penales_local = None
+                partido_guardado.penales_visitante = None
 
+            # Guardado final unificado
             if partido_guardado.goles_local is not None and partido_guardado.goles_visitante is not None:
                 partido_guardado.jugado = True
 
             partido_guardado.save()
             messages.success(request, "Resultado guardado correctamente.")
 
-            if es_torneo:
-                verificar_y_avanzar_fase(torneo_real)
+            # Si es torneo, le avisamos al motor que verifique quien avanza
+            if es_un_torneo:
+                verificar_y_avanzar_fase(torneo_vinculado)
 
-            return redirect(url_anterior)
+            return redirect(url_de_retorno)
     else:
-        form = CargarResultadoForm(instance=partido)
+        formulario_resultado = CargarResultadoForm(instance=partido_evaluado)
 
-    return render(request, 'competiciones/partido/cargar_resultado.html', {'form': form, 'partido': partido, 'url_anterior': url_anterior})
+    return render(request, 'competiciones/partido/cargar_resultado.html', {
+        'form': formulario_resultado, 
+        'partido': partido_evaluado, 
+        'url_anterior': url_de_retorno,
+        'es_un_torneo': es_un_torneo  # Variable inyectada
+    })
 
 def calcular_tabla_posiciones_oficial(liga_evaluada):
     equipos_participantes = list(liga_evaluada.equipos.all())
@@ -657,5 +716,19 @@ def calcular_tabla_posiciones_oficial(liga_evaluada):
     # Ordenamos la lista usando nuestro motor matematico
     lista_final_estadisticas = list(diccionario_estadisticas.values())
     lista_final_estadisticas.sort(key=cmp_to_key(comparar_dos_equipos))
+    
+    # NUEVO: Asignamos el numero de posicion respetando los empates
+    for indice_actual, fila_actual in enumerate(lista_final_estadisticas):
+        if indice_actual == 0:
+            fila_actual['posicion_en_tabla'] = 1
+        else:
+            fila_anterior = lista_final_estadisticas[indice_actual - 1]
+            
+            # Si la comparacion matematica dice que empatan en absolutamente todo (retorna 0)
+            if comparar_dos_equipos(fila_actual, fila_anterior) == 0:
+                fila_actual['posicion_en_tabla'] = fila_anterior['posicion_en_tabla']
+            else:
+                # Si no empatan, la posicion es su lugar real en la lista (Indice 2 = Posicion 3)
+                fila_actual['posicion_en_tabla'] = indice_actual + 1
     
     return lista_final_estadisticas
