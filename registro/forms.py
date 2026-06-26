@@ -2,8 +2,20 @@ from django import forms
 
 from django.db.models import Subquery, OuterRef
 from gestion.models import Cliente
+from django.core.exceptions import ValidationError
+from django.contrib.auth.models import User
 
 class ClienteRegistroForm(forms.ModelForm):
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+
+        if User.objects.filter(username=email).exists():
+            raise ValidationError(
+                'Ya existe una cuenta registrada con este correo.'
+            )
+
+        return email
     class Meta:
         model = Cliente
         template_name = 'registro/registro_cliente_form.html'

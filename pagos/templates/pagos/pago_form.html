@@ -199,20 +199,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // Estilizar campos nativos de Django
     const descuentoSelect = document.querySelector('select[name="descuento"]');
-    if (descuentoSelect) { descuentoSelect.classList.add('form-select', 'rounded-3'); }
+    if (descuentoSelect) { descuentoSelect.classList.add('form-control'); }
     
     const origenSelect = document.querySelector('select[name="origen_pago"]');
     if (origenSelect) { origenSelect.classList.add('form-control'); }
 
     // Sincronizar clases en inputs de detalles cargados por Django
     const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) { fileInput.classList.add('form-control', 'rounded-3'); }
+    if (fileInput) { fileInput.classList.add('form-control'); }
 
     const t4Input = document.querySelector('input[name*="tarjeta_ultimos_4"]');
-    if (t4Input) { t4Input.classList.add('form-control', 'rounded-3'); t4Input.setAttribute('maxlength', '4'); }
+    if (t4Input) { t4Input.classList.add('form-control'); t4Input.setAttribute('maxlength', '4'); }
 
     const cuponInput = document.querySelector('input[name*="tarjeta_cupon"]');
-    if (cuponInput) { cuponInput.classList.add('form-control', 'rounded-3'); }
+    if (cuponInput) { cuponInput.classList.add('form-control'); }
 
     // LÓGICA DINÁMICA DE DESCUENTOS EN VIVO
     const montoVisual = document.getElementById('montoVisual');
