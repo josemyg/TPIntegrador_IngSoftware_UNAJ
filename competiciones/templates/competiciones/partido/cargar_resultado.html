@@ -30,8 +30,9 @@
                     </div>
                 </div>
 
+                {% if es_un_torneo %}
                 <hr>
-
+                
                 <div class="alert alert-warning py-2 mb-3">
                     <small><strong>Solo en caso de empate:</strong> Ingrese el resultado de la tanda de penales.</small>
                 </div>
@@ -46,6 +47,7 @@
                         {{ form.penales_visitante }}
                     </div>
                 </div>
+                {% endif %}
 
                 <div class="form-check d-none">
                     {{ form.jugado }}

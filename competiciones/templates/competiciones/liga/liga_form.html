@@ -25,9 +25,17 @@
                         {{ form.puntos_empate }}
                     </div>
                 </div>
+
                 <div class="mb-3">
                     <label class="form-label fw-bold">Estado</label>
                     {{ form.estado }}
+                </div>
+
+                <div class="mb-3 form-check">
+                    {{ form.es_ida_y_vuelta }}
+                    <label class="form-check-label fw-bold ms-1">
+                        Liga con formato Ida y Vuelta
+                    </label>
                 </div>
 
                 <div class="mb-4">
@@ -45,10 +53,11 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary px-4">Guardar Liga</button>
-                    <a href="{% url 'liga_list' %}" class="btn btn-secondary px-4">Cancelar</a>
+                    <button type="submit" class="btn btn-primary px-4 fw-bold shadow-sm">Guardar Liga</button>
+                    <a href="{% url 'liga_list' %}" class="btn btn-secondary px-4 shadow-sm">Cancelar</a>
                 </div>
             </form>
         </div>
     </div>
+</div>
 {% endblock %}
