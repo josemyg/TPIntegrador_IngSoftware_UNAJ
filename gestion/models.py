@@ -125,3 +125,8 @@ def crear_Cliente(sender, instance, created, **kwargs):
         #connection.send_messages(correo)
         #connection.close()
         print("Se ha creado el perfil de usuario correctamente")
+
+@receiver(pre_delete, sender=Profesor)
+def eliminar_certificado(sender, instance, **kwargs):
+    instance.certificado.delete()
+    print("Se ha eliminado el archivo del certificado correctamente.")

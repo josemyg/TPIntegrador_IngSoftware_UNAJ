@@ -40,7 +40,7 @@ class ClientePerfilUpdateView(LoginRequiredMixin, UpdateView):
 def dashboard_cliente(request):
     cliente = get_cliente_por_usuario(request.user)
     if not cliente:
-        return redirect('login')
+        return redirect('/administracion')
     # Clases
     try:
         clases = cliente.clases.all()

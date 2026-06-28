@@ -157,6 +157,85 @@
     {% block content %}
     {% endblock %}
     {% block container_end %}</div>{% endblock %}
+
+{% block modal_search %}
+
+
+<div class="modal fade" id="formulario_busqueda" tabindex="-1" aria-labelledby="buscador" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="titulo_buscador">Buscar</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+            <form method="GET" enctype="multipart/form-data">
+              {{ filter.form.as_p }}
+
+              {% for field in filter.form %}
+                <div class="col-sm-6 col-form-label text-dark mb-1">
+                    {{ field.label_tag }}
+                </div>
+                <div class="col-sm-12">
+                    {% if field.widget.attrs.type == 'checkbox' %}
+                        <span class="form-check-input">{{ field }}</span>
+                    {% endif %}
+                    {{ field }}
+                </div>
+              {% endfor %}
+            </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button class="btn btn-primary" type="submit">Buscar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+{% comment %} 
+        <div id="formulario_busqueda" class="uk-flex-top" uk-modal>
+        <div class="uk-modal-dialog uk-margin-auto-vertical">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <div class="uk-modal-header">
+                <h2 class="uk-modal-title">Buscar</h2>
+            </div>
+            <form method="GET" enctype="multipart/form-data">
+                <div class="uk-modal-body">
+                    <fieldset class="uk-fieldset">
+                        {% for field in filter.form %}
+
+                                <div class="uk-margin">
+                                    <div class="uk-container-small">
+                                        {{ field.errors }}
+                                        <label class="uk-legend">{{ field.label_tag }}</label>
+                                        <div class="uk-margin">{{ field }}</div> {% endcomment %}
+{% comment %}                                             {% if field.errors %}
+                                                <p></p>
+                                                <div class="">
+                                                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                                    {{ field.errors }}
+                                                </div>
+                                                {% if field.help_text %}
+                                                    <p class="help">{{ field.help_text|safe }}</p>
+                                                {% endif %}
+                                            {% endif %} {% endcomment %}
+{% comment %}                                         
+                                    </div>
+                                </div>
+
+                        {% endfor %}
+                    </fieldset>
+                </div>
+                <div class="uk-modal-footer uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Cancelar</button>
+                    <button class="uk-button uk-button-primary" type="submit">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div> {% endcomment %}
+
 </body>
 
 </html>

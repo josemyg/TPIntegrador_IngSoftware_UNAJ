@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/login/', LoginView.as_view(template_name='gestion/middleware/login.html'), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
-    path('', include('gestion.urls')),
+    path('administracion', include('gestion.urls')),
     path('competiciones/', include('competiciones.urls')),
     path('reservas/', include('reservas.urls')),
     path('canchas/', include('canchas.urls')),
@@ -34,7 +34,7 @@ urlpatterns = [
     path('clases_y_entrenamientos/', include('clases_y_entrenamientos.urls')),
     path('reportes/', include('reportes.urls')),
     path('registro', include('registro.urls')),
-    path('clientes/', include('vistas.urls')),
+    path('', include('vistas.urls')),
 ]
 
 if settings.DEBUG:

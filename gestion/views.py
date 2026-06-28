@@ -8,6 +8,7 @@ from django.contrib.auth import logout
 
 from .models import Cliente, Profesor
 from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm, CreateProfesorForm
+from .filters import ClienteFilter
 from reservas.models import Reserva
 from pagos.models import Pago
 from canchas.models import Cancha
@@ -94,6 +95,7 @@ class ClienteListView(PermissionRequiredMixin, ListView):
     permission_required = 'gestion.view_cliente'
     template_name = "gestion/cliente/cliente_list.html"
     context_object_name = 'cliente_list'
+    filterset_class = 'ClienteFilter'
     paginate_by = 20
     queryset = Cliente.objects.exclude(estado='baja')
 
