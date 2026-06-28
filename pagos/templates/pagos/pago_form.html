@@ -1,310 +1,428 @@
-{% extends 'base.html' %}
+{% extends base_template|default:"base.html" %}
 {% load static %}
 
-{% block title %}Gol Ahora — Panel Admin: Registrar Cobro{% endblock %}
+{% block title %}Gol Ahora — Registrar Cobro{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'pagos/css/style.css' %}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<style>
+    .cursor-pointer { cursor: pointer; }
+    .transition-all { transition: all 0.3s ease; }
+    .payment-method-card:hover { transform: translateY(-2px); border-color: #0d6efd !important; }
+</style>
 
-<div class="container my-5">
-    <div class="row justify-content-center g-4">
-        
-        <div class="col-12 col-md-5 col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 bg-light p-4 sticky-md-top" style="top: 2rem;">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h4 class="fw-bold text-dark m-0">Resumen</h4>
-                    <span class="badge bg-dark text-uppercase font-monospace px-2 py-1" style="font-size: 0.7rem; letter-spacing: 0.5px;">Modo Operador</span>
+<div class="container mt-4 mb-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        {% if request.user.is_staff %}Resumen Modo Operador{% else %}Detalle de tu Reserva{% endif %}
+                    </h5>
                 </div>
-                
-                <div class="d-flex align-items-center mb-4 pb-3 border-bottom">
-                    <div class="p-3 bg-success bg-opacity-10 text-success rounded-3 me-3">
-                        <i class="bi bi-calculator fs-4"></i>
-                    </div>
-                    <div>
-                        <span class="text-uppercase text-muted fw-bold tracking-wider small" style="font-size: 0.75rem;">Consola de Gestión</span>
-                        <h5 class="fw-bold m-0 text-success">Caja Registradora</h5>
-                    </div>
-                </div>
-
-                <div class="mb-3 d-flex justify-content-between align-items-center">
-                    <span class="text-secondary">Concepto original:</span>
-                    <span class="fw-semibold text-dark">Alquiler de Cancha</span>
-                </div>
-
-                <hr class="my-4 opacity-25">
-
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fs-5 fw-bold text-dark">Monto a Facturar</span>
-                    <span class="fs-3 fw-black text-primary" id="montoVisual" data-base="{{ form.monto.value|default:'0.00' }}">$ {{ form.monto.value|default:"0.00" }}</span>
-                </div>
-                
-                <div class="p-3 bg-white bg-opacity-50 border border-dashed rounded-3 mt-3">
-                    <p class="text-muted small mb-0">
-                        El monto final impactará directamente en los balances diarios del sistema y cerrará la cuenta corriente del turno seleccionado.
-                    </p>
+                <div class="card-body">
+                    <p class="mb-2"><strong>Concepto:</strong> Alquiler de Cancha</p>
+                    <hr>
+                    <p class="mb-1">Monto a Facturar:</p>
+                    <h3 class="text-success fw-bold">
+                        $<span id="montoVisual" data-base="{{ form.monto.value|default:'0.00' }}">{{ form.monto.value|default:"0.00" }}</span>
+                    </h3>
+                    {% if request.user.is_staff %}
+                        <p class="text-muted small mt-3">El monto final impactará directamente en los balances diarios del sistema y cerrará la cuenta corriente del turno.</p>
+                    {% else %}
+                        <p class="text-muted small mt-3">El pago será revisado por la administración para confirmar definitivamente tu turno.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <div class="col-12 col-md-7 col-lg-6">
-            <div class="card border-0 shadow-sm p-4 bg-white rounded-4">
-                
-                <div class="mb-4">
-                    <h2 class="fw-bold text-dark mb-1">Registrar Operación</h2>
-                    <p class="text-secondary small mb-0">Especifique el método recibido del cliente y los beneficios aplicables.</p>
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="card-title mb-0">
+                        {% if request.user.is_staff %}Consola de Gestión{% else %}Abonar Reserva{% endif %}
+                    </h5>
                 </div>
+                <div class="card-body">
+                    <form id="paymentForm" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
 
-                <form method="post" novalidate id="paymentForm" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger py-2 px-3 small mb-3 rounded-3">
-                             {{ form.non_field_errors.0 }}
-                        </div>
-                    {% endif %}
-                    
-                    <div class="d-none">
-                        {{ form.origen_pago }}
-                        {{ form.tipo_pago }}
-                        {{ form.monto }}
-                        {{ form.fecha }}
-                    </div>
-
-                    <label class="form-label fw-bold text-dark mb-2">Canal de Cobro</label>
-                    <div class="row g-2 mb-4">
-                        <div class="col-4">
-                            <div class="card p-3 text-center border-2 cursor-pointer payment-method-card active border-primary bg-primary bg-opacity-10" data-value="Transferencia" id="methodTransfer">
-                                <div class="mb-2 text-primary icon-container">
-                                    <i class="bi bi-bank fs-4"></i>
-                                </div>
-                                <span class="fw-bold d-block text-primary small">Transferencia</span>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Tarjeta" id="methodCard">
-                                <div class="mb-2 text-secondary icon-container">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-credit-card"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
-                                </div>
-                                <span class="fw-bold d-block text-dark small">Tarjeta Débito</span>
-                            </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="card p-3 text-center border-2 cursor-pointer payment-method-card" data-value="Efectivo" id="methodCash">
-                                <div class="mb-2 text-secondary icon-container">
-                                    <i class="bi bi-cash-coin fs-4"></i>
-                                </div>
-                                <span class="fw-bold d-block text-dark small">Efectivo Caja</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    {% if form.tipo_pago.errors %}
-                        <div class="alert alert-danger py-2 px-3 small mb-3 rounded-3">
-                             Debe seleccionar una forma de pago válida.
-                        </div>
-                    {% endif %}
-
-                    <div class="mb-4 p-3 bg-light rounded-4 border">
-                        <label class="form-label fw-bold small text-dark mb-1">
-                             Descuento Aplicable (Bonificación)
-                        </label>
-                        {{ form.descuento }} 
-                        {% if form.descuento.errors %}
-                            <div class="text-danger small mt-1">{{ form.descuento.errors.0 }}</div>
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">{{ form.non_field_errors.0 }}</div>
                         {% endif %}
-                        <div class="form-text text-muted" style="font-size: 0.75rem;">
-                            Seleccione si corresponde una promoción del cliente o un ajuste por convenio.
-                        </div>
-                    </div>
 
-                    <div id="transferDetails" class="bg-light border rounded-4 p-4 mb-4">
-                        <h6 class="fw-bold text-dark mb-3">Verificación de Transferencia</h6>
-                        <div class="mb-3">
-                            <label class="form-label small text-secondary mb-1">Cargar Archivo/Comprobante de respaldo *</label>
+                        <div class="d-none">
+                            {{ form.origen_pago }}
+                            {{ form.tipo_pago }}
+                            {{ form.monto }}
+                            {{ form.fecha }}
+                        </div>
+
+                        <h5 class="mb-3 fw-bold border-bottom pb-2">Canal de Pago</h5>
+                        {% if form.tipo_pago.errors %}
+                            <div class="alert alert-danger">Debe seleccionar una forma de pago válida.</div>
+                        {% endif %}
+
+                        <div class="row mb-4">
+                            <div class="col-md-4 mb-3">
+                                <div class="payment-method-card border rounded-3 p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center active border-primary bg-primary bg-opacity-10" data-value="Transferencia">
+                                    <div class="icon-container mb-2 text-primary">
+                                        <i class="fas fa-university fa-2x"></i>
+                                    </div>
+                                    <span class="fw-bold text-primary d-block">Transferencia</span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="payment-method-card border rounded-3 p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center" data-value="Tarjeta">
+                                    <div class="icon-container mb-2 text-secondary">
+                                        <i class="fas fa-credit-card fa-2x"></i>
+                                    </div>
+                                    <span class="fw-bold text-dark d-block">Tarjeta Débito/Crédito</span>
+                                </div>
+                            </div>
+                            {% if request.user.is_staff %}
+                            <div class="col-md-4 mb-3">
+                                <div class="payment-method-card border rounded-3 p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center" data-value="Efectivo">
+                                    <div class="icon-container mb-2 text-secondary">
+                                        <i class="fas fa-money-bill-wave fa-2x"></i>
+                                    </div>
+                                    <span class="fw-bold text-dark d-block">Efectivo Caja</span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                         <!-- SECCIÓN DESCUENTOS (SEPARADA POR ROLES) -->
+                        {% if not es_cliente %}
+                            <!-- VISTA ADMIN: SELECTOR CLÁSICO -->
+                            <div class="mb-4 bg-light p-3 rounded border">
+                                <label class="form-label text-dark fw-bold mb-2">Descuento Aplicable (Bonificación)</label>
+                                {{ form.descuento }}
+                                {% if form.descuento.errors %}
+                                    <div class="text-danger small mt-1">{{ form.descuento.errors.0 }}</div>
+                                {% endif %}
+                                <small class="text-muted mt-2 d-block">Seleccione si corresponde una promoción del cliente o un ajuste por convenio.</small>
+                            </div>
+                        {% else %}
+                            <div class="d-none">
+                                {{ form.descuento }}
+                            </div>
+                            
+                            <div class="mb-4 p-4 border rounded border-success border-opacity-50 bg-success bg-opacity-10 shadow-sm">
+                                <h6 class="fw-bold text-success mb-3"><i class="fas fa-ticket-alt me-2"></i>¿Tenés un Código de Descuento?</h6>
+                                <div class="input-group">
+                                    <input type="text" id="cuponInputWeb" class="form-control text-uppercase" placeholder="Ej: GOL2026" style="text-transform: uppercase;">
+                                    <button type="button" id="btnAplicarCupon" class="btn btn-success fw-bold px-4">Aplicar</button>
+                                </div>
+                                <div id="cuponMensaje" class="small mt-2 text-muted">Ingresá el código promocional válido para tu reserva.</div>
+                            </div>
+                        {% endif %}
+
+                        <div id="transferDetails" class="mb-4 p-3 border rounded border-primary border-opacity-25">
+                            <h6 class="fw-bold text-primary"><i class="fas fa-file-upload me-2"></i>Verificación de Transferencia</h6>
+                            
+                            {% if not request.user.is_staff %}
+                            <div class="text-center my-3 p-3 bg-white border rounded shadow-sm">
+                                <p class="mb-1 fw-bold text-dark">Escaneá este código desde tu App bancaria:</p>
+                                <img src="{{ qr_code }}" alt="QR de Pago" class="img-fluid" style="max-width: 170px;">
+                                <p class="text-muted small mt-2 mb-0">Alias: <strong class="text-dark">GOL.AHORA.CANCHAS</strong></p>
+                            </div>
+                            {% endif %}
+                            
+                            <label class="form-label mt-2">Cargar Archivo/Comprobante de respaldo *</label>
                             {{ form.comprobante_archivo }}
                             {% if form.comprobante_archivo.errors %}
                                 <div class="text-danger small mt-1">{{ form.comprobante_archivo.errors.0 }}</div>
                             {% endif %}
+                            <small class="text-muted d-block mt-1">Obligatorio para verificar la transacción bancaria.</small>
                         </div>
-                        <span class="text-muted d-block" style="font-size: 0.75rem;">Obligatorio para auditorías internas del predio.</span>
-                    </div>
 
-                    <div id="cardDetails" class="bg-light border rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-dark mb-3">Datos del Terminal de Captura (Posnet)</h6>
-                        <div class="row g-2">
-                            <div class="col-8">
-                                <label class="form-label small text-secondary mb-1">Últimos 4 dígitos del plástico *</label>
-                                {{ form.tarjeta_ultimos_4 }}
-                                {% if form.tarjeta_ultimos_4.errors %}
-                                    <div class="text-danger small mt-1">{{ form.tarjeta_ultimos_4.errors.0 }}</div>
-                                {% endif %}
+                        {% if request.user.is_staff %}
+                            <div id="cardDetails" class="mb-4 p-3 border rounded d-none bg-light">
+                                <h6 class="fw-bold text-dark"><i class="fas fa-receipt me-2"></i>Terminal de Captura (Posnet Físico)</h6>
+                                <div class="row mt-3">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Últimos 4 dígitos del plástico *</label>
+                                        {{ form.tarjeta_ultimos_4 }}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label text-muted small">Nro. de Cupón de Autorización *</label>
+                                        {{ form.tarjeta_cupon }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-4">
-                                <label class="form-label small text-secondary mb-1">Nro. de Cupón *</label>
-                                {{ form.tarjeta_cupon }}
-                                {% if form.tarjeta_cupon.errors %}
-                                    <div class="text-danger small mt-1">{{ form.tarjeta_cupon.errors.0 }}</div>
-                                {% endif %}
+                        {% else %}
+                            <div id="cardDetails" class="mb-4 p-4 border rounded shadow-sm d-none bg-white">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h6 class="fw-bold text-dark mb-0"><i class="fas fa-lock text-success me-2"></i>Pago Seguro con Tarjeta</h6>
+                                    <div><i class="fab fa-cc-visa fa-lg text-primary me-1"></i> <i class="fab fa-cc-mastercard fa-lg text-danger"></i></div>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <label class="form-label text-muted small mb-1">Número de Tarjeta</label>
+                                        <input type="text" class="form-control" id="cc-number" placeholder="0000 1111 2222 3333" maxlength="19">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label text-muted small mb-1">Nombre y Apellido (Como figura en la tarjeta)</label>
+                                        <input type="text" class="form-control" id="cc-name" placeholder="Ej: JUAN PEREZ">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted small mb-1">Vencimiento</label>
+                                        <input type="text" class="form-control" id="cc-exp" placeholder="MM/AA" maxlength="5">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label text-muted small mb-1">Código de Seguridad (CVV)</label>
+                                        <input type="password" class="form-control" id="cc-cvv" placeholder="123" maxlength="4">
+                                    </div>
+                                </div>
+                                <div class="d-none">
+                                    {{ form.tarjeta_ultimos_4 }}
+                                    {{ form.tarjeta_cupon }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if request.user.is_staff %}
+                        <div id="cashDetails" class="mb-4 d-none">
+                            <div class="alert alert-warning mb-0">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Ingreso de Efectivo Directo:</strong> Asegúrese de contar el efectivo físico antes de confirmar el cobro. Este método no requiere comprobante, pero se registrará en la cuenta corriente del cliente.
                             </div>
                         </div>
-                    </div>
+                        {% endif %}
 
-                    <div id="cashDetails" class="bg-success bg-opacity-10 border border-success-subtle rounded-4 p-4 mb-4 d-none">
-                        <h6 class="fw-bold text-success-emphasis mb-2">Ingreso de Efectivo Directo</h6>
-                        <p class="small text-dark mb-0">
-                            Asegúrese de contar el efectivo físico antes de confirmar el cobro para evitar diferencias en el arqueo final de caja al cierre de turno.
-                        </p>
-                    </div>
+                        <div id="jsAlertBlock" class="alert alert-danger d-none">
+                            <i class="fas fa-exclamation-circle me-2"></i><span id="jsAlertText"></span>
+                        </div>
 
-                    <div id="jsAlertBlock" class="alert alert-danger py-2 px-3 small mb-3 d-none rounded-3">
-                         <span id="jsAlertText"></span>
-                    </div>
-
-                    <hr class="my-4 text-muted opacity-25">
-
-                    <div class="row g-3">
-                        <div class="col-12 col-sm-4 order-2 order-sm-1">
-                            <a href="{% url 'lista_reservas' %}" class="btn btn-light btn-lg w-100 fs-6 fw-semibold py-2.5 border border-secondary-subtle rounded-3">
-                                Volver a Lista
+                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                            <a href="{% if request.user.is_staff %}{% url 'lista_reservas' %}{% else %}{% url 'vistas:cancelar_pago_y_reserva' view.kwargs.reserva_id %}{% endif %}" class="btn btn-outline-danger px-4">
+                                {% if request.user.is_staff %}Volver a Lista{% else %}Cancelar Reserva{% endif %}
                             </a>
-                        </div>
-                        <div class="col-12 col-sm-8 order-1 order-sm-2">
-                            <button type="submit" class="btn btn-primary btn-lg w-100 fs-6 fw-semibold shadow-sm py-2.5 rounded-3">
-                                 Confirmar y Registrar Pago
+
+                            <button type="submit" class="btn btn-success px-4 fw-bold">
+                                {% if request.user.is_staff %}Confirmar y Registrar Pago{% else %}Enviar Comprobante{% endif %}
                             </button>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const paymentForm = document.getElementById('paymentForm');
-    const djangoSelect = document.querySelector('select[name="tipo_pago"]');
-    const cards = document.querySelectorAll('.payment-method-card');
-    
-    const transferDetails = document.getElementById('transferDetails');
-    const cardDetails = document.getElementById('cardDetails');
-    const cashDetails = document.getElementById('cashDetails');
-    
-    const jsAlertBlock = document.getElementById('jsAlertBlock');
-    const jsAlertText = document.getElementById('jsAlertText');
+    document.addEventListener("DOMContentLoaded", function() {
+        const paymentForm = document.getElementById('paymentForm');
+        const djangoSelect = document.querySelector('select[name="tipo_pago"]');
+        const cards = document.querySelectorAll('.payment-method-card');
+        
+        const transferDetails = document.getElementById('transferDetails');
+        const cardDetails = document.getElementById('cardDetails');
+        const cashDetails = document.getElementById('cashDetails');
+        
+        const jsAlertBlock = document.getElementById('jsAlertBlock');
+        const jsAlertText = document.getElementById('jsAlertText');
+        
+        const descuentoSelect = document.querySelector('select[name="descuento"]');
+        let canalSeleccionado = "Transferencia";
 
-    let canalSeleccionado = "Transferencia"; 
+        //logica cupones web clientes
+        const cuponInputWeb = document.getElementById('cuponInputWeb');
+        const btnAplicarCupon = document.getElementById('btnAplicarCupon');
+        const cuponMensaje = document.getElementById('cuponMensaje');
 
-    // Estilizar campos nativos de Django
-    const descuentoSelect = document.querySelector('select[name="descuento"]');
-    if (descuentoSelect) { descuentoSelect.classList.add('form-control'); }
-    
-    const origenSelect = document.querySelector('select[name="origen_pago"]');
-    if (origenSelect) { origenSelect.classList.add('form-control'); }
-
-    // Sincronizar clases en inputs de detalles cargados por Django
-    const fileInput = document.querySelector('input[type="file"]');
-    if (fileInput) { fileInput.classList.add('form-control'); }
-
-    const t4Input = document.querySelector('input[name*="tarjeta_ultimos_4"]');
-    if (t4Input) { t4Input.classList.add('form-control'); t4Input.setAttribute('maxlength', '4'); }
-
-    const cuponInput = document.querySelector('input[name*="tarjeta_cupon"]');
-    if (cuponInput) { cuponInput.classList.add('form-control'); }
-
-    // LÓGICA DINÁMICA DE DESCUENTOS EN VIVO
-    const montoVisual = document.getElementById('montoVisual');
-    const precioBase = parseFloat(montoVisual.getAttribute('data-base').replace(',', '.')) || 0;
-
-    if (descuentoSelect) {
-        descuentoSelect.addEventListener('change', function() {
-            const optionText = this.options[this.selectedIndex].text;
-            const match = optionText.match(/(\d+(?:\.\d+)?)/);
-            let porcentaje = 0;
-
-            if (match && this.value !== "") {
-                porcentaje = parseFloat(match[1]);
-            }
-
-            const descuentoCalculado = (precioBase * porcentaje) / 100;
-            const montoFinal = precioBase - descuentoCalculado;
-
-            montoVisual.innerText = `$ ${montoFinal.toFixed(2)}`;
-        });
-    }
-
-    // GESTIÓN DE CANALES DE COBRO (BOTONES)
-    cards.forEach(card => {
-        card.addEventListener('click', function() {
-            cards.forEach(c => {
-                c.classList.remove('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
-                
-                const span = c.querySelector('span.fw-bold');
-                if (span) { span.classList.remove('text-primary'); span.classList.add('text-dark'); }
-                
-                const iconContainer = c.querySelector('.icon-container');
-                if (iconContainer) { iconContainer.classList.remove('text-primary'); iconContainer.classList.add('text-secondary'); }
+        // Activamos el botón también al presionar "Enter"
+        if (cuponInputWeb) {
+            cuponInputWeb.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    if (btnAplicarCupon) btnAplicarCupon.click();
+                }
             });
+        }
 
-            this.classList.add('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
-            
-            const activeSpan = this.querySelector('span.fw-bold');
-            if (activeSpan) { activeSpan.classList.remove('text-dark'); activeSpan.classList.add('text-primary'); }
-            
-            const activeIconContainer = this.querySelector('.icon-container');
-            if (activeIconContainer) { activeIconContainer.classList.remove('text-secondary'); activeIconContainer.classList.add('text-primary'); }
+        if (btnAplicarCupon && cuponInputWeb && descuentoSelect) {
+            btnAplicarCupon.addEventListener('click', function() {
+                const codigoIngresado = cuponInputWeb.value.trim().toUpperCase();
+                let cuponEncontrado = false;
 
-            canalSeleccionado = this.getAttribute('data-value');
-            
-            if (djangoSelect) {
-                for (let i = 0; i < djangoSelect.options.length; i++) {
-                    if (djangoSelect.options[i].text.toLowerCase().includes(canalSeleccionado.toLowerCase())) {
-                        djangoSelect.selectedIndex = i;
+                if (codigoIngresado === "") return;
+
+                // Recorremos las opciones ocultas de la base de datos
+                for (let i = 0; i < descuentoSelect.options.length; i++) {
+                    const opcion = descuentoSelect.options[i];
+                    
+                    if (opcion.text.toUpperCase().includes(codigoIngresado) && opcion.value !== "") {
+                        // Seleccionamos la opción oculta
+                        descuentoSelect.selectedIndex = i;
+                        descuentoSelect.dispatchEvent(new Event('change')); 
+                        
+                        cuponEncontrado = true;
+                        if (cuponMensaje) {
+                            cuponMensaje.innerHTML = `<span class="text-success fw-bold"><i class="fas fa-check-circle me-1"></i>¡Cupón "${codigoIngresado}" aplicado! Precio actualizado.</span>`;
+                        }
                         break;
                     }
                 }
-            }
 
-            transferDetails.classList.add('d-none');
-            cardDetails.classList.add('d-none');
-            cashDetails.classList.add('d-none');
+                if (!cuponEncontrado) {
+                    if (cuponMensaje) {
+                        cuponMensaje.innerHTML = `<span class="text-danger fw-bold"><i class="fas fa-times-circle me-1"></i>El cupón "${codigoIngresado}" no existe o expiró.</span>`;
+                    }
+                    descuentoSelect.selectedIndex = 0; 
+                    descuentoSelect.dispatchEvent(new Event('change')); // Resetea el precio original
+                }
+            });
+        }
+        // Estilizar campos nativos de Django
+        if (descuentoSelect) descuentoSelect.classList.add('form-select');
+        
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.classList.add('form-control');
+        
+        const t4Input = document.querySelector('input[name="tarjeta_ultimos_4"]');
+        if (t4Input) {
+            t4Input.classList.add('form-control');
+            t4Input.setAttribute('maxlength', '4');
+        }
+        
+        const cuponInput = document.querySelector('input[name*="tarjeta_cupon"]');
+        if (cuponInput) cuponInput.classList.add('form-control');
 
+        //calculadora
+        const montoVisual = document.getElementById('montoVisual');
+        const subtotalVisual = document.getElementById('subtotalVisual');
+        const descuentoRow = document.getElementById('descuentoRow');
+        const descuentoVisual = document.getElementById('descuentoVisual');
+        const montoInputDjango = document.querySelector('input[name="monto"]');
+        
+        // Obtenemos el precio original de la reserva
+        const precioBase = parseFloat(montoVisual.getAttribute('data-base').replace(',', '.')) || 0;
+        
+        if (descuentoSelect) {
+            descuentoSelect.addEventListener('change', function() {
+                const optionText = this.options[this.selectedIndex].text;
+                let porcentaje = 0;
+                
+                if (this.value !== "") {
+                    // 1. Buscamos primero si hay un número pegado al símbolo % (ej: "20%")
+                    const matchPorcentaje = optionText.match(/(\d+(?:\.\d+)?)%/);
+                    
+                    if (matchPorcentaje) {
+                        porcentaje = parseFloat(matchPorcentaje[1]); // Extrae el "20" limpio
+                    } else {
+                        
+                        const todosLosNumeros = optionText.match(/(\d+(?:\.\d+)?)/g);
+                        if (todosLosNumeros && todosLosNumeros.length > 0) {
+                            porcentaje = parseFloat(todosLosNumeros[todosLosNumeros.length - 1]);
+                        }
+                    }
+                }
+                
+                // Ejecutamos la matemática
+                const descuentoCalculado = (precioBase * porcentaje) / 100;
+                const montoFinal = precioBase - descuentoCalculado;
+                
+                // 1. Actualizamos el número grande a cobrar (Para Admin y Cliente)
+                if (montoVisual) {
+                    montoVisual.innerText = montoFinal.toFixed(2);
+                }
+                
+                // 2. Si usamos el diseño de "Ticket", mostramos la fila en rojo
+                if (porcentaje > 0) {
+                    if (descuentoVisual) descuentoVisual.innerText = descuentoCalculado.toFixed(2);
+                    if (descuentoRow) descuentoRow.classList.remove('d-none');
+                } else {
+                    if (descuentoRow) descuentoRow.classList.add('d-none');
+                }
+                
+                // 3. Forzamos la actualización del input oculto de Django para el Backend
+                if (montoInputDjango) {
+                    montoInputDjango.value = montoFinal.toFixed(2);
+                }
+            });
+        }
+        // GESTIÓN DE CANALES DE COBRO (BOTONES)
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                cards.forEach(c => {
+                    c.classList.remove('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
+                    const span = c.querySelector('span.fw-bold');
+                    if (span) { span.classList.remove('text-primary'); span.classList.add('text-dark'); }
+                    const iconContainer = c.querySelector('.icon-container');
+                    if (iconContainer) { iconContainer.classList.remove('text-primary'); iconContainer.classList.add('text-secondary'); }
+                });
+                
+                this.classList.add('active', 'border-primary', 'bg-primary', 'bg-opacity-10');
+                const activeSpan = this.querySelector('span.fw-bold');
+                if (activeSpan) { activeSpan.classList.remove('text-dark'); activeSpan.classList.add('text-primary'); }
+                const activeIconContainer = this.querySelector('.icon-container');
+                if (activeIconContainer) { activeIconContainer.classList.remove('text-secondary'); activeIconContainer.classList.add('text-primary'); }
+                
+                canalSeleccionado = this.getAttribute('data-value');
+                
+                if (djangoSelect) {
+                    for (let i = 0; i < djangoSelect.options.length; i++) {
+                        if (djangoSelect.options[i].text.toLowerCase().includes(canalSeleccionado.toLowerCase())) {
+                            djangoSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+                
+                transferDetails.classList.add('d-none');
+                cardDetails.classList.add('d-none');
+                if (cashDetails) cashDetails.classList.add('d-none');
+                
+                if (canalSeleccionado === 'Transferencia') {
+                    transferDetails.classList.remove('d-none');
+                } else if (canalSeleccionado === 'Tarjeta') {
+                    cardDetails.classList.remove('d-none');
+                } else if (canalSeleccionado === 'Efectivo' && cashDetails) {
+                    cashDetails.classList.remove('d-none');
+                }
+            });
+        });
+
+        // VALIDACIÓN ANTES DEL ENVÍO
+        paymentForm.addEventListener('submit', function(event) {
+            jsAlertBlock.classList.add('d-none');
+            
             if (canalSeleccionado === 'Transferencia') {
-                transferDetails.classList.remove('d-none');
+                if (!fileInput || !fileInput.value) {
+                    event.preventDefault();
+                    jsAlertText.innerText = "¡Atención! Debe adjuntar el comprobante bancario antes de continuar.";
+                    jsAlertBlock.classList.remove('d-none');
+                    return false;
+                }
             } else if (canalSeleccionado === 'Tarjeta') {
-                cardDetails.classList.remove('d-none');
-            } else if (canalSeleccionado === 'Efectivo') {
-                cashDetails.classList.remove('d-none');
+                {% if request.user.is_staff %}
+                    const t4 = t4Input ? t4Input.value.trim() : "";
+                    const cupon = cuponInput ? cuponInput.value.trim() : "";
+                    if (t4.length < 4 || !cupon) {
+                        event.preventDefault();
+                        jsAlertText.innerText = "¡Atención! Para cobros con Tarjeta debe ingresar los últimos 4 dígitos y el número de cupón.";
+                        jsAlertBlock.classList.remove('d-none');
+                        return false;
+                    }
+                {% else %}
+                    const ccNum = document.getElementById('cc-number') ? document.getElementById('cc-number').value.replace(/\s/g, '') : "";
+                    const ccName = document.getElementById('cc-name') ? document.getElementById('cc-name').value.trim() : "";
+                    const ccExp = document.getElementById('cc-exp') ? document.getElementById('cc-exp').value.trim() : "";
+                    const ccCvv = document.getElementById('cc-cvv') ? document.getElementById('cc-cvv').value.trim() : "";
+
+                    if (ccNum.length < 14 || !ccName || ccExp.length < 4 || ccCvv.length < 3) {
+                        event.preventDefault();
+                        jsAlertText.innerText = "¡Atención! Por favor completa todos los datos de tu tarjeta para procesar el pago.";
+                        jsAlertBlock.classList.remove('d-none');
+                        return false;
+                    }
+                    
+                    if (t4Input) t4Input.value = ccNum.slice(-4);
+                    if (cuponInput) cuponInput.value = Math.floor(100000 + Math.random() * 900000).toString();
+                {% endif %}
             }
         });
-    });
-
-    // VALIDACIÓN ANTES DEL ENVÍO
-    paymentForm.addEventListener('submit', function(event) {
-        jsAlertBlock.classList.add('d-none');
-        
-        if (canalSeleccionado === 'Transferencia') {
-            if (!fileInput || !fileInput.value) {
-                event.preventDefault();
-                jsAlertText.innerText = "¡Atención! Debe adjuntar obligatoriamente el archivo del comprobante bancario antes de continuar.";
-                jsAlertBlock.classList.remove('d-none');
-                return false;
-            }
-        } 
-        else if (canalSeleccionado === 'Tarjeta') {
-            const t4 = t4Input ? t4Input.value.trim() : "";
-            const cupon = cuponInput ? cuponInput.value.trim() : "";
-            
-            if (t4.length < 4 || !cupon) {
-                event.preventDefault();
-                jsAlertText.innerText = "¡Atención! Para cobros con Tarjeta debe ingresar los últimos 4 dígitos y el número de cupón.";
-                jsAlertBlock.classList.remove('d-none');
-                return false;
-            }
-        }
-    });
-});
+    }); 
 </script>
 {% endblock %}

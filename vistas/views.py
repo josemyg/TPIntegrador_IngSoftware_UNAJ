@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from datetime import datetime, timedelta,time
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
@@ -170,22 +171,115 @@ def mis_reservas(request):
     return render(request, 'vistas/mis_reservas.html', {'reservas': reservas})
 
 
+
 @login_required
 def mis_reservas_crear(request):
     cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')  
     if request.method == 'POST':
-        form = ReservaForm(request.POST)
-        if form.is_valid():
-            reserva = form.save(commit=False)
-            reserva.cliente = cliente
-            reserva.save()
-            messages.success(request, "Reserva creada exitosamente.")
-            return redirect('vistas:mis_reservas')
-        else:
-            messages.error(request, "Error en el formulario. Verifica los datos.")
+        cancha_id = request.POST.get('cancha')
+        fecha = request.POST.get('fecha')
+        hora_inicio = request.POST.get('hora_inicio')
+        
+        if cancha_id and fecha and hora_inicio:
+            cancha = get_object_or_404(Cancha, id=cancha_id)
+            hora_inicio_dt = datetime.strptime(hora_inicio, '%H:%M')
+            hora_fin_dt = hora_inicio_dt + timedelta(minutes=60)
+            
+           
+            reserva = Reserva.objects.create(
+                cancha=cancha,
+                fecha=fecha,
+                hora_inicio=hora_inicio_dt.time(),
+                hora_fin=hora_fin_dt.time(),
+                cliente=cliente,
+                estado='PENDIENTE',
+                precio_final=cancha.tipo.precio_hora
+            )
+            return redirect('pago_create_reserva', reserva_id=reserva.id)
+    canchas = Cancha.objects.filter(estado='DISPONIBLE')
+    reservas = None
+    horarios_libres = []
+    
+    hoy_dt = datetime.today()
+    max_fecha_dt = hoy_dt + timedelta(days=7)
+    hoy_str = hoy_dt.strftime('%Y-%m-%d')
+    max_fecha_str = max_fecha_dt.strftime('%Y-%m-%d')
+    
+    fecha = request.GET.get('fecha')
+    cancha_id = request.GET.get('cancha')
+    
+    if fecha:
+        try:
+            fecha_seleccionada = datetime.strptime(fecha, '%Y-%m-%d')
+            if fecha_seleccionada.date() < hoy_dt.date() or fecha_seleccionada.date() > max_fecha_dt.date():
+                fecha = hoy_str
+        except ValueError:
+            fecha = hoy_str
+            
+    if fecha and cancha_id:
+        reservas = Reserva.objects.filter(
+            fecha=fecha, cancha_id=cancha_id
+        ).exclude(estado__startswith='CANCELADA').order_by('hora_inicio')
+        
+        intervalos_ocupados = [(r.hora_inicio, r.hora_fin) for r in reservas]
+        
+        hora_actual = datetime.combine(datetime.today(), time(8, 0))
+        hora_cierre = datetime.combine(datetime.today(), time(23, 0))
+        
+        while hora_actual < hora_cierre:
+            inicio = hora_actual.time()
+            fin = (hora_actual + timedelta(minutes=60)).time()
+            es_pasado = False
+            if fecha == hoy_str:
+                if inicio <= datetime.now().time():
+                    es_pasado = True
+            ocupado = any(
+                hora_inicio_res < fin and hora_fin_res > inicio
+                for hora_inicio_res, hora_fin_res in intervalos_ocupados
+            )
+            
+            if not ocupado and not es_pasado:
+                horarios_libres.append({
+                    'hora_inicio': inicio.strftime('%H:%M'),
+                    'texto': f"{inicio.strftime('%H:%M')} - {fin.strftime('%H:%M')}"
+                })
+            hora_actual += timedelta(minutes=60)
+    fecha_obj = None
+    if fecha:
+        fecha_obj = datetime.strptime(fecha, '%Y-%m-%d')
+
+    return render(request, 'vistas/mis_reservas_form.html', {
+        'canchas': canchas,
+        'reservas': reservas,
+        'fecha': fecha,
+        'fecha_obj': fecha_obj,
+        'cancha_id': cancha_id,
+        'horarios_libres': horarios_libres,
+        'hoy': hoy_str,
+        'max_fecha': max_fecha_str,
+    })
+
+@login_required
+def mis_reservas_cancelar(request, reserva_id):
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
+    reserva = get_object_or_404(Reserva, id=reserva_id, cliente=cliente)
+    ahora = datetime.now()
+    fecha_reserva = datetime.combine(reserva.fecha, reserva.hora_inicio)
+    diferencia = fecha_reserva - ahora
+
+    if diferencia < timedelta(hours=6):
+        reserva.estado = 'CANCELADA CON CARGO'
+        messages.error(request, 'La reserva fue cancelada fuera del plazo de 6hs permitido. Se aplicó un cargo a tu cuenta.')
     else:
-        form = ReservaForm()
-    return render(request, 'vistas/mis_reservas_form.html', {'form': form})
+        reserva.estado = 'CANCELADA CON REEMBOLSO'
+        messages.success(request, 'La reserva fue cancelada correctamente y a tiempo. Se procesará el reembolso o anulación del pago.')
+
+    reserva.save()
+    return redirect('vistas:mis_reservas')
 
 
 @login_required
@@ -197,6 +291,17 @@ def mis_pagos(request):
     total_adeudado = sum(p.monto_final for p in pagos if p.estado == 'PENDIENTE')
     return render(request, 'vistas/mis_pagos.html', {'pagos': pagos, 'total_adeudado': total_adeudado})
 
+
+@login_required
+def cancelar_pago_y_reserva(request, reserva_id):
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
+    reserva = get_object_or_404(Reserva, id=reserva_id, cliente=cliente)
+    Pago.objects.filter(reserva=reserva).delete()
+    reserva.delete()
+    messages.info(request, "Reserva cancelada")
+    return redirect('vistas:mis_reservas')
 
 @login_required
 def mis_inscripciones(request):

@@ -1,55 +1,138 @@
-{% extends 'vistas/base_cliente.html' %}
+{% extends 'vistas/base_cliente.html' %} 
 {% load static %}
 
-{% block title %}Mis Pagos - Gol Ahora{% endblock %}
+{% block title %}Historial de Pagos - Gol Ahora{% endblock %} 
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Mis Pagos</h2>
-    <div class="row mb-3">
-        <div class="col">
-            <div class="alert alert-info">
-                <strong>Total adeudado:</strong> ${{ total_adeudado }}
-            </div>
+<link rel="stylesheet" href="{% static 'vistas/css/style.css' %}">
+<div class="container py-4 mb-5 mx-auto" style="max-width: 1000px;">
+    
+    <!-- Cabecera con Ícono Financiero y Resumen -->
+    <div class="row align-items-center mb-5 fade-in-up">
+        <div class="col-md-7 text-center text-md-start mb-4 mb-md-0">
+            <h2 class="fw-bolder text-dark mb-2"><i class="fas fa-file-invoice-dollar text-primary me-2"></i>Tus Movimientos</h2>
+            <p class="text-muted mb-0 fs-5">Historial completo de comprobantes y estado de tu cuenta.</p>
         </div>
-    </div>
-    <div class="card shadow">
-        <div class="card-body">
-            {% if pagos %}
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Concepto</th>
-                                <th>Monto</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for pago in pagos %}
-                            <tr>
-                                <td>{{ pago.get_origen_pago_display }}</td>
-                                <td>${{ pago.monto_final }}</td>
-                                <td>{{ pago.fecha|date:'d/m/Y' }}</td>
-                                <td>
-                                    {% if pago.estado == 'PAGADO' %}
-                                        <span class="badge bg-success">Pagado</span>
-                                    {% elif pago.estado == 'PENDIENTE' %}
-                                        <span class="badge bg-warning">Pendiente</span>
-                                    {% elif pago.estado == 'RECHAZADO' %}
-                                        <span class="badge bg-danger">Rechazado</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+        
+        <div class="col-md-5 text-center text-md-end">
+            {% if total_adeudado > 0 %}
+                <div class="resumen-card alert-gradient border-0 rounded-4 p-4 d-inline-block shadow-sm card-hover-elevate text-md-end text-center w-100" style="max-width: 320px;">
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-end mb-1">
+                        <i class="fas fa-exclamation-circle text-white me-2 opacity-75"></i>
+                        <span class="text-white small fw-bold text-uppercase letter-spacing-1">Saldo Pendiente</span>
+                    </div>
+                    <span class="display-6 fw-black text-white d-block mt-1">${{ total_adeudado }}</span>
                 </div>
             {% else %}
-                <p class="text-muted">No hay pagos registrados.</p>
+                <div class="resumen-card success-gradient border-0 rounded-4 p-4 d-inline-block shadow-sm card-hover-elevate text-md-end text-center w-100" style="max-width: 320px;">
+                    <div class="d-flex align-items-center justify-content-center justify-content-md-end mb-1">
+                        <i class="fas fa-shield-check text-white me-2 opacity-75"></i>
+                        <span class="text-white small fw-bold text-uppercase letter-spacing-1">Estado de Cuenta</span>
+                    </div>
+                    <span class="fs-4 fw-bold text-white d-block mt-2">Cuenta al día</span>
+                </div>
             {% endif %}
         </div>
     </div>
+
+    <!-- Lista de Pagos -->
+    {% if pagos %}
+        <div class="row g-4">
+            {% for pago in pagos %}
+            <div class="col-12 fade-in-up" style="animation-delay: 0.{{ forloop.counter }}s;">
+                
+                <!-- Tarjeta de Movimiento -->
+                <div class="card border-0 shadow-sm rounded-4 tarjeta-movimiento border-start border-5 
+                    {% if pago.estado == 'PAGADO' %}border-success
+                    {% elif pago.estado == 'PENDIENTE' %}border-warning
+                    {% elif pago.estado == 'RECHAZADO' %}border-danger{% endif %}">
+                    
+                    <div class="card-body p-3 p-md-4">
+                        <div class="row align-items-center text-center text-md-start gy-3">
+                            
+                            <!-- 1. IDENTIDAD FINANCIERA: Fecha -->
+                            <div class="col-12 col-md-2">
+                                <div class="bg-primary bg-opacity-10 rounded-4 py-2 px-3 text-center border border-primary border-opacity-10 text-primary mx-auto mx-md-0" style="max-width: 100px;">
+                                    <span class="small text-uppercase fw-bold d-block letter-spacing-1">{{ pago.fecha|date:'M' }}</span>
+                                    <span class="fs-2 fw-bolder lh-1 d-block my-1">{{ pago.fecha|date:'d' }}</span>
+                                    <span class="small fw-bold opacity-75">{{ pago.fecha|date:'Y' }}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 2. Detalles del Movimiento con ÍCONOS -->
+                            <div class="col-12 col-md-4">
+                                <h5 class="fw-bolder text-dark mb-1">{{ pago.get_origen_pago_display }}</h5>
+                                
+                                {% if pago.reserva %}
+                                    <p class="text-muted small mb-2">
+                                        <i class="fas fa-map-marker-alt text-primary opacity-75 me-1"></i>{{ pago.reserva.cancha.nombre }}
+                                    </p>
+                                {% endif %}
+                                
+                                <div class="d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border border-light shadow-sm mt-1">
+                                    {% if 'Efectivo' in pago.tipo_pago.nombre %}
+                                        <i class="fas fa-money-bill-wave text-success me-2"></i>
+                                    {% elif 'Tarjeta' in pago.tipo_pago.nombre or 'Débito' in pago.tipo_pago.nombre or 'Credito' in pago.tipo_pago.nombre %}
+                                        <i class="fas fa-credit-card text-warning me-2"></i>
+                                    {% elif 'Transferencia' in pago.tipo_pago.nombre %}
+                                        <i class="fas fa-exchange-alt text-info me-2"></i>
+                                    {% else %}
+                                        <i class="fas fa-wallet text-secondary me-2"></i>
+                                    {% endif %}
+                                    <span class="text-muted small fw-bold">{{ pago.tipo_pago.nombre|default:"A definir" }}</span>
+                                </div>
+                            </div>
+
+                            <!-- 3. Monto y Estado -->
+                            <div class="col-12 col-md-3">
+                                <span class="d-block d-md-none text-muted small fw-bold mb-1">Monto de transacción</span>
+                                <h3 class="fw-black mb-2 text-dark">${{ pago.monto_final }}</h3>
+                                
+                                {% if pago.estado == 'PAGADO' %}
+                                    <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success px-3 py-1 shadow-sm"><i class="fas fa-check-circle me-1"></i>Aprobado</span>
+                                {% elif pago.estado == 'PENDIENTE' %}
+                                    <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning px-3 py-1 shadow-sm"><i class="fas fa-clock me-1"></i>En Revisión</span>
+                                {% elif pago.estado == 'RECHAZADO' %}
+                                    <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger px-3 py-1 shadow-sm"><i class="fas fa-times-circle me-1"></i>Rechazado</span>
+                                {% endif %}
+                            </div>
+
+                            <!-- 4. Acciones (Recibo) -->
+                            <div class="col-12 col-md-3 text-center text-md-end mt-3 mt-md-0">
+                                {% if pago.estado == 'PAGADO' and pago.recibo %}
+                                    <a href="{% url 'recibo_descargar' pago.recibo.id %}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold shadow-sm hover-boton w-100" target="_blank" title="Descargar Comprobante">
+                                        <i class="fas fa-download me-1"></i> Recibo
+                                    </a>
+                               
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small fst-italic"><i class="fas fa-minus me-1"></i>Sin comprobante</span>
+                                {% endif %}
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+    {% else %}
+        <!-- Pantalla Vacía Moderna -->
+        <div class="card border-0 shadow-sm rounded-4 text-center py-5 fade-in-up bg-white">
+            <div class="card-body py-5">
+                <div class="bg-light rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 100px; height: 100px;">
+                    <i class="fas fa-file-invoice-dollar fa-3x text-primary opacity-50"></i>
+                </div>
+                <h4 class="fw-bold text-dark">Aún no tenés movimientos</h4>
+                <p class="text-muted mb-4 max-w-sm mx-auto">Cuando realices tu primera reserva, el detalle de tu pago aparecerá aquí.</p>
+                <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn btn-primary fw-bold rounded-pill px-4 py-2 shadow-sm hover-boton">
+                    <i class="fas fa-plus me-2"></i>Crear primera reserva
+                </a>
+            </div>
+        </div>
+    {% endif %}
+
 </div>
+
 {% endblock %}
