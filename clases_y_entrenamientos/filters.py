@@ -37,7 +37,7 @@ class EntrenamientoFilter(django_filters.FilterSet):
     profesor = django_filters.ModelChoiceFilter(queryset=Profesor.objects.all(), lookup_expr='icontains', widget=forms.TextInput(attrs={'class':'form-control'}))
     cancha = django_filters.ModelChoiceFilter(queryset=Cancha.objects.all(), lookup_expr='icontains', widget=forms.TextInput(attrs={'class':'form-control'}))
     reserva = django_filters.ModelChoiceFilter(queryset=Reserva.objects.all(), lookup_expr='icontains', widget=forms.TextInput(attrs={'class':'form-control'}))
-    estado = django_filters.ChoiceFilter(choices=Clase.ESTADO_OPCIONES , widget=forms.Select(attrs={'class':'form-control'}))
+    estado = django_filters.ChoiceFilter(choices=Entrenamiento.ESTADO_OPCIONES , widget=forms.Select(attrs={'class':'form-control'}))
 
     class Meta:
         model = Entrenamiento

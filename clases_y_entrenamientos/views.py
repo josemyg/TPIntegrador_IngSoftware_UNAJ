@@ -111,13 +111,13 @@ def tomar_asistencia_clase(request, pk):
 # VISTAS DE ENTRENAMIENTOS
 
 
-class EntrenamientoListView(PermissionRequiredMixin, ListView):
+class EntrenamientoListView(PermissionRequiredMixin, FilterView):
     model = Entrenamiento
     permission_required = 'clases_y_entrenamientos.view_entrenamiento'
+    filterset_class = EntrenamientoFilter
     template_name = 'clases_y_entrenamientos/entrenamiento/entrenamiento_list.html'
     context_object_name = 'entrenamiento_list'
-    paginate_by = 10
-
+    paginate_by = 25
 
 class EntrenamientoCreateView(PermissionRequiredMixin, CreateView):
     model = Entrenamiento
