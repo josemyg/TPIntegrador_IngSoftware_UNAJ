@@ -10,17 +10,28 @@ from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import permission_required
 
+from django_filters.views import FilterView
+
 from .models import AsistenciaClase, Entrenamiento, Clase, AsistenciaEntrenamiento
 from .forms import EntrenamientoForm, ClaseForm
+from .filters import ClaseFilter, EntrenamientoFilter
 
-
-class ClaseListView(PermissionRequiredMixin, ListView):
+""" class ClaseListView(PermissionRequiredMixin, ListView):
     model = Clase
     permission_required = 'clases_y_entrenamientos.view_clase'
     template_name = 'clases_y_entrenamientos/clase/clase_list.html'
     context_object_name = 'clase_list'
-    paginate_by = 10
+    paginate_by = 10 """
 
+
+class ClaseListView(PermissionRequiredMixin, FilterView):
+    model = Clase
+    permission_required = 'clases_y_entrenamientos.view_clase'
+    filterset_class = ClaseFilter
+    template_name = 'clases_y_entrenamientos/clase/clase_list.html'
+    context_object_name = 'clase_list'
+    queryset = Clase.objects.all()
+    paginate_by = 25
 
 class ClaseCreateView(PermissionRequiredMixin, CreateView):
     model = Clase

@@ -11,8 +11,12 @@ Lista de Clases
 
   <div class="container">
     <div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="fw-bold text-dark mb-0">Lista de Clases</h1>
-    <a href="{% url 'clases_y_entrenamientos:clase_create' %}" class="btn btn-primary">Nueva Clase</a>
+      <h1 class="fw-bold text-dark mb-0">Clases</h1>
+      <div>
+          <a data-bs-toggle="modal" href="#formulario_busqueda"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#245235" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg></a>
+          <a href="{% url 'clases_y_entrenamientos:clase_list' %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-x-icon lucide-funnel-x"><path d="M12.531 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14v6a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341l.427-.473"/><path d="m16.5 3.5 5 5"/><path d="m21.5 3.5-5 5"/></svg></a>
+          <a href="{% url 'clases_y_entrenamientos:clase_create' %}" class="btn btn-primary">Nueva Clase</a>
+      </div>
     </div>
     <table class="table table-striped">
       <thead>
