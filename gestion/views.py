@@ -15,7 +15,7 @@ from clases_y_entrenamientos.models import Clase, Entrenamiento, AsistenciaClase
 from competiciones.models import Equipo, Competicion, Liga, Torneo
 from .models import Cliente, Profesor
 from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm, CreateProfesorForm
-from .filters import ClienteFilter
+from .filters import ClienteFilter, ProfesorFilter
 
 
 
@@ -42,6 +42,7 @@ class ProfesoresaValidarListView(PermissionRequiredMixin, ListView):
 class ProfesorListView(PermissionRequiredMixin, FilterView):
     model = Profesor
     permission_required = 'profesor.view_profesor'
+    filterset_class = ProfesorFilter
     template_name = "gestion/profesor/profesor_list.html"
     context_object_name = 'profesor_list'
     queryset = Profesor.objects.exclude(
@@ -51,6 +52,7 @@ class ProfesorListView(PermissionRequiredMixin, FilterView):
 class ProfesoresaValidarListView(PermissionRequiredMixin, FilterView):
     model = Profesor
     permission_required = 'profesor.view_profesor'
+    filterset_class = ProfesorFilter
     template_name = 'gestion/profesor/profesor_list_validar.html'
     context_object_name = 'profesor_list'
     queryset = Profesor.objects.filter(estado='en_validacion')

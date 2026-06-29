@@ -77,8 +77,14 @@ class Profesor(Usuario):
 
 class Cliente(Usuario):
 
+    estados = {
+    'activo': 'Activo',
+    'inactivo': 'Inactivo',
+    'baja': 'Baja',
+    }
+
     fechaAlta = models.CharField(("Fecha de Alta"), max_length=20)
-    estado = models.CharField(("Estado"), max_length=50)
+    estado = models.CharField(("Estado"), choices=estados, default='activo', max_length=50)
     esSocio = models.BooleanField(("Es Socio"), default=False)
 
     class Meta:
