@@ -1,21 +1,25 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth import logout
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
-from django.contrib.auth.decorators import permission_required
-from django.contrib.auth import logout
 
-from .models import Cliente, Profesor
-from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm, CreateProfesorForm
-from .filters import ClienteFilter
+from django_filters.views import FilterView
+
 from reservas.models import Reserva
 from pagos.models import Pago
 from canchas.models import Cancha
 from clases_y_entrenamientos.models import Clase, Entrenamiento, AsistenciaClase, AsistenciaEntrenamiento
 from competiciones.models import Equipo, Competicion, Liga, Torneo
+from .models import Cliente, Profesor
+from .forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm, CreateProfesorForm
+from .filters import ClienteFilter
 
 
+
+"""
 class ProfesorListView(PermissionRequiredMixin, ListView):
     model = Profesor
     permission_required = 'profesor.view_profesor'
@@ -25,8 +29,7 @@ class ProfesorListView(PermissionRequiredMixin, ListView):
     queryset = Profesor.objects.exclude(
         estado='baja').exclude(estado='en_validacion')
     paginate_by = 20
-
-
+    
 class ProfesoresaValidarListView(PermissionRequiredMixin, ListView):
     model = Profesor
     permission_required = 'profesor.view_profesor'
@@ -34,7 +37,24 @@ class ProfesoresaValidarListView(PermissionRequiredMixin, ListView):
     context_object_name = 'profesor_list'
     queryset = Profesor.objects.filter(estado='en_validacion')
     paginate_by = 20
+"""
 
+class ProfesorListView(PermissionRequiredMixin, FilterView):
+    model = Profesor
+    permission_required = 'profesor.view_profesor'
+    template_name = "gestion/profesor/profesor_list.html"
+    context_object_name = 'profesor_list'
+    queryset = Profesor.objects.exclude(
+        estado='baja').exclude(estado='en_validacion')
+    paginate_by = 25
+
+class ProfesoresaValidarListView(PermissionRequiredMixin, FilterView):
+    model = Profesor
+    permission_required = 'profesor.view_profesor'
+    template_name = 'gestion/profesor/profesor_list_validar.html'
+    context_object_name = 'profesor_list'
+    queryset = Profesor.objects.filter(estado='en_validacion')
+    paginate_by = 20
 
 class ProfesorCreateView(PermissionRequiredMixin, CreateView):
     model = Profesor
@@ -93,12 +113,32 @@ def ConfirmarVerificacionProfesor(request, pk):
 class ClienteListView(PermissionRequiredMixin, ListView):
     model = Cliente
     permission_required = 'gestion.view_cliente'
+    filterset_class = ClienteFilter
     template_name = "gestion/cliente/cliente_list.html"
     context_object_name = 'cliente_list'
-    filterset_class = 'ClienteFilter'
-    paginate_by = 20
+    paginate_by = 25
     queryset = Cliente.objects.exclude(estado='baja')
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = self.filterset
+        return context
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        self.filterset = self.filterset_class(self.request.GET, queryset=qs)
+        return self.filterset.qs.distinct()
+
+"""
+class ClienteListView(PermissionRequiredMixin, FilterView):
+    model = Cliente
+    permission_required = 'gestion.view_cliente'
+    filterset_class = ClienteFilter
+    template_name = "gestion/cliente/cliente_list.html"
+    context_object_name = 'cliente_list'
+    paginate_by = 25
+    queryset = Cliente.objects.exclude(estado='baja')
+"""
 
 class ClienteCreateView(PermissionRequiredMixin, CreateView):
     model = Cliente

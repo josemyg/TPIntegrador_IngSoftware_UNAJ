@@ -14,7 +14,6 @@ import random
 
 
 def remove_accents(s):
-    """Remove accents from a string."""
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
 
 def crear_password(length=10):
