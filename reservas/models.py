@@ -90,7 +90,9 @@ def actualizar_estado_reserva(sender, instance, **kwargs):
 
     reserva = instance.reserva
 
-    nuevo_estado = reserva.estado
+    # Si el pago no pertenece a una reserva (ej. inscripción), no hacemos nada
+    if reserva is None:
+        return
 
     if instance.estado == 'PAGADO':
         nuevo_estado = 'CONFIRMADA'
@@ -98,7 +100,7 @@ def actualizar_estado_reserva(sender, instance, **kwargs):
     elif instance.estado == 'RECHAZADO':
         nuevo_estado = 'CANCELADA'
 
-    elif instance.estado == 'PENDIENTE':
+    else:
         nuevo_estado = 'PENDIENTE'
 
     if reserva.estado != nuevo_estado:
