@@ -1,12 +1,14 @@
 from django.urls import path
 from . import views
 from django.conf.urls import include
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
+from django.urls import path, reverse_lazy
 
 
 app_name = 'vistas'
 
 urlpatterns = [
-    path('bienvenido', views.dashboard_cliente, name='dashboard_bienvenida'),
+    path('', views.dashboard_cliente, name='dashboard_bienvenida'),
     path('perfil/editar/', views.ClientePerfilUpdateView.as_view(), name='cliente_perfil_update'),
     path('mis-actividades/', views.mis_actividades, name='mis_actividades'),
     path('mis-reservas/', views.mis_reservas, name='mis_reservas'),
@@ -16,4 +18,10 @@ urlpatterns = [
     path('mis-pagos/', views.mis_pagos, name='mis_pagos'),
     path('mis-inscripciones/', views.mis_inscripciones, name='mis_inscripciones'),
     path('mis-inscripciones/pagar/<int:competicion_id>/<int:equipo_id>/', views.pagar_inscripcion_cliente, name='pagar_inscripcion_cliente'),
+    path('cambiar-contrasena/', PasswordChangeView.as_view(
+    template_name='vistas/cambio_contrasena.html',
+    success_url=reverse_lazy('vistas:cambio_contrasena_exitoso')
+), name='cambio_contrasena'),
+    path('cambiar-contrasena/exitoso/', PasswordChangeDoneView.as_view(template_name='vistas/cambio_contrasena_exitoso.html'), 
+    name='cambio_contrasena_exitoso'),
 ]

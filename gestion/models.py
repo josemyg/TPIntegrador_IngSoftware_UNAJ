@@ -14,7 +14,6 @@ import random
 
 
 def remove_accents(s):
-    """Remove accents from a string."""
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
 
 def crear_password(length=10):
@@ -78,8 +77,14 @@ class Profesor(Usuario):
 
 class Cliente(Usuario):
 
+    estados = {
+    'activo': 'Activo',
+    'inactivo': 'Inactivo',
+    'baja': 'Baja',
+    }
+
     fechaAlta = models.CharField(("Fecha de Alta"), max_length=20)
-    estado = models.CharField(("Estado"), max_length=50)
+    estado = models.CharField(("Estado"), choices=estados, default='activo', max_length=50)
     esSocio = models.BooleanField(("Es Socio"), default=False)
 
     class Meta:
@@ -125,3 +130,8 @@ def crear_Cliente(sender, instance, created, **kwargs):
         #connection.send_messages(correo)
         #connection.close()
         print("Se ha creado el perfil de usuario correctamente")
+
+@receiver(pre_delete, sender=Profesor)
+def eliminar_certificado(sender, instance, **kwargs):
+    instance.certificado.delete()
+    print("Se ha eliminado el archivo del certificado correctamente.")

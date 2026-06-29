@@ -157,6 +157,43 @@
     {% block content %}
     {% endblock %}
     {% block container_end %}</div>{% endblock %}
+
+{% block modal_search %}
+
+
+<div class="modal fade" id="formulario_busqueda" tabindex="-1" aria-labelledby="buscador" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="titulo_buscador">Buscar</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+            <form method="GET" enctype="multipart/form-data">
+              {% for field in filter.form %}
+                {{ field.errors }}
+                <div class="col-sm-6 col-form-label text-dark mb-1">
+                    {{ field.label_tag }}
+                </div>
+                <div class="col-sm-12">
+                    {% if field.widget.attrs.type == 'checkbox' %}
+                        <span class="form-check-input">{{ field }}</span>
+                    {% endif %}
+                    {{ field }}
+                </div>
+              {% endfor %}
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button class="btn btn-primary" type="submit">Buscar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
 </body>
 
 </html>

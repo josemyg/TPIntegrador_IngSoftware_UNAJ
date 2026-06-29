@@ -1,0 +1,22 @@
+{% extends 'vistas/base_cliente.html' %}
+{% load static %}
+
+{% block title %}Contraseña Actualizada - Gol Ahora{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">¡Contraseña actualizada!</h5>
+                </div>
+                <div class="card-body">
+                    <p>Tu contraseña fue cambiada correctamente.</p>
+                    <a href="{% url 'vistas:dashboard_bienvenida' %}" class="btn btn-primary">Volver al Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
