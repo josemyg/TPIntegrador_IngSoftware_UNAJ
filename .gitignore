@@ -18,5 +18,7 @@ archivo/
 */migrations/00*.py
 !*/migrations/__init__.py
 .env.dev
+.env.prd
+.env.prod
 tp_integrador/settings.py
 tp_integrador/urls.py
