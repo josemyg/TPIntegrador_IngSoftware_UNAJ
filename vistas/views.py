@@ -37,7 +37,7 @@ class ClientePerfilUpdateView(LoginRequiredMixin, UpdateView):
         return get_cliente_por_usuario(self.request.user)
 
     def get_success_url(self):
-        return reverse_lazy('vistas:dashboard_bienvenida')
+        return reverse_lazy('vistas:dashboard_cliente')
 
 @login_required
 def dashboard_cliente(request):

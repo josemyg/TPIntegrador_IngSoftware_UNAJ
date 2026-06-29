@@ -8,7 +8,7 @@ from django.urls import path, reverse_lazy
 app_name = 'vistas'
 
 urlpatterns = [
-    path('', views.dashboard_cliente, name='dashboard_bienvenida'),
+    path('', views.dashboard_cliente, name='dashboard_cliente'),
     path('perfil/editar/', views.ClientePerfilUpdateView.as_view(), name='cliente_perfil_update'),
     path('mis-actividades/', views.mis_actividades, name='mis_actividades'),
     path('mis-reservas/', views.mis_reservas, name='mis_reservas'),
