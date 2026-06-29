@@ -110,7 +110,8 @@ def crear_Cliente(sender, instance, created, **kwargs):
         #nombre = remove_accents(nombre)
         #if User.objects.filter(username=nombre).exists():
         #    nombre = instance.nombre+'_'+instance.apellido+str(User.objects.count()+1)
-        user = User.objects.create_user(instance.email, instance.email, 'f.123456')
+        instance.password = crear_password()
+        user = User.objects.create_user(instance.email, instance.email, instance.password)
         grupo, _ = Group.objects.get_or_create(name='Clientes')
         user.groups.add(grupo)
         user.save()
@@ -118,7 +119,7 @@ def crear_Cliente(sender, instance, created, **kwargs):
         instance.save()
         correo = EmailMultiAlternatives(
             'Tu cuenta GolAhora fue creada correctamente',
-            '¡Hola '+instance.nombre+' '+instance.apellido+'! Tu usuario es: '+instance.email+' y tu contraseña por defecto es f.123456',
+            '¡Hola '+instance.nombre+' '+instance.apellido+'! Tu usuario es: '+instance.email+' y tu contraseña por defecto es '+instance.password,
             'golahora@yedro.ar',
             [instance.email],
         )
