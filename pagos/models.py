@@ -34,6 +34,9 @@ class Pago(models.Model):
         blank=True
     )
 
+    equipo = models.ForeignKey('competiciones.Equipo', on_delete=models.PROTECT, null=True, blank=True, verbose_name="Equipo a Inscribir")
+    competicion = models.ForeignKey('competiciones.Competicion', on_delete=models.PROTECT, null=True, blank=True, verbose_name="Torneo/Liga")
+
     estado = models.CharField(
         max_length=20,
         choices=ESTADOS_PAGO,
@@ -122,12 +125,13 @@ class Recibo(models.Model):
 def crear_Recibo(sender, instance, created, **kwargs):
     if instance.estado == 'PAGADO':
         # 1. Creamos el recibo si no existe todavía usando la relación reversa
-        if not hasattr(instance, 'recibo'): # Verificamos si el pago ya tiene un recibo asociado para evitar crear duplicados
+        if not hasattr(instance, 'recibo'):
             Recibo.objects.create(pago=instance)
             print(f"Recibo creado automáticamente para el Pago #{instance.id}")
 
-        # 2. Si el pago tiene una reserva asociada, la confirmamos automáticamente
-        if instance.reserva and instance.reserva.estado != 'CONFIRMADA':
-            instance.reserva.estado = 'CONFIRMADA'
-            instance.reserva.save()
-            print(f"Reserva #{instance.reserva.id} confirmada automáticamente")
+        # 2. PROTECCIÓN EXTREMA: Solo entramos si el ID de la reserva existe en la base de datos
+        if getattr(instance, 'reserva_id', None) is not None:
+            if instance.reserva.estado != 'CONFIRMADA':
+                instance.reserva.estado = 'CONFIRMADA'
+                instance.reserva.save()
+                print(f"Reserva #{instance.reserva.id} confirmada automáticamente")

@@ -1,51 +1,88 @@
-{% extends 'vistas/base_cliente.html' %}
+{% extends 'vistas/base_cliente.html' %} 
 {% load static %}
 
-{% block title %}Mis Inscripciones - Gol Ahora{% endblock %}
+{% block title %}Mis Inscripciones - Gol Ahora{% endblock %} 
 
 {% block content %}
-<div class="container mt-4">
-    <h2>Mis Equipos,torneos y ligas</h2>
-    <div class="row">
-        <div class="col-md-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header bg-dark text-white">
-                    <h5 class="mb-0">Mis Equipos</h5>
+<div class="container py-4 mb-5">
+    
+    <div class="row align-items-center mb-5 fade-in-up">
+        <div class="col-md-8 text-center text-md-start">
+            <h2 class="fw-bolder text-dark mb-1"><i class="fas fa-trophy text-warning me-2"></i>Mis Inscripciones</h2>
+            <p class="text-muted mb-0">Torneos y Ligas en los que participan tus equipos.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for equipo in equipos %}
+            {% for competicion in equipo.competiciones.all %}
+                
+                {% with clave=equipo.id|stringformat:"s"|add:"-"|add:competicion.id|stringformat:"s" %}
+                <div class="col-12 fade-in-up">
+                    <div class="card border-0 shadow-sm rounded-4 tarjeta-movimiento border-start border-5 
+                        {% if competicion.estado == 'Inscripcion' %}border-warning{% else %}border-success{% endif %}">
+                        
+                        <div class="card-body p-4">
+                            <div class="row align-items-center">
+                                
+                                <div class="col-md-5 mb-3 mb-md-0">
+                                    <h5 class="fw-bolder text-dark mb-2">{{ competicion.nombre }}</h5>
+                                    <div class="d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border shadow-sm">
+                                        <i class="fas fa-users text-primary me-2"></i>
+                                        <span class="text-dark small fw-bold">Equipo: {{ equipo.nombre }}</span>
+                                    </div>
+                                </div>
+
+                              
+                                <div class="col-md-3 mb-3 mb-md-0 text-md-center">
+                                    <span class="badge rounded-pill 
+                                        {% if competicion.estado == 'Inscripcion' %}bg-warning text-dark
+                                        {% elif competicion.estado == 'Finalizada' %}bg-secondary
+                                        {% else %}bg-success{% endif %} px-3 py-2 shadow-sm">
+                                        <i class="fas fa-info-circle me-1"></i>{{ competicion.estado }}
+                                    </span>
+                                </div>
+
+                               
+                                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                                    {% if competicion.estado == 'Inscripcion' %}
+                                        
+                                        {% if clave in pagos_lista %}
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill shadow-sm">
+                                                <i class="fas fa-check-circle me-1"></i> Inscripción Pagada
+                                            </span>
+                                        {% else %}
+                                            <a href="{% url 'vistas:pagar_inscripcion_cliente' competicion.id equipo.id %}" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm hover-boton">
+                                                 <i class="fas fa-credit-card me-2"></i>Pagar Inscripción
+                                            </a>
+                                        {% endif %}
+                                        
+                                    {% else %}
+                                        <span class="badge bg-light text-muted border px-3 py-2 rounded-pill shadow-sm"><i class="fas fa-lock me-1"></i>Inscripciones cerradas</span>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    {% if equipos %}
-                        <ul class="list-group">
-                            {% for equipo in equipos %}
-                            <li class="list-group-item">{{ equipo.nombre }} ({{ equipo.clientes.count }} integrantes)</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">No perteneces a ningún equipo.</p>
-                    {% endif %}
+                {% endwith %}
+                
+            {% endfor %}
+            
+        {% empty %}
+            <div class="col-12 fade-in-up">
+                <div class="card border-0 shadow-sm rounded-4 text-center py-5 w-100">
+                    <div class="card-body py-5">
+                        <div class="display-1 text-warning opacity-25 mb-4">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <h4 class="fw-bold text-dark">No estás inscripto en ninguna competición</h4>
+                        <p class="text-muted mb-4">Cuando te unás a un equipo y se anoten en una Liga o Torneo, lo verás reflejado aquí.</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Competiciones en las que participo</h5>
-                </div>
-                <div class="card-body">
-                    {% if competiciones %}
-                        <ul class="list-group">
-                            {% for comp in competiciones %}
-                            <li class="list-group-item">
-                                <strong>{{ comp.nombre }}</strong> ({{ comp.get_estado_display }})
-                                <br><small class="text-muted">{{ comp.equipos.count }} equipos participantes</small>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">No estás inscrito en ninguna liga o torneo.</p>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends base_template|default:"base.html" %}
+{% extends request.user.is_staff|yesno:"base.html,vistas/base_cliente.html" %}
 {% load static %}
 
 {% block title %}Gol Ahora — Registrar Cobro{% endblock %}
@@ -20,7 +20,7 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="mb-2"><strong>Concepto:</strong> Alquiler de Cancha</p>
+                    <p class="mb-2"><strong>Concepto:</strong> {{ form.origen_pago.value|default:"No especificado" }}</p>
                     <hr>
                     <p class="mb-1">Monto a Facturar:</p>
                     <h3 class="text-success fw-bold">
@@ -195,14 +195,22 @@
                         </div>
 
                         <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                            <a href="{% if request.user.is_staff %}{% url 'lista_reservas' %}{% else %}{% url 'vistas:cancelar_pago_y_reserva' view.kwargs.reserva_id %}{% endif %}" class="btn btn-outline-danger px-4">
-                                {% if request.user.is_staff %}Volver a Lista{% else %}Cancelar Reserva{% endif %}
-                            </a>
 
-                            <button type="submit" class="btn btn-success px-4 fw-bold">
-                                {% if request.user.is_staff %}Confirmar y Registrar Pago{% else %}Enviar Comprobante{% endif %}
-                            </button>
-                        </div>
+                            {% if reserva %}
+                              <a href="{% url 'cancelar_pago_y_reserva' reserva.id %}" class="btn btn-outline-danger px-4 rounded-pill fw-bold">
+                                <i class="fas fa-times me-2"></i>Cancelar Reserva
+                              </a>
+                              {% else %}
+                                <a href="javascript:history.back()" class="btn btn-outline-secondary px-4 rounded-pill fw-bold">
+                                    <i class="fas fa-arrow-left me-2"></i>Volver
+                                </a>
+                            {% endif %}
+
+                             <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold">
+                                <i class="fas fa-check-circle me-2"></i>Confirmar y Registrar Pago
+                             </button>
+        
+                       </div>
                     </form>
                 </div>
             </div>

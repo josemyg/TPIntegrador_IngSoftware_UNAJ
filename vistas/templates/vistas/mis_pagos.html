@@ -16,12 +16,12 @@
         
         <div class="col-md-5 text-center text-md-end">
             {% if total_adeudado > 0 %}
-                <div class="resumen-card alert-gradient border-0 rounded-4 p-4 d-inline-block shadow-sm card-hover-elevate text-md-end text-center w-100" style="max-width: 320px;">
-                    <div class="d-flex align-items-center justify-content-center justify-content-md-end mb-1">
-                        <i class="fas fa-exclamation-circle text-white me-2 opacity-75"></i>
-                        <span class="text-white small fw-bold text-uppercase letter-spacing-1">Saldo Pendiente</span>
+                <div class="resumen-card bg-danger-subtle text-danger-emphasis border border-danger-subtle rounded-4 p-4 d-inline-block shadow-sm card-hover-elevate text-center w-100" style="max-width: 320px;">
+                    <div class="d-flex align-items-center justify-content-center mb-1">
+                        <i class="fas fa-exclamation-circle text-danger me-2 opacity-75"></i>
+                        <span class="text-danger small fw-bold text-uppercase letter-spacing-1">Saldo Pendiente</span>
                     </div>
-                    <span class="display-6 fw-black text-white d-block mt-1">${{ total_adeudado }}</span>
+                    <span class="display-6 fw-black text-dark d-block mt-1">${{ total_adeudado }}</span>
                 </div>
             {% else %}
                 <div class="resumen-card success-gradient border-0 rounded-4 p-4 d-inline-block shadow-sm card-hover-elevate text-md-end text-center w-100" style="max-width: 320px;">
@@ -61,7 +61,17 @@
                             
                             <!-- 2. Detalles del Movimiento con ÍCONOS -->
                             <div class="col-12 col-md-4">
-                                <h5 class="fw-bolder text-dark mb-1">{{ pago.get_origen_pago_display }}</h5>
+                                <td>
+                                    {{ pago.get_origen_pago_display }}
+
+                                {% if pago.competicion %}
+                                    <br>
+                                        <small class="text-muted">
+                                        <i class="fas fa-trophy me-1"></i>
+                                             {{ pago.competicion.nombre }}
+                                         </small>
+                                    {% endif %}
+                                 </td>
                                 
                                 {% if pago.reserva %}
                                     <p class="text-muted small mb-2">

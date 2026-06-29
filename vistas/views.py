@@ -11,13 +11,16 @@ from django.contrib.auth.models import User
 from gestion.models import Cliente, Profesor
 from gestion.forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm
 from reservas.models import Reserva
-from pagos.models import Pago
+from pagos.models import Pago,TipoPago
+from pagos.forms import PagoForm
 from canchas.models import Cancha
 from clases_y_entrenamientos.models import Clase, Entrenamiento, AsistenciaClase, AsistenciaEntrenamiento
 from competiciones.models import Equipo, Competicion, Liga, Torneo
 from vistas.forms import ClientePerfilForm
 from django.contrib import messages
 from .forms import ReservaForm
+from django.db.models import Q
+
 
 def get_cliente_por_usuario(user):
     try:
@@ -281,16 +284,75 @@ def mis_reservas_cancelar(request, reserva_id):
     reserva.save()
     return redirect('vistas:mis_reservas')
 
-
 @login_required
 def mis_pagos(request):
     cliente = get_cliente_por_usuario(request.user)
     if not cliente:
         return redirect('login')
-    pagos = Pago.objects.filter(reserva__cliente=cliente).order_by('-fecha')
+    
+   
+    equipos_cliente = Equipo.objects.filter(clientes=cliente)
+
+    pagos = Pago.objects.filter(
+        Q(reserva__cliente=cliente) | Q(equipo__in=equipos_cliente)
+    ).order_by('-fecha')
+    
     total_adeudado = sum(p.monto_final for p in pagos if p.estado == 'PENDIENTE')
     return render(request, 'vistas/mis_pagos.html', {'pagos': pagos, 'total_adeudado': total_adeudado})
 
+@login_required
+def mis_inscripciones(request):
+    cliente = get_cliente_por_usuario(request.user)
+    if not cliente:
+        return redirect('login')
+        
+    equipos_cliente = Equipo.objects.filter(clientes=cliente)
+    
+    pagos = Pago.objects.filter(estado='PAGADO', competicion__isnull=False, equipo__in=equipos_cliente)
+    
+    pagos_lista = [f"{p.equipo.id}-{p.competicion.id}" for p in pagos]
+    
+    return render(request, 'vistas/mis_inscripciones.html', {
+        'equipos': equipos_cliente, 
+        'pagos_lista': pagos_lista
+    })
+
+@login_required
+def pagar_inscripcion_cliente(request, competicion_id, equipo_id):
+    competicion = get_object_or_404(Competicion, id=competicion_id)
+    equipo = get_object_or_404(Equipo, id=equipo_id)
+
+    if Pago.objects.filter(equipo=equipo, competicion=competicion, estado='PAGADO').exists():
+        messages.info(request, "Esta inscripción ya se encuentra abonada.")
+        return redirect('vistas:mis_pagos')
+
+    es_liga = Liga.objects.filter(id=competicion.id).exists()
+    origen = 'inscripcion_liga' if es_liga else 'inscripcion_torneo'
+    qr_code = "https://api.qrserver.com/v1/create-qr-code/?data=123"
+    monto_oficial = 25000.00 
+
+    if request.method == 'POST':
+        form = PagoForm(request.POST, request.FILES)
+        if form.is_valid():
+            pago = form.save(commit=False)
+            pago.equipo = equipo
+            pago.competicion = competicion
+            pago.origen_pago = origen
+            pago.estado = 'PENDIENTE'
+            
+            pago.monto = pago.calcular_monto_con_descuento(monto_oficial)
+            pago.save()
+            competicion.equipos.add(equipo)
+
+            messages.success(request, f"¡Pago exitoso! El equipo {equipo.nombre} completó su inscripción.")
+            return redirect('vistas:mis_pagos')
+    else:
+        form = PagoForm(initial={
+            'monto': monto_oficial,
+            'origen_pago': origen,
+        })
+
+    return render(request, 'pagos/pago_form.html', {'form': form, 'competicion_actual': competicion, 'equipo_actual': equipo, 'es_cliente': not request.user.is_staff, 'qr_code': qr_code})
 
 @login_required
 def cancelar_pago_y_reserva(request, reserva_id):
@@ -302,12 +364,3 @@ def cancelar_pago_y_reserva(request, reserva_id):
     reserva.delete()
     messages.info(request, "Reserva cancelada")
     return redirect('vistas:mis_reservas')
-
-@login_required
-def mis_inscripciones(request):
-    cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
-        return redirect('login')
-    equipos_cliente = Equipo.objects.filter(clientes=cliente)
-    competiciones = Competicion.objects.filter(equipos__in=equipos_cliente).distinct().order_by('-id')
-    return render(request, 'vistas/mis_inscripciones.html', {'equipos': equipos_cliente, 'competiciones': competiciones})
