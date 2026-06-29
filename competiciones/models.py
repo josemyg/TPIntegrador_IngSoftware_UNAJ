@@ -73,12 +73,12 @@ class Partido(models.Model):
     goles_visitante = models.IntegerField(default=0)
     penales_local = models.IntegerField(null=True, blank=True)
     penales_visitante = models.IntegerField(null=True, blank=True)
-    jugado = models.BooleanField(default=False)
     goles_local = models.IntegerField(null=True, blank=True, verbose_name="Goles del Local")
     goles_visitante = models.IntegerField(null=True, blank=True, verbose_name="Goles del Visitante")
     penales_local = models.IntegerField(null=True, blank=True, verbose_name="Penales Local")
     penales_visitante = models.IntegerField(null=True, blank=True, verbose_name="Penales Visitante")
     jugado = models.BooleanField(default=False, verbose_name="Partido Finalizado")
+    
     class Meta:
         verbose_name = "Partido"
         verbose_name_plural = "Partidos"

@@ -11,12 +11,12 @@
     <!-- Cabecera Moderna y Botón de Acción -->
     <div class="row align-items-center mb-5 fade-in-up">
         <div class="col-md-7 text-center text-md-start mb-4 mb-md-0">
-            <h2 class="fw-bolder text-dark mb-2"><i class="fas fa-calendar-alt text-success me-2"></i>Tus Turnos</h2>
+            <h2 class="fw-bolder text-dark mb-2"><i class="fas fa-calendar-alt text-success me-2"></i>Mis Turnos</h2>
             <p class="text-muted mb-0 fs-5">Gestioná tus reservas, horarios y comprobantes.</p>
         </div>
         
         <div class="col-md-5 text-center text-md-end">
-            <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn-premium-cta shadow-sm">
+            <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn btn-primary">
                 <i class="fas fa-plus"></i>
                 <span>Nueva Reserva</span>
             </a>
@@ -30,7 +30,7 @@
             <div class="col-12 fade-in-up" style="animation-delay: 0.{{ forloop.counter }}s;">
                 
                 <!-- Borde lateral dinámico según el estado -->
-                <div class="card border-0 shadow-sm rounded-4 tarjeta-movimiento border-start border-5 
+                <div class="card border-0 shadow-sm tarjeta-movimiento border-start border-5 
                     {% if reserva.estado == 'CONFIRMADA' %}border-success
                     {% elif reserva.estado == 'PENDIENTE' %}border-warning
                     {% elif 'CANCELADA' in reserva.estado %}border-danger{% endif %}">
@@ -40,7 +40,7 @@
                             
                             <!-- 1. Bloque de Fecha Elegante y Neutral -->
                             <div class="col-12 col-md-2">
-                                <div class="bg-light rounded-4 py-2 px-3 text-center border shadow-sm mx-auto mx-md-0" style="max-width: 100px;">
+                                <div class="bg-light py-2 px-3 text-center border shadow-sm mx-auto mx-md-0" style="max-width: 100px;">
                                     <span class="small text-uppercase fw-bold d-block text-muted letter-spacing-1">{{ reserva.fecha|date:'M' }}</span>
                                     <span class="fs-2 fw-black lh-1 d-block my-1 text-dark">{{ reserva.fecha|date:'d' }}</span>
                                     <span class="small fw-bold text-muted">{{ reserva.fecha|date:'Y' }}</span>
@@ -50,7 +50,7 @@
                             <!-- 2. Detalles de la Reserva -->
                             <div class="col-12 col-md-4">
                                 <h5 class="fw-bolder text-dark mb-2">{{ reserva.cancha.nombre }}</h5>
-                                <div class="d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border border-light shadow-sm">
+                                <div class="d-inline-flex align-items-center bg-light px-3 py-1 border border-light shadow-sm">
                                     <i class="far fa-clock text-primary me-2 opacity-75"></i>
                                     <span class="text-dark small fw-bold">{{ reserva.hora_inicio|time:'H:i' }} - {{ reserva.hora_fin|time:'H:i' }} hs</span>
                                 </div>
@@ -62,11 +62,11 @@
                                 <h3 class="fw-black mb-2 text-dark">${{ reserva.precio_final }}</h3>
                                 
                                 {% if reserva.estado == 'CONFIRMADA' %}
-                                    <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success px-3 py-1 shadow-sm"><i class="fas fa-check-circle me-1"></i>Confirmada</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-1 shadow-sm"><i class="fas fa-check-circle me-1"></i>Confirmada</span>
                                 {% elif reserva.estado == 'PENDIENTE' %}
-                                    <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning px-3 py-1 shadow-sm"><i class="fas fa-clock me-1"></i>Pendiente</span>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-3 py-1 shadow-sm"><i class="fas fa-clock me-1"></i>Pendiente</span>
                                 {% elif 'CANCELADA' in reserva.estado %}
-                                    <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger px-3 py-1 shadow-sm"><i class="fas fa-times-circle me-1"></i>{{ reserva.estado|title }}</span>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-1 shadow-sm"><i class="fas fa-times-circle me-1"></i>{{ reserva.estado|title }}</span>
                                 {% endif %}
                             </div>
 
@@ -77,7 +77,7 @@
                                     {% if reserva.estado == 'CONFIRMADA' %}
                                         {% for pago in reserva.pagos.all %}
                                             {% if pago.estado == 'PAGADO' and pago.recibo %}
-                                                <a href="{% url 'recibo_descargar' pago.recibo.id %}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold shadow-sm hover-boton w-100" target="_blank" title="Descargar Comprobante">
+                                                <a href="{% url 'recibo_descargar' pago.recibo.id %}" class="btn btn-outline-primary px-4 py-2 fw-bold shadow-sm hover-boton w-100" target="_blank" title="Descargar Comprobante">
                                                     <i class="fas fa-file-pdf me-1"></i> Recibo
                                                 </a>
                                             {% endif %}
@@ -85,11 +85,11 @@
                                     {% endif %}
 
                                     {% if reserva.estado == 'PENDIENTE' or reserva.estado == 'CONFIRMADA' %}
-                                        <a href="{% url 'vistas:mis_reservas_cancelar' reserva.id %}" class="btn btn-outline-danger rounded-pill px-4 py-2 fw-bold shadow-sm hover-boton w-100" onclick="return confirm('Atención: Si cancelás con menos de 6 horas de anticipación se aplicará un cargo a tu cuenta.\n\n¿Estás seguro de que querés cancelar este turno?');" title="Cancelar Reserva">
+                                        <a href="{% url 'vistas:mis_reservas_cancelar' reserva.id %}" class="btn btn-outline-danger px-4 py-2 fw-bold shadow-sm hover-boton w-100" onclick="return confirm('Atención: Si cancelás con menos de 6 horas de anticipación se aplicará un cargo a tu cuenta.\n\n¿Estás seguro de que querés cancelar este turno?');" title="Cancelar Reserva">
                                             <i class="fas fa-times me-1"></i> Cancelar
                                         </a>
                                     {% elif 'CANCELADA' in reserva.estado %}
-                                        <span class="badge bg-light text-muted border px-3 py-2 rounded-pill mx-auto mx-md-0"><i class="fas fa-ban me-1"></i>Inactiva</span>
+                                        <span class="badge bg-light text-muted border px-3 py-2 mx-auto mx-md-0"><i class="fas fa-ban me-1"></i>Inactiva</span>
                                     {% endif %}
                                     
                                 </div>
@@ -104,14 +104,14 @@
         
     {% else %}
         <!-- Pantalla Vacía Moderna -->
-        <div class="card border-0 shadow-sm rounded-4 text-center py-5 fade-in-up bg-white">
+        <div class="card border-0 shadow-sm text-center py-5 fade-in-up bg-white">
             <div class="card-body py-5">
-                <div class="bg-light rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 100px; height: 100px;">
+                <div class="bg-light d-inline-flex justify-content-center align-items-center mb-4" style="width: 100px; height: 100px;">
                     <i class="fas fa-calendar-times fa-3x text-success opacity-50"></i>
                 </div>
                 <h4 class="fw-bold text-dark">Aún no tenés reservas realizadas</h4>
                 <p class="text-muted mb-4 max-w-sm mx-auto">Animate a jugar tu primer partido. Buscá tu horario ideal y armá el equipo.</p>
-                <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn-premium-cta shadow-sm" style="padding: 12px 28px;">
+                <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn btn-primary" style="padding: 12px 28px;">
                     <i class="fas fa-plus"></i>
                     <span>Buscar Canchas</span>
                 </a>

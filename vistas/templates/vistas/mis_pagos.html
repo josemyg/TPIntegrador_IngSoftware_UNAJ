@@ -16,7 +16,7 @@
         
         <div class="col-md-5 text-center text-md-end">
             {% if total_adeudado > 0 %}
-                <div class="resumen-card bg-danger-subtle text-danger-emphasis border border-danger-subtle rounded-4 p-4 d-inline-block shadow-sm card-hover-elevate text-center w-100" style="max-width: 320px;">
+                <div class="resumen-card bg-danger-subtle text-danger-emphasis border border-danger-subtle p-4 d-inline-block shadow-sm card-hover-elevate text-center w-100" style="max-width: 320px;">
                     <div class="d-flex align-items-center justify-content-center mb-1">
                         <i class="fas fa-exclamation-circle text-danger me-2 opacity-75"></i>
                         <span class="text-danger small fw-bold text-uppercase letter-spacing-1">Saldo Pendiente</span>
@@ -24,7 +24,7 @@
                     <span class="display-6 fw-black text-dark d-block mt-1">${{ total_adeudado }}</span>
                 </div>
             {% else %}
-                <div class="resumen-card success-gradient border-0 rounded-4 p-4 d-inline-block shadow-sm card-hover-elevate text-md-end text-center w-100" style="max-width: 320px;">
+                <div class="resumen-card success-gradient border-0 p-4 d-inline-block shadow-sm card-hover-elevate text-md-end text-center w-100" style="max-width: 320px;">
                     <div class="d-flex align-items-center justify-content-center justify-content-md-end mb-1">
                         <i class="fas fa-shield-check text-white me-2 opacity-75"></i>
                         <span class="text-white small fw-bold text-uppercase letter-spacing-1">Estado de Cuenta</span>
@@ -42,7 +42,7 @@
             <div class="col-12 fade-in-up" style="animation-delay: 0.{{ forloop.counter }}s;">
                 
                 <!-- Tarjeta de Movimiento -->
-                <div class="card border-0 shadow-sm rounded-4 tarjeta-movimiento border-start border-5 
+                <div class="card border-0 shadow-sm tarjeta-movimiento border-start border-5 
                     {% if pago.estado == 'PAGADO' %}border-success
                     {% elif pago.estado == 'PENDIENTE' %}border-warning
                     {% elif pago.estado == 'RECHAZADO' %}border-danger{% endif %}">
@@ -52,7 +52,7 @@
                             
                             <!-- 1. IDENTIDAD FINANCIERA: Fecha -->
                             <div class="col-12 col-md-2">
-                                <div class="bg-primary bg-opacity-10 rounded-4 py-2 px-3 text-center border border-primary border-opacity-10 text-primary mx-auto mx-md-0" style="max-width: 100px;">
+                                <div class="bg-primary bg-opacity-10 py-2 px-3 text-center border border-primary border-opacity-10 text-primary mx-auto mx-md-0" style="max-width: 100px;">
                                     <span class="small text-uppercase fw-bold d-block letter-spacing-1">{{ pago.fecha|date:'M' }}</span>
                                     <span class="fs-2 fw-bolder lh-1 d-block my-1">{{ pago.fecha|date:'d' }}</span>
                                     <span class="small fw-bold opacity-75">{{ pago.fecha|date:'Y' }}</span>
@@ -79,7 +79,7 @@
                                     </p>
                                 {% endif %}
                                 
-                                <div class="d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border border-light shadow-sm mt-1">
+                                <div class="d-inline-flex align-items-center bg-light px-3 py-1 border border-light shadow-sm mt-1">
                                     {% if 'Efectivo' in pago.tipo_pago.nombre %}
                                         <i class="fas fa-money-bill-wave text-success me-2"></i>
                                     {% elif 'Tarjeta' in pago.tipo_pago.nombre or 'Débito' in pago.tipo_pago.nombre or 'Credito' in pago.tipo_pago.nombre %}
@@ -99,18 +99,18 @@
                                 <h3 class="fw-black mb-2 text-dark">${{ pago.monto_final }}</h3>
                                 
                                 {% if pago.estado == 'PAGADO' %}
-                                    <span class="badge rounded-pill bg-success bg-opacity-10 text-success border border-success px-3 py-1 shadow-sm"><i class="fas fa-check-circle me-1"></i>Aprobado</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-1 shadow-sm"><i class="fas fa-check-circle me-1"></i>Aprobado</span>
                                 {% elif pago.estado == 'PENDIENTE' %}
-                                    <span class="badge rounded-pill bg-warning bg-opacity-10 text-warning border border-warning px-3 py-1 shadow-sm"><i class="fas fa-clock me-1"></i>En Revisión</span>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-3 py-1 shadow-sm"><i class="fas fa-clock me-1"></i>En Revisión</span>
                                 {% elif pago.estado == 'RECHAZADO' %}
-                                    <span class="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger px-3 py-1 shadow-sm"><i class="fas fa-times-circle me-1"></i>Rechazado</span>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-1 shadow-sm"><i class="fas fa-times-circle me-1"></i>Rechazado</span>
                                 {% endif %}
                             </div>
 
                             <!-- 4. Acciones (Recibo) -->
                             <div class="col-12 col-md-3 text-center text-md-end mt-3 mt-md-0">
                                 {% if pago.estado == 'PAGADO' and pago.recibo %}
-                                    <a href="{% url 'recibo_descargar' pago.recibo.id %}" class="btn btn-outline-primary rounded-pill px-4 py-2 fw-bold shadow-sm hover-boton w-100" target="_blank" title="Descargar Comprobante">
+                                    <a href="{% url 'recibo_descargar' pago.recibo.id %}" class="btn btn-outline-primary px-4 py-2 fw-bold shadow-sm hover-boton w-100" target="_blank" title="Descargar Comprobante">
                                         <i class="fas fa-download me-1"></i> Recibo
                                     </a>
                                
@@ -129,14 +129,14 @@
         
     {% else %}
         <!-- Pantalla Vacía Moderna -->
-        <div class="card border-0 shadow-sm rounded-4 text-center py-5 fade-in-up bg-white">
+        <div class="card border-0 shadow-sm text-center py-5 fade-in-up bg-white">
             <div class="card-body py-5">
-                <div class="bg-light rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 100px; height: 100px;">
+                <div class="bg-light d-inline-flex justify-content-center align-items-center mb-4" style="width: 100px; height: 100px;">
                     <i class="fas fa-file-invoice-dollar fa-3x text-primary opacity-50"></i>
                 </div>
                 <h4 class="fw-bold text-dark">Aún no tenés movimientos</h4>
                 <p class="text-muted mb-4 max-w-sm mx-auto">Cuando realices tu primera reserva, el detalle de tu pago aparecerá aquí.</p>
-                <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn btn-primary fw-bold rounded-pill px-4 py-2 shadow-sm hover-boton">
+                <a href="{% url 'vistas:mis_reservas_crear' %}" class="btn btn-primary fw-bold px-4 py-2 shadow-sm hover-boton">
                     <i class="fas fa-plus me-2"></i>Crear primera reserva
                 </a>
             </div>

@@ -56,7 +56,7 @@ class ProfesoresaValidarListView(PermissionRequiredMixin, FilterView):
     template_name = 'gestion/profesor/profesor_list_validar.html'
     context_object_name = 'profesor_list'
     queryset = Profesor.objects.filter(estado='en_validacion')
-    paginate_by = 20
+    paginate_by = 25
 
 class ProfesorCreateView(PermissionRequiredMixin, CreateView):
     model = Profesor

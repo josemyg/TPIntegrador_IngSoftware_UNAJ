@@ -19,7 +19,7 @@
                 
                 {% with clave=equipo.id|stringformat:"s"|add:"-"|add:competicion.id|stringformat:"s" %}
                 <div class="col-12 fade-in-up">
-                    <div class="card border-0 shadow-sm rounded-4 tarjeta-movimiento border-start border-5 
+                    <div class="card border-0 shadow-sm tarjeta-movimiento border-start border-5 
                         {% if competicion.estado == 'Inscripcion' %}border-warning{% else %}border-success{% endif %}">
                         
                         <div class="card-body p-4">
@@ -27,7 +27,7 @@
                                 
                                 <div class="col-md-5 mb-3 mb-md-0">
                                     <h5 class="fw-bolder text-dark mb-2">{{ competicion.nombre }}</h5>
-                                    <div class="d-inline-flex align-items-center bg-light rounded-pill px-3 py-1 border shadow-sm">
+                                    <div class="d-inline-flex align-items-center bg-light px-3 py-1 border shadow-sm">
                                         <i class="fas fa-users text-primary me-2"></i>
                                         <span class="text-dark small fw-bold">Equipo: {{ equipo.nombre }}</span>
                                     </div>
@@ -35,7 +35,7 @@
 
                               
                                 <div class="col-md-3 mb-3 mb-md-0 text-md-center">
-                                    <span class="badge rounded-pill 
+                                    <span class="badge 
                                         {% if competicion.estado == 'Inscripcion' %}bg-warning text-dark
                                         {% elif competicion.estado == 'Finalizada' %}bg-secondary
                                         {% else %}bg-success{% endif %} px-3 py-2 shadow-sm">
@@ -48,17 +48,17 @@
                                     {% if competicion.estado == 'Inscripcion' %}
                                         
                                         {% if clave in pagos_lista %}
-                                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill shadow-sm">
+                                            <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 shadow-sm">
                                                 <i class="fas fa-check-circle me-1"></i> Inscripción Pagada
                                             </span>
                                         {% else %}
-                                            <a href="{% url 'vistas:pagar_inscripcion_cliente' competicion.id equipo.id %}" class="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm hover-boton">
+                                            <a href="{% url 'vistas:pagar_inscripcion_cliente' competicion.id equipo.id %}" class="btn btn-primary px-4 py-2 fw-bold shadow-sm hover-boton">
                                                  <i class="fas fa-credit-card me-2"></i>Pagar Inscripción
                                             </a>
                                         {% endif %}
                                         
                                     {% else %}
-                                        <span class="badge bg-light text-muted border px-3 py-2 rounded-pill shadow-sm"><i class="fas fa-lock me-1"></i>Inscripciones cerradas</span>
+                                        <span class="badge bg-light text-muted border px-3 py-2 shadow-sm"><i class="fas fa-lock me-1"></i>Inscripciones cerradas</span>
                                     {% endif %}
                                 </div>
 
@@ -72,7 +72,7 @@
             
         {% empty %}
             <div class="col-12 fade-in-up">
-                <div class="card border-0 shadow-sm rounded-4 text-center py-5 w-100">
+                <div class="card border-0 shadow-sm text-center py-5 w-100">
                     <div class="card-body py-5">
                         <div class="display-1 text-warning opacity-25 mb-4">
                             <i class="fas fa-trophy"></i>

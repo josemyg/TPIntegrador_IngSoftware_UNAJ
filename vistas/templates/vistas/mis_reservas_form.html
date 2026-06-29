@@ -10,7 +10,7 @@
     
     <!-- Cabecera de la sección -->
     <div class="text-center mb-5 fade-in-up">
-        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 rounded-pill px-3 py-2 mb-3 fw-bold text-uppercase" style="letter-spacing: 1px;">
+        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 mb-3 fw-bold text-uppercase" style="letter-spacing: 1px;">
             <i class="fas fa-search me-1"></i> Búsqueda de Turnos
         </span>
         <h2 class="fw-bolder text-dark mb-2">Encontrá tu Cancha Ideal</h2>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- Buscador Principal -->
-    <div class="card shadow-lg border-0 rounded-4 overflow-hidden mb-5 fade-in-up border-top border-success border-4" style="animation-delay: 0.1s;">
+    <div class="card shadow-lg border-0 overflow-hidden mb-5 fade-in-up border-top border-success border-4" style="animation-delay: 0.1s;">
         <div class="card-body p-4 p-md-5 bg-white">
             <form method="GET" class="row g-4 align-items-center">
                 
@@ -28,9 +28,9 @@
                         <div class="step-badge-modern me-3 shadow-sm">1</div>
                         <label class="form-label fw-bold mb-0 text-dark fs-5">Seleccioná una Cancha</label>
                     </div>
-                    <div class="input-group input-group-lg shadow-sm rounded-3">
+                    <div class="input-group input-group-lg shadow-sm">
                         <span class="input-group-text bg-white border-end-0 text-success px-4"><i class="fas fa-map-marker-alt"></i></span>
-                        <select name="cancha" class="form-select border-start-0 ps-0 fw-bold text-secondary" onchange="this.form.submit()" style="cursor: pointer;">
+                        <select name="cancha" class="form-control border-start-0 ps-0 fw-bold text-secondary" onchange="this.form.submit()" style="cursor: pointer;">
                             <option value="">Elegí el tipo de cancha...</option>
                             {% for c in canchas %}
                                 <option value="{{ c.id }}" {% if c.id|stringformat:"s" == cancha_id %}selected{% endif %}>
@@ -47,7 +47,7 @@
                         <div class="step-badge-modern me-3 shadow-sm">2</div>
                         <label class="form-label fw-bold mb-0 text-dark fs-5">Elegí la Fecha</label>
                     </div>
-                    <div class="input-group input-group-lg shadow-sm rounded-3">
+                    <div class="input-group input-group-lg shadow-sm">
                         <span class="input-group-text bg-white border-end-0 text-success px-4"><i class="far fa-calendar-alt"></i></span>
                         <input type="date" name="fecha" class="form-control border-start-0 ps-0 fw-bold text-secondary" value="{{ fecha }}" min="{{ hoy }}" max="{{ max_fecha }}" onchange="this.form.submit()" style="cursor: pointer;">
                     </div>
@@ -59,12 +59,12 @@
 
     <!-- Resultados de Disponibilidad -->
     {% if fecha and cancha_id %}
-        <div class="card shadow-sm border-0 rounded-4 mt-4 bg-white fade-in-up" style="animation-delay: 0.2s;">
+        <div class="card shadow-sm border-0 mt-4 bg-white fade-in-up" style="animation-delay: 0.2s;">
             <div class="card-body p-4 p-md-5">
                 
                 <!-- Título de resultados -->
                 <div class="d-flex align-items-center justify-content-center justify-content-md-start mb-4 pb-3 border-bottom">
-                    <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
+                    <div class="bg-primary bg-opacity-10 text-primary d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px;">
                         <i class="far fa-clock fs-4"></i>
                     </div>
                     <div class="text-center text-md-start">
@@ -86,7 +86,7 @@
                                 <button type="submit" class="btn time-slot-btn w-100 h-100 p-3 shadow-sm">
                                     <i class="far fa-clock icon-clock text-muted fs-4 mb-2 transition-all"></i>
                                     <span class="fw-black fs-5 text-dark d-block">{{ horario.texto }}</span>
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success mt-2 px-3 py-1 rounded-pill"><i class="fas fa-check me-1"></i>Disponible</span>
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success mt-2 px-3 py-1"><i class="fas fa-check me-1"></i>Disponible</span>
                                 </button>
                             </form>
                         </div>
@@ -95,7 +95,7 @@
                 {% else %}
                     <!-- Estado: Sin horarios -->
                     <div class="text-center py-5">
-                        <div class="bg-warning bg-opacity-10 rounded-circle d-inline-flex justify-content-center align-items-center mb-4 shadow-sm" style="width: 90px; height: 90px;">
+                        <div class="bg-warning bg-opacity-10 d-inline-flex justify-content-center align-items-center mb-4 shadow-sm" style="width: 90px; height: 90px;">
                             <i class="fas fa-sad-cry fa-3x text-warning"></i>
                         </div>
                         <h4 class="fw-bold text-dark mb-2">No quedan turnos libres</h4>
@@ -107,7 +107,7 @@
     {% else %}
         <!-- Estado Inicial -->
         <div class="text-center py-5 mt-4 opacity-75 fade-in-up" style="animation-delay: 0.2s;">
-            <div class="bg-light rounded-circle d-inline-flex justify-content-center align-items-center mb-4" style="width: 100px; height: 100px;">
+            <div class="bg-light d-inline-flex justify-content-center align-items-center mb-4" style="width: 100px; height: 100px;">
                 <i class="fas fa-search-location fa-3x text-muted opacity-50"></i>
             </div>
             <h5 class="text-secondary fw-bold mb-2">Estamos listos para buscar</h5>

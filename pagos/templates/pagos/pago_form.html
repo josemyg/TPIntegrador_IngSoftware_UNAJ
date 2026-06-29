@@ -64,7 +64,7 @@
 
                         <div class="row mb-4">
                             <div class="col-md-4 mb-3">
-                                <div class="payment-method-card border rounded-3 p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center active border-primary bg-primary bg-opacity-10" data-value="Transferencia">
+                                <div class="payment-method-card border p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center active border-primary bg-primary bg-opacity-10" data-value="Transferencia">
                                     <div class="icon-container mb-2 text-primary">
                                         <i class="fas fa-university fa-2x"></i>
                                     </div>
@@ -72,7 +72,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4 mb-3">
-                                <div class="payment-method-card border rounded-3 p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center" data-value="Tarjeta">
+                                <div class="payment-method-card border p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center" data-value="Tarjeta">
                                     <div class="icon-container mb-2 text-secondary">
                                         <i class="fas fa-credit-card fa-2x"></i>
                                     </div>
@@ -81,7 +81,7 @@
                             </div>
                             {% if request.user.is_staff %}
                             <div class="col-md-4 mb-3">
-                                <div class="payment-method-card border rounded-3 p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center" data-value="Efectivo">
+                                <div class="payment-method-card border p-3 text-center cursor-pointer transition-all h-100 d-flex flex-column align-items-center justify-content-center" data-value="Efectivo">
                                     <div class="icon-container mb-2 text-secondary">
                                         <i class="fas fa-money-bill-wave fa-2x"></i>
                                     </div>
@@ -94,7 +94,7 @@
                          <!-- SECCIÓN DESCUENTOS (SEPARADA POR ROLES) -->
                         {% if not es_cliente %}
                             <!-- VISTA ADMIN: SELECTOR CLÁSICO -->
-                            <div class="mb-4 bg-light p-3 rounded border">
+                            <div class="mb-4 bg-light p-3 border">
                                 <label class="form-label text-dark fw-bold mb-2">Descuento Aplicable (Bonificación)</label>
                                 {{ form.descuento }}
                                 {% if form.descuento.errors %}
@@ -107,7 +107,7 @@
                                 {{ form.descuento }}
                             </div>
                             
-                            <div class="mb-4 p-4 border rounded border-success border-opacity-50 bg-success bg-opacity-10 shadow-sm">
+                            <div class="mb-4 p-4 border border-success border-opacity-50 bg-success bg-opacity-10 shadow-sm">
                                 <h6 class="fw-bold text-success mb-3"><i class="fas fa-ticket-alt me-2"></i>¿Tenés un Código de Descuento?</h6>
                                 <div class="input-group">
                                     <input type="text" id="cuponInputWeb" class="form-control text-uppercase" placeholder="Ej: GOL2026" style="text-transform: uppercase;">
@@ -117,11 +117,11 @@
                             </div>
                         {% endif %}
 
-                        <div id="transferDetails" class="mb-4 p-3 border rounded border-primary border-opacity-25">
+                        <div id="transferDetails" class="mb-4 p-3 border border-primary border-opacity-25">
                             <h6 class="fw-bold text-primary"><i class="fas fa-file-upload me-2"></i>Verificación de Transferencia</h6>
                             
                             {% if not request.user.is_staff %}
-                            <div class="text-center my-3 p-3 bg-white border rounded shadow-sm">
+                            <div class="text-center my-3 p-3 bg-white border shadow-sm">
                                 <p class="mb-1 fw-bold text-dark">Escaneá este código desde tu App bancaria:</p>
                                 <img src="{{ qr_code }}" alt="QR de Pago" class="img-fluid" style="max-width: 170px;">
                                 <p class="text-muted small mt-2 mb-0">Alias: <strong class="text-dark">GOL.AHORA.CANCHAS</strong></p>
@@ -137,7 +137,7 @@
                         </div>
 
                         {% if request.user.is_staff %}
-                            <div id="cardDetails" class="mb-4 p-3 border rounded d-none bg-light">
+                            <div id="cardDetails" class="mb-4 p-3 border d-none bg-light">
                                 <h6 class="fw-bold text-dark"><i class="fas fa-receipt me-2"></i>Terminal de Captura (Posnet Físico)</h6>
                                 <div class="row mt-3">
                                     <div class="col-md-6 mb-3">
@@ -151,7 +151,7 @@
                                 </div>
                             </div>
                         {% else %}
-                            <div id="cardDetails" class="mb-4 p-4 border rounded shadow-sm d-none bg-white">
+                            <div id="cardDetails" class="mb-4 p-4 border shadow-sm d-none bg-white">
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h6 class="fw-bold text-dark mb-0"><i class="fas fa-lock text-success me-2"></i>Pago Seguro con Tarjeta</h6>
                                     <div><i class="fab fa-cc-visa fa-lg text-primary me-1"></i> <i class="fab fa-cc-mastercard fa-lg text-danger"></i></div>
@@ -197,16 +197,16 @@
                         <div class="d-flex justify-content-between mt-4 pt-3 border-top">
 
                             {% if reserva %}
-                              <a href="{% url 'cancelar_pago_y_reserva' reserva.id %}" class="btn btn-outline-danger px-4 rounded-pill fw-bold">
+                              <a href="{% url 'cancelar_pago_y_reserva' reserva.id %}" class="btn btn-outline-danger px-4 fw-bold">
                                 <i class="fas fa-times me-2"></i>Cancelar Reserva
                               </a>
                               {% else %}
-                                <a href="javascript:history.back()" class="btn btn-outline-secondary px-4 rounded-pill fw-bold">
+                                <a href="javascript:history.back()" class="btn btn-outline-secondary px-4 fw-bold">
                                     <i class="fas fa-arrow-left me-2"></i>Volver
                                 </a>
                             {% endif %}
 
-                             <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold">
+                             <button type="submit" class="btn btn-primary px-5 fw-bold">
                                 <i class="fas fa-check-circle me-2"></i>Confirmar y Registrar Pago
                              </button>
         

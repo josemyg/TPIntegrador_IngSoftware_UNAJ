@@ -8,17 +8,17 @@ class PagoForm(forms.ModelForm):
     # 1. Declaramos los campos virtuales que pide la interfaz (no obligatorios por defecto)
     comprobante_archivo = forms.FileField(
         required=False,
-        widget=forms.ClearableFileInput(attrs={'class': 'form-control form-control-sm rounded-2', 'id': 'comprobanteFile'})
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control form-control-sm', 'id': 'comprobanteFile'})
     )
     tarjeta_ultimos_4 = forms.CharField(
         max_length=4, 
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control rounded-3', 'placeholder': 'Ej: 4542', 'id': 'tarjeta4', 'maxlength': '4'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Ej: 4542', 'id': 'tarjeta4', 'maxlength': '4'})
     )
     tarjeta_cupon = forms.CharField(
         max_length=6, 
         required=False,
-        widget=forms.TextInput(attrs={'class': 'form-control rounded-3', 'placeholder': '0124', 'id': 'tarjetaCupon', 'maxlength': '6'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '0124', 'id': 'tarjetaCupon', 'maxlength': '6'})
     )
 
     def __init__(self, *args, **kwargs):

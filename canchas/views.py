@@ -1,15 +1,19 @@
-from django.shortcuts import render
 import unicodedata
+
+from django.shortcuts import render
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.decorators.http import require_POST
 from django.urls import reverse_lazy
-from .models import TipoCancha, Cancha
-from .forms import TipoCanchaForm, CanchaForm
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect
-from django.views.decorators.http import require_POST
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import permission_required
 
+from django_filters.views import FilterView
+
+from .models import TipoCancha, Cancha
+from .forms import TipoCanchaForm, CanchaForm
+from .filters import CanchaFilter
 
 # RF-12: Registrar tipo de cancha
 class TipoCanchaCreateView(PermissionRequiredMixin, CreateView):
@@ -77,13 +81,14 @@ def alternar_estado_cancha(request, pk):
 
 #CANCHAS
 # 1. VISTA PARA LISTAR LAS CANCHAS
-class CanchaListView(PermissionRequiredMixin, ListView):
+class CanchaListView(PermissionRequiredMixin, FilterView):
     model = Cancha
     permission_required = 'canchas.view_cancha'
+    filterset_class = CanchaFilter
     template_name = 'canchas/cancha_list.html'
     context_object_name = 'canchas' 
-    def get_queryset(self):
-        return Cancha.objects.all()
+    queryset = Cancha.objects.all()
+    paginate_by = 25
 
 # 2. VISTA PARA REGISTRAR UNA NUEVA CANCHA
 class CanchaCreateView(PermissionRequiredMixin, CreateView):

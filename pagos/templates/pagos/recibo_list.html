@@ -34,13 +34,13 @@
                         <td class="fw-bold text-success">${{ recibo.pago.monto|floatformat:2 }}</td>
                         <td class="text-center pe-4">
                             <div class="btn-group gap-1">
-                                <a href="{% url 'recibo_imprimir' recibo.id %}" target="_blank" class="btn btn-sm btn-outline-dark rounded-2" title="Imprimir Comprobante">
+                                <a href="{% url 'recibo_imprimir' recibo.id %}" target="_blank" class="btn btn-sm btn-outline-dark" title="Imprimir Comprobante">
                                     
                                 </a>
-                                <a href="{% url 'recibo_update' recibo.id %}" class="btn btn-sm btn-outline-secondary rounded-2" title="Editar Parámetros">
+                                <a href="{% url 'recibo_update' recibo.id %}" class="btn btn-sm btn-outline-secondary" title="Editar Parámetros">
                                     
                                 </a>
-                                <a href="{% url 'recibo_delete' recibo.id %}" class="btn btn-sm btn-outline-danger rounded-2" title="Dar de Baja">
+                                <a href="{% url 'recibo_delete' recibo.id %}" class="btn btn-sm btn-outline-danger" title="Dar de Baja">
                                     
                                 </a>
                             </div>

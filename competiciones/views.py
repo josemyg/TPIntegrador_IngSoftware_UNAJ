@@ -1,17 +1,23 @@
+import math
+import random
+
+from functools import cmp_to_key
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import permission_required
 from django.shortcuts import render, redirect
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,DetailView
-from .models import Equipo, Liga, Torneo, Partido
 from django.contrib import messages
-from .forms import EquipoForm, LigaForm, TorneoForm, AsignarCanchaForm, CargarResultadoForm
 from django.shortcuts import render, redirect, get_object_or_404
-import math
-import random
 from django.db.models import Q
-from functools import cmp_to_key
+
+from django_filters.views import FilterView
+
+from .models import Equipo, Liga, Torneo, Partido
+from .forms import EquipoForm, LigaForm, TorneoForm, AsignarCanchaForm, CargarResultadoForm
+from .filters import EquipoFilter, PartidoFilter, LigaFilter, TorneoFilter
 
 def obtener_tabla_posiciones(liga):
     # Preparamos un diccionario vacio para cada equipo
@@ -130,11 +136,13 @@ def generar_fixture_liga(request, pk):
     
     return redirect('liga_detail', pk=pk)
 
-class EquipoListView(PermissionRequiredMixin, ListView):
+class EquipoListView(PermissionRequiredMixin, FilterView):
     model = Equipo
     permission_required = 'competiciones.view_equipo'
+    filterset_class = EquipoFilter
     template_name = 'competiciones/equipo/equipo_list.html'
     context_object_name = 'equipo_list'
+    paginate_by = 25
 
 class EquipoCreateView(PermissionRequiredMixin, CreateView):
     model = Equipo
@@ -172,11 +180,13 @@ class EquipoDeleteView(PermissionRequiredMixin, DeleteView):
             
         return super().dispatch(request, *args, **kwargs)
 
-class LigaListView(PermissionRequiredMixin, ListView):
+class LigaListView(PermissionRequiredMixin, FilterView):
     model = Liga
     permission_required = 'competiciones.view_liga'
+    filterset_class = LigaFilter
     template_name = 'competiciones/liga/liga_list.html'
     context_object_name = 'liga_list'
+    paginate_by = 25
 
 class LigaCreateView(PermissionRequiredMixin, CreateView):
     model = Liga
@@ -215,11 +225,13 @@ class LigaDeleteView(PermissionRequiredMixin, DeleteView):
 
 
 # --- CRUD DE TORNEOS ---
-class TorneoListView(PermissionRequiredMixin, ListView):
+class TorneoListView(PermissionRequiredMixin, FilterView):
     model = Torneo
     permission_required = 'competiciones.view_torneo'
+    filterset_class = TorneoFilter
     template_name = 'competiciones/torneo/torneo_list.html'
     context_object_name = 'torneo_list'
+    paginate_by = 25
 
 class TorneoCreateView(PermissionRequiredMixin, CreateView):
     model = Torneo

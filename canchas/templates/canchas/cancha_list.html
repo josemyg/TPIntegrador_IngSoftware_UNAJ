@@ -4,11 +4,15 @@
 {% block content %}
     
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
+        <div class="col-6">
             <h1 class="fw-bold text-dark mb-0">Control de Canchas</h1>
             <p class="text-muted small mb-0">Inventario y estado de los campos de juego del complejo.</p>
         </div>
-        <a href="{% url 'cancha_create' %}" class="btn btn-primary">Agregar Cancha</a>
+        <div class="col-6">
+            <a data-bs-toggle="modal" href="#formulario_busqueda"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#245235" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg></a>
+            <a href="{% url 'cancha_list' %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff0000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-x-icon lucide-funnel-x"><path d="M12.531 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14v6a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341l.427-.473"/><path d="m16.5 3.5 5 5"/><path d="m21.5 3.5-5 5"/></svg></a>
+            <a href="{% url 'cancha_create' %}" class="btn btn-primary">Agregar Cancha</a>
+        </div>
     </div>
 
     <div class="card border-0 shadow-sm">
@@ -32,10 +36,10 @@
                             </span>
                         </td>
                         <td>
-                            {% if cancha.estado == 'DISPONIBLE' %}
-                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Disponible</span>
-                            {% elif cancha.estado == 'OCUPADA' %}
-                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">Ocupada</span>
+                            {% if cancha.estado == 'activo' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Activo</span>
+                            {% elif cancha.estado == 'inactivo' %}
+                                <span class="badge bg-light-subtle text-dark border border-light-subtle px-2 py-1">Inactivo</span>
                             {% else %}
                                 <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">Mantenimiento</span>
                             {% endif %}
@@ -44,7 +48,7 @@
                         <td class="text-center">
                             <div class="d-inline-flex gap-1">
                                 
-                                {% if cancha.estado == 'DISPONIBLE' %}
+                                {% if cancha.estado == 'activo' %}
                                     <a name="" id="" class="" href="{% url 'cancha_bloquear' cancha.id %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-traffic-cone-icon lucide-traffic-cone"><path d="M16.05 10.966a5 2.5 0 0 1-8.1 0"/><path d="m16.923 14.049 4.48 2.04a1 1 0 0 1 .001 1.831l-8.574 3.9a2 2 0 0 1-1.66 0l-8.574-3.91a1 1 0 0 1 0-1.83l4.484-2.04"/><path d="M16.949 14.14a5 2.5 0 1 1-9.9 0L10.063 3.5a2 2 0 0 1 3.874 0z"/><path d="M9.194 6.57a5 2.5 0 0 0 5.61 0"/></svg></a>
                                 {% else %}
                                     <a name="" id="" class="" href="{% url 'cancha_activar' cancha.id %}"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#285238" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-copy-check-icon lucide-copy-check"><path d="m12 15 2 2 4-4"/><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg></a>
@@ -65,4 +69,33 @@
             </table>
         </div>
     </div>
+        {% if is_paginated %}
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-sm">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Anterior</a>
+                        </li>
+                    {% endif %}
+                    {% for i in paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == i %}active{% endif %}">
+                            <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{{ request.GET.urlencode }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Siguiente</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
 {% endblock %}
