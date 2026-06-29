@@ -7,3 +7,4 @@ dotenv
 psycopg2
 python-dotenv
 gunicorn
+whitenoise
