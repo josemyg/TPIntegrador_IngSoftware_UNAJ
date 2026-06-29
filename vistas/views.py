@@ -22,9 +22,10 @@ from .forms import ReservaForm
 from django.db.models import Q
 
 
-def get_cliente_por_usuario(user):
+def get_cliente_por_usuario(usuario):
     try:
-        return Cliente.objects.get(user_django=user)
+        es_cliente = usuario.groups.filter(name='Clientes').exists()
+        return es_cliente
     except Cliente.DoesNotExist:
         return None
 
