@@ -6,12 +6,10 @@ from django.dispatch import receiver
 from django.db.models.signals import post_save, pre_delete
 from django.urls import reverse
 from django.core import mail
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
+
 
 import random
-
-#connection = mail.get_connection()
-
 
 def remove_accents(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
@@ -118,17 +116,13 @@ def crear_Cliente(sender, instance, created, **kwargs):
         user.save()
         instance.user_django = user
         instance.save()
-        #correo = EmailMessage(
-        #    'Tu cuenta GolAhora fue creada correctamente',
-        #    'Tu usuario es: '+instance.email,
-        #    'golahora@yedro.ar',
-        #    [instance.email],
-        #)
-        #correo.attach_alternative(html_content, "text/html")
-        #connection.open()
-        #correo.send()
-        #connection.send_messages(correo)
-        #connection.close()
+        correo = EmailMultiAlternatives(
+            'Tu cuenta GolAhora fue creada correctamente',
+            '¡Hola '+instance.nombre+' '+instance.apellido+'! Tu usuario es: '+instance.email+' y tu contraseña por defecto es f.123456',
+            'golahora@yedro.ar',
+            [instance.email],
+        )
+        correo.send()
         print("Se ha creado el perfil de usuario correctamente")
 
 @receiver(pre_delete, sender=Profesor)
