@@ -14,8 +14,8 @@ class ClienteRegistroForm(forms.ModelForm):
             raise ValidationError(
                 'Ya existe una cuenta registrada con este correo.'
             )
-
         return email
+
     class Meta:
         model = Cliente
         template_name = 'registro/registro_cliente_form.html'

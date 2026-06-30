@@ -7,6 +7,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
+from django.contrib import messages
+from django.db.models import Q
 
 from gestion.models import Cliente, Profesor
 from gestion.forms import ProfesorForm, ProfesorSinValidarForm, ClienteForm
@@ -17,9 +19,7 @@ from canchas.models import Cancha
 from clases_y_entrenamientos.models import Clase, Entrenamiento, AsistenciaClase, AsistenciaEntrenamiento
 from competiciones.models import Equipo, Competicion, Liga, Torneo
 from vistas.forms import ClientePerfilForm
-from django.contrib import messages
 from .forms import ReservaForm
-from django.db.models import Q
 
 
 def get_cliente_por_usuario(user):
@@ -42,9 +42,11 @@ class ClientePerfilUpdateView(LoginRequiredMixin, UpdateView):
 @login_required
 def dashboard_cliente(request):
     cliente = get_cliente_por_usuario(request.user)
+    print(cliente)
     es_cliente = False
     try:
         es_cliente = cliente.verificarCliente()
+        print(es_cliente)
     except:
         pass
     if not es_cliente:
