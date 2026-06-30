@@ -44,11 +44,13 @@ def dashboard_cliente(request):
     cliente = get_cliente_por_usuario(request.user)
     print(cliente)
     es_cliente = False
-    try:
-        es_cliente = cliente.verificarCliente()
-        print(es_cliente)
-    except:
-        pass
+    if cliente is not None:
+        try:
+            es_cliente = cliente.verificarCliente()
+            print(es_cliente)
+        except Exception as e:
+            print(f"Error al verificar cliente: {e}")
+            pass
     if not es_cliente:
         return redirect('/administracion')
     # Clases
