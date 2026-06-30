@@ -22,10 +22,9 @@ from .forms import ReservaForm
 from django.db.models import Q
 
 
-def get_cliente_por_usuario(usuario):
+def get_cliente_por_usuario(user):
     try:
-        es_cliente = usuario.groups.filter(name='Clientes').exists()
-        return es_cliente
+        return Cliente.objects.get(user_django=user)
     except Cliente.DoesNotExist:
         return None
 
@@ -38,12 +37,17 @@ class ClientePerfilUpdateView(LoginRequiredMixin, UpdateView):
         return get_cliente_por_usuario(self.request.user)
 
     def get_success_url(self):
-        return reverse_lazy('vistas:dashboard_cliente')
+        return reverse_lazy('vistas:dashboard_bienvenida')
 
 @login_required
 def dashboard_cliente(request):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('/administracion')
     # Clases
     try:
@@ -147,7 +151,13 @@ def dashboard_cliente(request):
 @login_required
 def mis_actividades(request):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = cliente.verificarCliente()
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('login')
     clases_futuras = cliente.clases.filter(estado__in=['programada', 'en_curso']).order_by('horario')
     entrenamientos_futuros = cliente.entrenamientos.filter(estado__in=['programado', 'en_curso']).order_by('horario')
@@ -169,7 +179,13 @@ def mis_actividades(request):
 @login_required
 def mis_reservas(request):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = cliente.verificarCliente()
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('login')
     reservas = Reserva.objects.filter(cliente=cliente).order_by('-fecha_creacion')
     return render(request, 'vistas/mis_reservas.html', {'reservas': reservas})
@@ -179,7 +195,13 @@ def mis_reservas(request):
 @login_required
 def mis_reservas_crear(request):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = cliente.verificarCliente()
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('login')  
     if request.method == 'POST':
         cancha_id = request.POST.get('cancha')
@@ -268,7 +290,13 @@ def mis_reservas_crear(request):
 @login_required
 def mis_reservas_cancelar(request, reserva_id):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = cliente.verificarCliente()
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('login')
     reserva = get_object_or_404(Reserva, id=reserva_id, cliente=cliente)
     ahora = datetime.now()
@@ -288,7 +316,13 @@ def mis_reservas_cancelar(request, reserva_id):
 @login_required
 def mis_pagos(request):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = cliente.verificarCliente()
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('login')
     
    
@@ -304,7 +338,13 @@ def mis_pagos(request):
 @login_required
 def mis_inscripciones(request):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = cliente.verificarCliente()
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('login')
         
     equipos_cliente = Equipo.objects.filter(clientes=cliente)
@@ -358,7 +398,13 @@ def pagar_inscripcion_cliente(request, competicion_id, equipo_id):
 @login_required
 def cancelar_pago_y_reserva(request, reserva_id):
     cliente = get_cliente_por_usuario(request.user)
-    if not cliente:
+    es_cliente = cliente.verificarCliente()
+    es_cliente = False
+    try:
+        es_cliente = cliente.verificarCliente()
+    except:
+        pass
+    if not es_cliente:
         return redirect('login')
     reserva = get_object_or_404(Reserva, id=reserva_id, cliente=cliente)
     Pago.objects.filter(reserva=reserva).delete()

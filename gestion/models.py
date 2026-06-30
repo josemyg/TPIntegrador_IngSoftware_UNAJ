@@ -47,6 +47,10 @@ class Usuario(models.Model):
     def __str__(self):
         return (self.nombre + " " + self.apellido)
 
+    def verificarCliente(self):
+        es_cliente = self.user_django.groups.filter(name='Clientes').exists()
+        return es_cliente
+
 class Profesor(Usuario):
 
     estados = {
